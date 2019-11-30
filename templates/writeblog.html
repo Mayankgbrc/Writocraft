@@ -1,0 +1,94 @@
+{% load static from staticfiles %}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Include Quill stylesheet -->
+        <link href="/static/css/style.css" rel="stylesheet">
+        <link href="/static/css/quill.snow.css" rel="stylesheet">
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div style="width: 100%;">
+            <div style="margin-left:15%;margin-top: 2%; width: 70%;" >
+                <span id="error" class="alert alert-danger" style="display: none;"></span>
+                <span id="success" class="alert alert-success" style="display: none;"></span>
+                <br><br>
+                {% csrf_token %}
+                <label>Enter the topic of your blog</label>
+                <input type="text" name="heading" id="heading" placeholder="Enter a heading" class="form-control" /> <br>
+                
+                <label>Enter the context</label>
+                <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
+                    <div id="editor" name="data">
+                        <p></p>
+                    </div>
+                </div>
+                <br>
+                <button name="datacatch" value="save">Save</button> &nbsp;
+                <button name="datacatch" value="submit">Submit for Review</button>
+            </div>
+        </div>
+    </body>
+
+<script src="/static/js/quill.js"></script>
+<script>
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        [{ 'direction': 'rtl' }],                         // text direction
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['image'],
+        ['clean']                                         // remove formatting button
+    ];
+
+    var editor = new Quill('#editor', {
+        modules: { toolbar: toolbarOptions },
+        theme: 'snow',
+        placeholder: 'Compose an epic...',
+    });
+    
+$(document).ready(function(){
+    $("button[name ='datacatch']").click(function(){
+        var token = $(this).val(); 
+        var delta = editor.getContents();
+        var quillHtml = editor.root.innerHTML.trim();
+        var id = "{{id}}";
+        $.ajax({
+            type: 'POST',
+            url: '/writeblog/',
+            data: {
+                heading: $("#heading").val(),
+                id: "{{id}}",
+                data: quillHtml,
+                token: token,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(result){
+                var output = result['status'];
+                if (output == 200){
+                    $("#success").text(result['success']);
+                    $("#success").show().delay(5000).fadeOut(3000);;
+                }
+                else{
+                    console.log(result['error']);
+                    $("#error").text(result['error']);
+                    $("#error").show().delay(5000).fadeOut(3000);;
+                }
+            }
+        })
+    });
+});
+    
+</script>
+</html>
