@@ -166,19 +166,80 @@ def logout_view(request):
     logout(request)
 
 def userprofile(request, username):
-    context = {"username":"No Data Found"}
+    context = {"username":"Anonymous"}
     if User.objects.filter(username=username).exists():
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
-            print("Entered")
             context['username'] = username
             context['email'] = userdata.email
-            print(1)
             context['fname'] = userdata.first_name
             context['lname'] = userdata.last_name
-            print(2)
             context['fullname'] = userdata.first_name + " " + userdata.last_name
-
-    print(context)
-            
+            context['status'] = 200
+        else:
+            context['status'] = 110
+    else:
+        context['status'] = 404
     return render(request, "userprofile.html", context)
+
+def blogs(request, username, title):
+    context = {}
+    if models.Blog.objects.filter(user__username = username, heading = title).exists():
+        if models.Blog.objects.filter(user__username = username, heading = title).count() == 1:
+            blog = models.Blog.objects.get(user__username = username, heading = title)
+            context['heading'] = blog.heading
+            context['data'] = blog.data
+            context['status'] = 200
+        else:
+            context['status'] = 110
+    else:
+        context['status'] = 404
+    return render(request, "blogshow.html", context)
+
+@login_required(login_url='/login/')
+def myblogs(request):
+    context = {}
+    context['status'] = 110
+    try:
+        if request.user.is_anonymous:
+            return render(request, "login.html", context)
+    except:
+        return render(request, "login.html", context)
+    else:
+        if models.Blog.objects.filter(user__username = request.user).exists():
+            blog_all = models.Blog.objects.filter(user__username = request.user)
+            blog_list = []
+            blog_num = len(blog_all)
+            context['blog_num'] = blog_num
+            for each in blog_all:
+                if (len(each.heading) > 9) or (len(each.data) > 9) :
+                    blog_content = {}
+                    blog_content['heading'] = each.heading
+                    blog_content['blogid'] = each.id
+                    blog_content['data'] = each.data
+                    blog_content['updated'] = each.updated_at
+                    blog_list.append(blog_content)
+                    context['status'] = 200
+                else:
+                    context['status'] = 120
+            context['blogs'] = blog_list
+        else:
+            context['status'] = 120
+        return render(request, "myblogs.html", context)
+
+@login_required(login_url='/login/')
+def edit(request, title):
+    context = {}
+    if models.Blog.objects.filter(user__username = request.user, heading = title).exists():
+        if models.Blog.objects.filter(user__username = request.user, heading = title).count() == 1:
+            blog = models.Blog.objects.get(user__username = request.user, heading = title)
+            context['heading'] = blog.heading
+            context['data'] = blog.data
+            context['id'] = blog.id
+            context['status'] = 200
+        else:
+            context['status'] = 110
+    else:
+        context['status'] = 404
+    print(context)
+    return render(request, "writeblog.html", context)

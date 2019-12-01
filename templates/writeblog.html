@@ -18,12 +18,14 @@
                 <br><br>
                 {% csrf_token %}
                 <label>Enter the topic of your blog</label>
-                <input type="text" name="heading" id="heading" placeholder="Enter a heading" class="form-control" /> <br>
+                <input type="text" name="heading" id="heading" value="{{ heading }}" placeholder="Enter a heading" class="form-control" /> <br>
                 
                 <label>Enter the context</label>
                 <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
                     <div id="editor" name="data">
-                        <p></p>
+                        <p>
+                           {{ data|safe }}
+                        </p>
                     </div>
                 </div>
                 <br>
