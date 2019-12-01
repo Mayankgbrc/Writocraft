@@ -11,6 +11,9 @@ from django.contrib.auth import logout
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
 
+def index(request):
+    return HttpResponse("Hlo buddy")
+
 def register(request):
     if request.method == "POST":
         try:
