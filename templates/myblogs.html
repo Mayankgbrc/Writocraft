@@ -1,0 +1,6 @@
+
+{% if blog_num > 0 %}
+    {% for each in blogs %}
+        <a href="/edit/{{each.heading}}/">Heading is {{ each.heading }}</a> <br>
+    {% endfor %}
+{% endif %}

@@ -13,4 +13,7 @@ urlpatterns = [
     url(r'^blogshow/$',views.blogshow),
     url(r'^logout/$',views.logout_view),
     url(r'^(?P<username>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)$', views.userprofile, name='userprofile'),
+    url(r'^(?P<username>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/(?P<title>[\w\s\?]+)$', views.blogs, name='blogs'),
+    url(r'^myblogs/$',views.myblogs),
+    url(r'^edit/(?P<title>[\w\s\?]+)/$', views.edit, name='edit'),
 ]
