@@ -4,5 +4,11 @@
     </head>
     <body>
         Welcome {{email}}
+        Total blog is {{blog_num}}<br>
+        {% if blog_num > 0 %}
+            {% for each in blogs %}
+                <a href="/@{{username}}/{{ each.url|urlencode }}/">Heading is {{ each.heading }}</a><br>
+            {% endfor %}
+        {% endif %}
     </body>
 </html>

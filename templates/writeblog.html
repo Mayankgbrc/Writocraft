@@ -22,13 +22,10 @@
                 
                 <label>Enter the context</label>
                 <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
-                    <div id="editor" name="data">
-                        <p>
-                           {{ data|safe }}
-                        </p>
-                    </div>
+                    <div id="editor" name="data">{{ data|safe }}</div>
                 </div>
                 <br>
+                <input type="checkbox" id="post_type" {{anoaccept}}><label>Post Anonymously</label>
                 <button name="datacatch" value="save">Save</button> &nbsp;
                 <button name="datacatch" value="submit">Submit for Review</button>
             </div>
@@ -66,6 +63,11 @@ $(document).ready(function(){
         var delta = editor.getContents();
         var quillHtml = editor.root.innerHTML.trim();
         var id = "{{id}}";
+        var anoaccept = "False";
+		if ($('#post_type').is(":checked"))
+		{
+			anoaccept = "True";
+		}
         $.ajax({
             type: 'POST',
             url: '/writeblog/',
@@ -74,6 +76,7 @@ $(document).ready(function(){
                 id: "{{id}}",
                 data: quillHtml,
                 token: token,
+                anoaccept: anoaccept,
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function(result){

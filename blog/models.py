@@ -10,6 +10,7 @@ class Profile(models.Model):
 
 class Blog(models.Model):
     heading = models.CharField(max_length=128, blank=True, null=True)
+    url = models.CharField(max_length=128, blank=True, null=True)
     data = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_visible = models.BooleanField(default=True)
@@ -17,7 +18,45 @@ class Blog(models.Model):
     is_verified = models.BooleanField(default=False)
     is_failed = models.BooleanField(default=False)
     is_draft = models.BooleanField(default=True)
+    is_anonymous = models.BooleanField(default=False)
     status = models.CharField(max_length=128, blank=True, null=True)
     verified_by = models.CharField(max_length=128, blank=True, null=True)
+    unix_time = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Notification(models.Model):
+    fromuser = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='creators')
+    touser = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='tousers')
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    data = models.CharField(max_length=128, blank=True, null=True)
+    viewed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    comment = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Commentthread(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    commentthread = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class URLshortner(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    shorturl = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+
+class Follow(models.Model):
+    userfrom = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='userfrom')
+    userto = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='userto')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Likes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
