@@ -1,9 +1,5 @@
-<html>
-    <head>
-        <title>{{username}}</title>
-    </head>
-    <body>
-        Welcome {{email}}
+{% include "navbar.html" %}
+{% load static from staticfiles %}
         Total blog is {{blog_num}}<br>
         {% if blog_num > 0 %}
             {% for each in blogs %}

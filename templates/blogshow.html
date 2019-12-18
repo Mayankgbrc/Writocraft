@@ -1,78 +1,74 @@
-<html>
-    <head>
-        <title>{{heading}} | Blog</title>
-        <link href="/static/css/materialize.min.css" rel="stylesheet">
-        <script src="/static/js/materialize.min.js"></script>
-        <script src="/static/js/jquery.min.js"></script>
-        <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
-        <style>
-            body { 
-                font-family: "Helvetica Neue"; 
-                font-size: 24px; 
-                font-style: normal; 
-                font-variant: normal; 
-                font-weight: 300; 
-                line-height: 28.8px; 
-                filter: invert(0);
-            }
-        </style>
-    </head>
-    <body>
-        
-            <div class="navbar-fixed">
-            <nav>
-              <div class="nav-wrapper grey lighten-3 ">
-                <a href="#!" class="brand-logo black-text text-darken-2">Logo</a>
-                <ul class="right hide-on-med-and-down black-text text-darken-2">
-                  
-                  <li>
-                    <div class="switch">
-                        <label>
-                            Off
-                            <input type="checkbox" id="colortoggle">
-                            <span class="lever"></span>
-                            On
-                        </label>
-                    </div>
-                  </li>
-                  <li><a href="sass.html">Sass</a></li>
-                  <li><a href="badges.html">Components</a></li>
+{% include "navbar.html" %}
+{% load static from staticfiles %}
+<script>
+        $(".0_0").click(function(){
+            alert("Hello");
+            var which=$(this).attr('id');
+            alert(which);
+            $("#commentbox"+which).slideToggle("slow");
+        });
 
-                </ul>
-              </div>
-            </nav>
-          </div>
+</script>
         <div class="parallax-container">
             <div class="parallax"><img src="/static/images/parallax1.jpg"></div>
         </div>
             
-        <div class="section white">
-                <div class="row container">
-                  <h2 class="header">Parallax</h2>
-                  <p class="grey-text text-darken-3 lighten-3">Parallax is an effect where the background content or image in this case, is moved at a different speed than the foreground content while scrolling.</p>
-                </div>
-              </div>
 
-        <div id="doc" to="0" class="section white">
+        <div id="doc" class="">
             <div class="row" style="">
-                <div class="col s12 m2 l2 grey valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
+                <div class="col s12 m2 l2  valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
                 <div class="col s12 m8 l8" style="padding: 5vh 5vw;">
                     <div>
                         <h1>{{heading}}</h1>
                         <div style="font-size: 22px; letter-spacing: 0.0625em; ">{{data|safe}}</div>
                     </div>
-                    <div id="likes">Likes <i class="fa fa-heart" style="color: red;" aria-hidden="true"></i></div>
+                    <span id="likes" style="cursor: pointer;"  to="0"><i id="heart" class="fa fa-heart-o" style="color: black;" aria-hidden="true"></i></span>
+                    <span id="maincomment" style="cursor: pointer; color: black;" to='0'><i id="icomment" class="fa fa-comment-o" style="color: black;" aria-hidden="true"></i></span>
+                    <div id='cmtmainbox' style='display: none;'>
+                        <textarea id='commentmainbox'  style='resize: none;'></textarea>
+                        <button>Reply</button>
+                    </div>
                     <div>
-                        <div id="comments"> </div>
+                        <div id="comments" style="width: 100%; line-height: 1.3;">
+                            
+                        </div>
                     </div>
                 </div>
-                <div class="col s12 m2 l2 grey valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
+                <div class="col s12 m2 l2  valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
             </div>            
         </div>
         {% csrf_token %}
+        <div class="sharethis-inline-share-buttons"></div>
+        
     </body>
 
     <script>
+        $("#likes").click(function(){
+            var value = $(this).attr('to');
+            if (value == 0){
+                $("#heart").attr('class', 'fa fa-heart');
+                $("#heart").attr('style', 'color: #f00');
+                $(this).attr('to',1);
+            }
+            else{
+                $("#heart").attr('class', 'fa fa-heart-o');
+                $("#heart").attr('style', 'color: #000');
+                $(this).attr('to',0);
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/likes/',
+                data: {
+                    blogid: '{{blogid}}',
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    var output = result['status'];
+                    console.log(output);
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('.sidenav');
             var instances = M.Sidenav.init(elems, options);
@@ -88,7 +84,7 @@
                 type: 'POST',
                 url: '/commentload/',
                 data: {
-                    heading: '{{heading}}',
+                    blogid: '{{blogid}}',
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function(result){
@@ -99,11 +95,43 @@
                         comments = result['data'];
                         console.log(comments);
                         for(var i = 0; i < comments.length; i+=1){
-                            $("#comments").append("<div><div><b>"+comments[i]['user']+"</b></div><div>"+comments[i]['comment']+"</div><div>"+comments[i]['date']+"</div>");
+                            $("#comments").append("<div class='row' style='margin-bottom: 10px;'><div class='col m10 s12' style='font-size: 20px;'><div><b>"+comments[i]['user']+"</b></div><div>"+comments[i]['comment']+"</div><div>"+comments[i]['date']
+                                                    +" | <span onClick='commentClick("+i+")' style='cursor: pointer;' class='commentreply' id='"+i+"'>Reply</span><div id='cmtbox"+i+"' style='display: none;'><textarea id='commentbox"+i+"'  style='resize: none;'></textarea><button>Reply</button></div></div>");
                             for(var j = 0; j < comments[i]['commentthread'].length; j+=1){
-                                $("#comments").append("<div style='margin-left: 5%; font-size: 20px;'><div>"+comments[i]['commentthread'][j]['user']+"</div><div>"+comments[i]['commentthread'][j]['thread']+"</div><div>"+comments[i]['commentthread'][j]['date']+"</div></div>");
+                                $("#comments").append("<div style='margin-left: 5%; font-size: 18px;'><div><b>"
+                                                        +comments[i]['commentthread'][j]['user']+"</b></div><div>"
+                                                        +comments[i]['commentthread'][j]['thread']+"</div><div style='font-size: medium'>"
+                                                        +comments[i]['commentthread'][j]['date']
+                                                        +" | <span onClick='commentThreadClick("+i+","+j+")' style='cursor: pointer;' class='commentthreadreply' id='"+i+"_"+j+"' >Reply</span></div><div id='cmtthread"+i+"_"+j+"' style='display: none;'><textarea id='commentthreadbox"+i+"_"+j+"' style='resize: none;'></textarea><button>Reply</button></div></div>");
                             }
-                            $("#comments").append("</div><br>");
+                            $("#comments").append("</div></div><br>");
+                        }
+                    }
+                    else{
+                        console.log(output);
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/likescheck/',
+                data: {
+                    blogid: '{{blogid}}',
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    var output = result['status'];
+                    if (output == 200){
+                        if (result['value'] == 1){
+                            $("#heart").attr('class', 'fa fa-heart');
+                            $("#heart").attr('style', 'color: #f00');
+                            $("#likes").attr('to',1);
+                        }
+                        else{
+                            $("#heart").attr('class', 'fa fa-heart-o');
+                            $("#heart").attr('style', 'color: #000');
+                            $("#likes").attr('to',0);
                         }
                     }
                     else{
@@ -111,29 +139,35 @@
                     }
                 }
             })
-
         });
-        $(".switch").find("#colortoggle").on("change",function() {
-            var value = $("#doc").attr('to');
-            $("span").css("color", "");
-            $("span").css("background-color", "");
+
+        $("#icomment").on('click', function(){
+            var value = $("#maincomment").attr('to');
             if (value == 0){
-                $("#doc").css("background-color", "#222");
-                $("#doc").css("color", "#eee");
-                $("#doc").attr('to',1);
+                $("#icomment").attr('class', 'fa fa-comment');
+                $("#icomment").attr('style', 'color: #D68910; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: #000;');
+                $("#cmtmainbox").slideDown(100);
+                $("#maincomment").attr('to',"1");
             }
             else{
-                $("#doc").css("background-color", "#fff");
-                $("#doc").css("color", "#000");
-                $("#doc").attr('to',0);
+                $("#icomment").attr('class', 'fa fa-comment-o');
+                $("#icomment").attr('style', 'color: #000;');
+                $("#cmtmainbox").slideUp(100);
+                $("#maincomment").attr('to','0');
             }
+            
         });
-        $(document).ready(function(){
-            $('.parallax').parallax();
-        });
+        
+        function commentClick(x) {
+            $("#cmtbox"+x).slideToggle(100);
+        }
+
+        function commentThreadClick(x,y) {
+            $("#cmtthread"+x+"_"+y).slideToggle(100);
+        }
+
+        
+
 
     </script>
-    <!--
-
-            -->
 </html>

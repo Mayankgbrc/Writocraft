@@ -10,6 +10,7 @@ from django.contrib.auth import logout
 from django.db.models import Q
 import random
 import time
+import datetime
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -202,16 +203,6 @@ def writeblog(request):
         context['status'] = "Error Occured"
         return HttpResponse(json.dumps(context), content_type="application/json")
 
-def blogshow(request):
-    data = models.Blog.objects.all()
-    for i in data:
-        print(i.heading)
-        print(i.data)
-        data = {"heading": i.heading, "data": i.data}
-
-    
-    return render(request, "blogshow.html", data)
-
 def logout_view(request):
     logout(request)
 
@@ -226,6 +217,7 @@ def userprofile(request, username):
             context['lname'] = userdata.last_name
             context['fullname'] = userdata.first_name + " " + userdata.last_name
             context['status'] = 200
+            context['title'] = username
 
 
             if models.Blog.objects.filter(user__username = username, is_anonymous = False).exists():
@@ -241,9 +233,11 @@ def userprofile(request, username):
                         blog_content['blogid'] = each.id
                         blog_content['updated'] = each.updated_at
                         blog_list.append(blog_content)
+
                         context['status'] = 200
                     else:
                         context['status'] = 120
+                        
                 context['blogs'] = blog_list
                 print(context)
         else:
@@ -260,7 +254,11 @@ def blogs(request, username, title):
             context['heading'] = blog.heading
             context['url'] = blog.url
             context['data'] = blog.data
+            context['title'] = blog.heading + " | " + username
+            context['author'] = username
+            context['blogid'] = blog.id
             context['status'] = 200
+        
         else:
             context['heading'] = "110"
             context['status'] = 110
@@ -277,6 +275,8 @@ def anoblog(request, timestamp, url):
             context['heading'] = blog.heading
             context['url'] = blog.url
             context['data'] = blog.data
+            context['title'] = blog.heading + " | Anonymous"
+            context['blogid'] = blog.id
             context['status'] = 200
         else:
             context['heading'] = "110"
@@ -312,9 +312,8 @@ def myblogs(request):
                     blog_content['is_anonymous'] = each.is_anonymous
                     blog_list.append(blog_content)
                     #context['notification'] = notification(request)
-                    context['status'] = 200
-                else:
-                    context['status'] = 120
+            context['status'] = 200
+            context['title'] = request.user
             context['blogs'] = blog_list
         else:
             context['status'] = 120
@@ -348,8 +347,7 @@ def notification(request):
         context['data'] = "Please Login"
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
-        notify = models.Notification.objects.filter(Q(touser=request.user))
-        print("notify count - ",notify.count())
+        notify = models.Notification.objects.filter(Q(touser=request.user)).order_by('-created_at')
         if notify.count() > 0:
             status = 200
             data = []
@@ -357,7 +355,10 @@ def notification(request):
                 notifi_dict = {}
                 notifi_dict['blog'] = each.blog
                 notifi_dict['data'] = each.data
-                notifi_dict['date'] = str(each.created_at)
+                TIME_FORMAT = "%b %d %Y, %I:%m %p"
+                curr_time = each.created_at
+                f_str = curr_time.strftime(TIME_FORMAT)
+                notifi_dict['date'] = f_str
                 data.append(notifi_dict)
                 context['notification'] = data
         else:
@@ -368,7 +369,7 @@ def notification(request):
 
 def commentload(request):
     if request.method == "POST":
-        blog = request.POST.get('heading','')
+        blogid = request.POST.get('blogid','')
         context = {}
         print("Entered")
         context['status'] = 110
@@ -376,7 +377,7 @@ def commentload(request):
             context['data'] = "Please Login"
             return data
         else:
-            comment = models.Comment.objects.filter(blog__heading=blog).order_by('created_at')
+            comment = models.Comment.objects.filter(blog = blogid).order_by('created_at')
             if comment.count() > 0:
                 data = []
                 for each in comment:
@@ -384,9 +385,12 @@ def commentload(request):
                     comment = {}
                     comment['user'] = each.user.username
                     comment['comment'] = each.comment
-                    comment['date'] = str(each.created_at)
+                    TIME_FORMAT = "%b %d %Y, %I:%m %p"
+                    curr_time = each.created_at
+                    f_str = curr_time.strftime(TIME_FORMAT)
+                    comment['date'] = f_str
                     print("Check2")
-                    commentthreaddata = models.Commentthread.objects.filter(blog__heading=blog, comment__comment = each.comment)
+                    commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
                     print("Check X1")
                     if commentthreaddata.count() > 0:
                         data2 = []
@@ -395,8 +399,12 @@ def commentload(request):
                             commentthread = {}
                             commentthread['user'] = per.user.username
                             commentthread['thread'] = per.commentthread
-                            commentthread['date'] = str(per.created_at)
+                            curr_time = each.created_at
+                            TIME_FORMAT = "%b %d %Y, %I:%m %p"
+                            f_str = curr_time.strftime(TIME_FORMAT)
+                            commentthread['date'] = f_str
                             data2.append(commentthread)
+                    
                     print("Check4")
                     comment['commentthread'] = data2
                     data.append(comment)
@@ -407,3 +415,45 @@ def commentload(request):
                 data = "Comments"
             print(context)
             return HttpResponse(json.dumps(context), content_type="application/json")
+
+def likes(request):
+    context = {}
+    context['status'] = 110
+    if request.method == "POST":
+        blogid = int(request.POST.get('blogid',''))
+        if request.user.is_anonymous:
+            context['data'] = "Please Login"
+            return data
+        else:
+            if models.Likes.objects.filter(blog = blogid, user = request.user).exists():
+                models.Likes.objects.filter(blog = blogid, user = request.user).delete()
+                context['status'] = 200
+            else:
+                try:
+                    blogs = models.Blog.objects.get(id=blogid)
+                    like = models.Likes(blog=blogs, user = request.user)
+                    like.save()
+                except:
+                    context['status'] = 110
+                else:
+                    context['status'] = 200
+        return HttpResponse(json.dumps(context), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+def likescheck(request):
+    context = {}
+    context['status'] = 110
+    context['value'] = 0
+    if request.method == "POST":
+        blogid = int(request.POST.get('blogid',''))
+        if request.user.is_anonymous:
+            context['data'] = "Please Login"
+            return data
+        else:
+            if models.Likes.objects.filter(blog = blogid, user = request.user).exists():
+                context['value'] = 1
+                context['status'] = 200
+        return HttpResponse(json.dumps(context), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(context), content_type="application/json")

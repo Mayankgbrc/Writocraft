@@ -5352,7 +5352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Cursor.blotName = 'cursor';
 	Cursor.className = 'ql-cursor';
 	Cursor.tagName = 'span';
-	Cursor.CONTENTS = 'ï»¿'; // Zero width no break space
+	Cursor.CONTENTS = '\uFEFF'; // Zero width no break space
 
 
 	exports.default = Cursor;

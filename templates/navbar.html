@@ -1,0 +1,102 @@
+{% load static from staticfiles %}
+<html>
+    <head>
+        <title>{{title}} | Blog</title>
+        <script src="/static/js/jquery.min.js" ></script>
+        <link href="/static/css/materialize.min.css" rel="stylesheet">
+        <script src="/static/js/materialize.min.js"></script>
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
+        <style>
+            body { 
+                font-family: "Helvetica Neue"; 
+                font-size: 24px; 
+                font-style: normal; 
+                font-variant: normal; 
+                font-weight: 300; 
+                line-height: 28.8px; 
+                filter: invert(0);
+            }
+        </style>
+        <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5df46af8d59bd4001220ef92&product=inline-share-buttons" async="async"></script> 
+    </head>
+    <body to="0">
+        
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper grey lighten-3 ">
+                    <a href="#!" class="brand-logo black-text text-darken-2">Logo</a>
+                    <ul class="right hide-on-med-and-down black-text text-darken-2">
+                        <li>
+                            <div class="switch">
+                                <label>
+                                    Off
+                                    <input type="checkbox" id="colortoggle">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa fa-bell-o" id="notificationpanel" style="cursor: pointer; font-size: 20px;"> </i>
+                        </li>
+                        <li><a href="sass.html">Sass</a></li>
+                        <li><a href="badges.html">Components</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        {% csrf_token %}
+        <div class="" style="z-index: 2; position:fixed; right: 0; width:100%; display: none;" id="notification">
+            <div class="row">
+                <div id="notifyinner" class="col l4 s12 offset-l7" style="max-height: 60vh; overflow: scroll;">
+                </div>
+            </div>
+        </div>
+        <script>
+            $(".switch").find("#colortoggle").on("change",function() {
+                console.log("Working color");
+                var value = $("body").attr('to');
+                $("span").css("color", "");
+                $("span").css("background-color", "");
+                if (value == 0){
+                    $("body").attr('style', 'background-color: #222 !important');
+                    $("body").css("color", "#eee");
+                    $("body").attr('to',1);
+                }
+                else{
+                    $("body").attr('style', 'background-color: #fff !important');
+                    $("body").css("color", "#000");
+                    $("body").attr('to',0);
+                }
+            });
+
+            $("#notificationpanel").click(function(){
+                $("#notification").slideToggle(300);
+            });
+
+            $(document).ready(function(){
+                $('.parallax').parallax();
+            });
+
+            $(document).ready(function(){
+                $.ajax({
+                    type: 'POST',
+                    url: '/notification/',
+                    data: {
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(result){
+                        var output = result['status'];
+                        if (output == 200){
+                            for (var i = 0; i < result['notification'].length ; i++){
+                                $("#notifyinner").append("<div class='collection' style='margin: 0px !important;'><a href='#' class='collection-item'><div class='badge'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></a></div>");
+                            }
+                        }
+                        else{
+                            $("#notifyinner").append("<div class='collection' style='margin: 0px !important;'><a href='#' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
+                        }
+                    }
+                })
+            });
+        </script>
