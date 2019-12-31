@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 
+
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     img = models.CharField(max_length=200, null=True, blank=True)
@@ -22,9 +23,14 @@ class Blog(models.Model):
     status = models.CharField(max_length=128, blank=True, null=True)
     verified_by = models.CharField(max_length=128, blank=True, null=True)
     unix_time = models.CharField(max_length=20, blank=True, null=True)
+    views_num = models.IntegerField(default = 0, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Follower(models.Model):
+    fromuser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fromuser')
+    touser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='touser')
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Notification(models.Model):
     fromuser = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='creators')
@@ -61,3 +67,18 @@ class Likes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Views(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Photo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    file = models.ImageField(upload_to = 'blog/static/images/uploadsfile/')
+    description = models.CharField(max_length=255, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'photo'
+        verbose_name_plural = 'photos'

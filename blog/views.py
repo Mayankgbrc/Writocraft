@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from . import models
+from .forms import PhotoForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 import json
@@ -11,6 +12,8 @@ from django.db.models import Q
 import random
 import time
 import datetime
+from PIL import Image
+
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -31,30 +34,21 @@ def urlshort(request, link):
 def index(request):
     return HttpResponse("Hlo buddy")
 
-def register(request):
-    if request.method == "POST":
-        try:
-            fname = request.POST['fname']
-            lname = request.POST['lname']
-            email = request.POST['email']
-            password = request.POST['password']
-            phone = request.POST.get('phone','')
 
-        except:
-            return render(request, 'signup.html')
-        
-        else:
-            user = User(email=email, username=email,
-                        first_name=fname, last_name=lname)
-            user.save()
-            user.set_password(password)
-            user.save()
-            profile = models.Profile(user = user, phone = phone)
-            profile.save()
-            print("Profile saved")
-            return HttpResponse("Done")
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('/photo_upload/')
     else:
-        return render(request, 'signup.html')
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
 
 @csrf_protect
 def profile_login(request):
@@ -137,7 +131,8 @@ def writeblog(request):
                     blog = models.Blog.objects.get(user = request.user, id =id)
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
-                    blog.data = data
+                    new_data = data.replace("<img", "<img style='width:100%;'")
+                    blog.data = new_data
                     blog.is_anonymous = is_anonymous
                     blog.save()
                     context['success'] = "Changes Saved Successfully"
@@ -176,7 +171,9 @@ def writeblog(request):
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
                     blog = models.Blog.objects.get(user = request.user, id = id)
                     blog.heading = heading
-                    blog.data = data
+                    blog.url = heading.replace(' ', '-')
+                    new_data = data.replace("<img", "<img style='width:100%;'")
+                    blog.data = new_data
                     blog.is_draft = False
                     blog.is_anonymous = is_anonymous
                     blog.save()
@@ -211,17 +208,28 @@ def userprofile(request, username):
     if User.objects.filter(username=username).exists():
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
+            followers = models.Follower.objects.filter(touser__username=username).count()
+            followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
+
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
             context['lname'] = userdata.last_name
+            TIME_FORMAT = "%b %d, %Y"
+            curr_time = userdata.date_joined
+            f_str = curr_time.strftime(TIME_FORMAT)
+            context['datejoined'] = f_str
             context['fullname'] = userdata.first_name + " " + userdata.last_name
-            context['status'] = 200
             context['title'] = username
+            context['followers'] = followers
+            context['followcheck'] = followcheck
+            user_views = models.Views.objects.filter(user__username = username).count()
+            context['user_views'] = human_format(request, user_views)
+            context['status'] = 200
+            total_views = 0
 
-
-            if models.Blog.objects.filter(user__username = username, is_anonymous = False).exists():
-                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False)
+            if models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).exists():
+                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
                 blog_list = []
                 blog_num = len(blog_all)
                 context['blog_num'] = blog_num
@@ -231,20 +239,52 @@ def userprofile(request, username):
                         blog_content['heading'] = each.heading
                         blog_content['url'] = each.url
                         blog_content['blogid'] = each.id
-                        blog_content['updated'] = each.updated_at
+                        blog_content['views_num'] = human_format(request, each.views_num)
+                        blog_content['created_at'] = each.created_at
+                        TIME_FORMAT = "%b %d %Y"
+                        curr_time = each.created_at
+                        f_str = curr_time.strftime(TIME_FORMAT)
+                        blog_content['date'] = f_str
+                        blog_content['updated_at'] = each.updated_at
                         blog_list.append(blog_content)
-
+                        total_views += each.views_num
                         context['status'] = 200
                     else:
                         context['status'] = 120
-                        
                 context['blogs'] = blog_list
-                print(context)
+                context['total_views'] = human_format(request, total_views)
         else:
             context['status'] = 110
     else:
         context['status'] = 404
+    print(context)
     return render(request, "userprofile.html", context)
+
+def followers(request):
+    if request.method == 'POST':
+        context = {}
+        context['status'] = 110
+        profile = request.POST.get('profile','')
+        followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = profile).count()
+        follownum = models.Follower.objects.filter(touser__username = profile).count()
+        if followcheck == 0:
+            if User.objects.filter(username = profile).exists():
+                if User.objects.filter(username = profile).count() == 1:
+                    touse = User.objects.get(username = profile)
+                    if touse != request.user: 
+                        following = models.Follower(fromuser = request.user, touser = touse)
+                        following.save()
+                        context['stats'] = 1
+                        context['status'] = 200
+                        context['follownum'] = follownum + 1
+        elif followcheck == 1:
+            followdelete = models.Follower.objects.filter(fromuser__username = request.user, touser__username = profile).delete()
+            if followdelete:
+                context['stats'] = 0 
+                context['status'] = 200
+                context['follownum'] = follownum - 1
+
+        return HttpResponse(json.dumps(context), content_type="application/json")
 
 def blogs(request, username, title):
     context = {}
@@ -257,6 +297,19 @@ def blogs(request, username, title):
             context['title'] = blog.heading + " | " + username
             context['author'] = username
             context['blogid'] = blog.id
+            user = User.objects.get(username = username)
+            num_blogs = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft = False, is_visible = True).count()
+            context['fullname'] = user.first_name + " " + user.last_name
+            context['numberblog'] = num_blogs
+            context['username'] = username
+            view = models.Views(blog=blog, user = request.user)
+            view.save()
+            blog.views_num = blog.views_num + 1
+            blog.save()
+            blog_views = models.Views.objects.filter(blog = blog).count()
+            user_views = models.Views.objects.filter(blog__user__username = username).count()
+            context['blog_views'] = human_format(request, blog_views)
+            context['user_views'] = human_format(request, user_views)
             context['status'] = 200
         
         else:
@@ -277,6 +330,10 @@ def anoblog(request, timestamp, url):
             context['data'] = blog.data
             context['title'] = blog.heading + " | Anonymous"
             context['blogid'] = blog.id
+            view = models.Views(blog=blog, user = request.user)
+            view.save()
+            blog_views = models.Views.objects.filter(blog = blog).count()
+            context['blog_views'] = human_format(request, blog_views)
             context['status'] = 200
         else:
             context['heading'] = "110"
@@ -355,7 +412,7 @@ def notification(request):
                 notifi_dict = {}
                 notifi_dict['blog'] = each.blog
                 notifi_dict['data'] = each.data
-                TIME_FORMAT = "%b %d %Y, %I:%m %p"
+                TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 curr_time = each.created_at
                 f_str = curr_time.strftime(TIME_FORMAT)
                 notifi_dict['date'] = f_str
@@ -371,7 +428,6 @@ def commentload(request):
     if request.method == "POST":
         blogid = request.POST.get('blogid','')
         context = {}
-        print("Entered")
         context['status'] = 110
         if request.user.is_anonymous:
             context['data'] = "Please Login"
@@ -381,31 +437,29 @@ def commentload(request):
             if comment.count() > 0:
                 data = []
                 for each in comment:
-                    print("Check1")
                     comment = {}
                     comment['user'] = each.user.username
                     comment['comment'] = each.comment
-                    TIME_FORMAT = "%b %d %Y, %I:%m %p"
-                    curr_time = each.created_at
-                    f_str = curr_time.strftime(TIME_FORMAT)
-                    comment['date'] = f_str
-                    print("Check2")
+                    comment['id'] = each.id
+                    TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                    curr_time1 = each.created_at
+                    f_str1 = curr_time1.strftime(TIME_FORMAT)
+                    comment['date'] = f_str1
                     commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
-                    print("Check X1")
+                    data2 = []
                     if commentthreaddata.count() > 0:
-                        data2 = []
+                        
                         for per in commentthreaddata:
-                            print("Check3")
                             commentthread = {}
                             commentthread['user'] = per.user.username
                             commentthread['thread'] = per.commentthread
-                            curr_time = each.created_at
-                            TIME_FORMAT = "%b %d %Y, %I:%m %p"
-                            f_str = curr_time.strftime(TIME_FORMAT)
-                            commentthread['date'] = f_str
+                            commentthread['id'] = per.id
+                            curr_time2 = per.created_at
+                            
+                            TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                            f_str2 = curr_time2.strftime(TIME_FORMAT)
+                            commentthread['date'] = f_str2
                             data2.append(commentthread)
-                    
-                    print("Check4")
                     comment['commentthread'] = data2
                     data.append(comment)
                 context['status'] = 200
@@ -413,7 +467,6 @@ def commentload(request):
                 
             else:
                 data = "Comments"
-            print(context)
             return HttpResponse(json.dumps(context), content_type="application/json")
 
 def likes(request):
@@ -457,3 +510,82 @@ def likescheck(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         return HttpResponse(json.dumps(context), content_type="application/json")
+
+def commentpush(request):
+    context = {}
+    context['status'] = 110
+    if request.method == "POST":
+        blogid = request.POST.get('blogid','')
+        commentid = request.POST.get('commentid','')
+        commenttext = request.POST.get('commenttext','').strip()
+        if (len(blogid) == 0) or (len(commentid) == 0) or (len(commenttext) == 0):
+            context['data'] = "Something Error Occured"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        if models.Blog.objects.filter(id=blogid).exists():
+            blogs = models.Blog.objects.get(id=blogid)
+            if commentid == "main":
+                comment = models.Comment(blog=blogs, user = request.user, comment = commenttext)
+                comment.save()
+                context['user'] = request.user.username
+                context['commentid'] = commentid
+                context['comment'] = commenttext
+                context['id'] = comment.id
+                curr_time2 = comment.created_at
+                TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                f_str2 = curr_time2.strftime(TIME_FORMAT)
+                context['date'] = f_str2
+                context['status'] = 200
+            else:
+                idnum = commentid.isnumeric()
+                if idnum:
+                    commentid = int(commentid)
+                    if models.Comment.objects.filter(blog = blogid, id=commentid).exists():
+                        comment = models.Comment.objects.get(blog = blogid, id=commentid)
+                        commentthread = models.Commentthread(blog=blogs, user = request.user, comment = comment, commentthread = commenttext)
+                        commentthread.save()
+                        context['user'] = request.user.username
+                        context['commentid'] = commentid
+                        context['commentthread'] = commenttext
+                        context['id'] = commentthread.id
+                        curr_time2 = commentthread.created_at
+                        TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                        f_str2 = curr_time2.strftime(TIME_FORMAT)
+                        context['date'] = f_str2
+                        context['status'] = 200
+                    else:
+                        context['data'] = "Something Error Occured"
+                else:
+                    context['data'] = "Something Error Occured"
+        else:
+            context['data'] = "Something Error Occured"
+        return HttpResponse(json.dumps(context), content_type="application/json")
+            
+def cropper(request):
+    return render(request, "cropper.html")
+
+
+def photo_list(request):
+    photos = models.Photo.objects.all()
+    if request.method == 'POST':
+        form = PhotoForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            obj = form.save()
+            obj.refresh_from_db()
+            obj.user = User.objects.get(username = request.user)
+            obj.save()
+            return redirect('/description')
+        else:
+            print("Print No")
+            #return redirect('photo_list')
+    else:
+        form = PhotoForm()
+    return render(request, 'photo_list.html', {'form': form, 'photos': photos})
+
+def human_format(request, num):
+    magnitude = 0
+    if abs(num) < 1000:
+        return num
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
