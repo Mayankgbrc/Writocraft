@@ -35,6 +35,11 @@ class Views(admin.ModelAdmin):
 class Photo(admin.ModelAdmin):
     list_display = ('user','file','description','uploaded_at',)
 
+class ReadLater(admin.ModelAdmin):
+    list_display = ('user','blog','created_at',)
+
+class Report(admin.ModelAdmin):
+    list_display = ('user','blog','created_at',)
 
 
 admin.site.register(models.Photo, Photo)
@@ -48,3 +53,5 @@ admin.site.register(models.CommentsLikes, CommentsLikes)
 admin.site.register(models.Commentthread, Commentthread)
 admin.site.register(models.Likes, Likes)
 admin.site.register(models.Views, Views)
+admin.site.register(models.Report, Report)
+admin.site.register(models.ReadLater, ReadLater)

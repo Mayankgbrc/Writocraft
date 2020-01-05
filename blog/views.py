@@ -650,3 +650,25 @@ def commentslikes(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         return HttpResponse(json.dumps(context), content_type="application/json")
+
+def readreport(request):
+    context = {}
+    context['status'] = 110
+    print("Entered")
+    if not request.user.is_anonymous:
+        if request.method == "POST":
+            work = request.POST.get('work')
+            blogid = request.POST.get('blogid')
+            if models.Blog.objects.filter(id = blogid).exists():
+                blog = models.Blog.objects.get(id = blogid)
+                if work == "reportblog":
+                    report = models.Report(blog=blog, user = request.user)
+                    report.save()
+                    context['status'] = 200
+                elif work == "readlater":
+                    readlater = models.ReadLater(blog=blog, user = request.user)
+                    readlater.save()
+                    context['status'] = 200
+    print(context)
+    return HttpResponse(json.dumps(context), content_type="application/json")
+

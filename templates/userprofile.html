@@ -52,7 +52,7 @@ a {
 
 .dropdown-content1 a:hover {background-color: #ddd;}
 
-/* .dropdowndiv:hover .dropdown-content1 {display: block;} */
+.dropdowndiv:hover .dropdown-content1 {display: block;}
 
 
 </style>
@@ -60,7 +60,7 @@ a {
         <div  class="flow-text">
             <div class="row">
                 <div class="col m2 s8 offset-m3 offset-s2">
-                    <img style="width: 100%;" class="circle responsive-img" src="/static/images/thumbnail/{{ username }}.jpg">
+                    <img style="width: 100%;" class="circle responsive-img" src="/static/images/pic/{{ username }}.jpg">
                 </div>
                 <div class="col m6 s12">
                         
@@ -112,9 +112,9 @@ a {
                                 <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/" id="link{{ each.blogid }}" class="activator grey-text text-darken-4">
                                     <b>{{ each.heading|truncatechars:30 }}</b>
                                 </a>
-                                <div class="dropdowndiv right">
-                                    <i class="fa fa-chevron-down dropbton" style="font-size: 1.2rem;"></i>
-                                    <div class="dropdown-content1" style="box-shadow: 5px 5px 10px #222; right:0px;">
+                                <div class="dropdowndiv right" for="{{ each.blogid }}">
+                                    <i class="fa fa-chevron-down" id="dropbton" style="font-size: 1.2rem;"></i>
+                                    <div class="dropdown-content1" id="drop{{ each.blogid }}" style="box-shadow: 5px 5px 10px #222; right:0px;">
                                         <a class="dropbutton black-text" id="readlater" for="{{ each.blogid }}"><b>Add to Read Later</b></a>
                                         <a class="dropbutton black-text" id="reportblog" for="{{ each.blogid }}"><b>Report Content</b></a>
                                         <a class="dropbutton black-text" id="copylink" for="{{ each.blogid }}"><b>Copy Blog Link</b></a>
@@ -138,10 +138,11 @@ a {
         </span>
 <script>
     $(document).ready(function(){
-        $(".dropdowndiv").click(function(){
-            alert("Clicked");
-            $(".dropdown-content1").show();
-        });
+        
+        //$(".dropdowndiv").click(function(){
+          //  var idname = $(this).attr("for");
+            //$("#drop"+idname).show();
+        //});
 
         $("#followbutton").click(function(){
             $.ajax({
@@ -186,7 +187,25 @@ a {
                 $(this).html('<b>Copied</b>');
                 $(this).css({"background-color":"#999"});
             }
-            if (id == "readlater"){
+
+            if (id == "readlater" || id == "reportblog"){
+                $.ajax({
+                type: 'POST',
+                url: '/readreport/',
+                data: {
+                    work: id,
+                    blogid: forid,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    if (result['status']==200){
+                        if (result['stats'] == 1){
+                        }
+                        else{
+                        }
+                    }
+                }
+            });
 
             }
         });

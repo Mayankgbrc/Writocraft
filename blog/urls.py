@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^notification/$',views.notification),
     url(r'^commentslikes/$',views.commentslikes),
     url(r'^cropper/$',views.cropper),
+    url(r'^readreport/$',views.readreport),
     url(r'^followplus/$',views.followers),
     url(r'^photo_upload/$',views.photo_list, name='photo_list'),
     url(r'^edit/(?P<url>[\w\s\-\?]+)/$', views.edit, name='edit'),
