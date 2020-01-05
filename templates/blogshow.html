@@ -1,5 +1,10 @@
 {% include "navbar.html" %}
 {% load static from staticfiles %}
+<style>
+    textarea{
+        height: none;
+    }
+</style>
 <script>
         $(document).ready(function(){
             $.ajax({
@@ -15,13 +20,26 @@
                     if (output == 200){
                         comments = result['data'];
                         for(var i = 0; i < comments.length; i+=1){
-                            $("#comments").append("<div><div class='row' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+comments[i]['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px'><b>"+comments[i]['user']+"</b></div><div style='font-size: 24px'>"+comments[i]['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+comments[i]['date']
-                                                    +" | <span onClick='commentClick("+comments[i]['id']+")' for='"+comments[i]['id']+"' style='cursor: pointer; ' class='commentreply' id='"+comments[i]['id']+"'>Reply</span><div id='cmtbox"+comments[i]['id']+"' style='display: none;'><textarea rows='4' cols='70' id='commentbox"+comments[i]['id']+"' style='resize: none;'></textarea><button class='commentcheck  btn waves-effect waves-light' for='"+comments[i]['id']+"' style='margin-top: 5px; background-color: black;' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+comments[i]['id']+"'></div>");
+                            var commentlike = comments[i]['like'];
+                            if (commentlike == 0){
+                                var liketext = "<span style='cursor: pointer' id='cm"+comments[i]['id']+"' class='commentlike'><span>Like</span><i class='fa fa-thumbs-up' style='font-size: 1.1rem;'></i></span>";
+                            }
+                            else{
+                                var liketext = "<span style='cursor: pointer' id='cm"+comments[i]['id']+"' class='commentlike'><span>Unlike</span><i class='' style='font-size: 1.1rem;'></i></span>";
+                            }
+                            $("#comments").append("<div><div class='row' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+comments[i]['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px;'><b><a style='color: black; font-weight: 500;' href='/@"+comments[i]['userurl']+"'>"+comments[i]['commentname']+"</a></b></div><div style='font-size: 24px'>"+comments[i]['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+comments[i]['date']
+                                                    +" | "+ liketext +" | <span onClick='commentClick("+comments[i]['id']+")' for='"+comments[i]['id']+"' style='cursor: pointer; ' class='commentreply' id='"+comments[i]['id']+"'>Reply</span><div id='cmtbox"+comments[i]['id']+"' style='display: none;'><textarea rows='3' cols='70' id='commentbox"+comments[i]['id']+"' style='resize: none; font-size: 20; height: none !important;'></textarea><button class='commentcheck  btn waves-effect waves-light' for='"+comments[i]['id']+"' style='margin-top: 5px; background-color: black;' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+comments[i]['id']+"'></div>");
                             for(var j = 0; j < comments[i]['commentthread'].length; j+=1){
-                                $("#threadbox"+comments[i]['id']).append("<div class='row' style='padding: 1%; margin-left: 15%; border-radius: 10px; box-shadow: 0px 0px 5px #bbb; background-color: #eee; height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['commentthread'][j]['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 80%;' /></div><div class='col s10'><div style='font-size: 20px'><b>"
-                                                        +comments[i]['commentthread'][j]['user']+"</b></div><div style='font-size: 24px'>"
+                                var commentlike = comments[i]['commentthread'][j]['like'];
+                                if (commentlike == 0){
+                                    var liketext = "<span style='cursor: pointer' id='ct"+comments[i]['commentthread'][j]['id']+"' class='commentlike'><span>Like</span><i class='fa fa-thumbs-up' style='font-size: 1.1rem;'></i></span>";
+                                }
+                                else{
+                                    var liketext = "<span style='cursor: pointer' id='ct"+comments[i]['commentthread'][j]['id']+"' class='commentlike'><span>Unlike</span><i class='' style='font-size: 1.1rem;'></i></span>";
+                                }
+                                $("#threadbox"+comments[i]['id']).append("<div class='row' style='padding: 1%; margin-left: 15%; border-radius: 10px; box-shadow: 0px 0px 5px #bbb; background-color: #eee; height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='hide-on-small-only circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['commentthread'][j]['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 80%;' /><img class='hide-on-med-and-up circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['commentthread'][j]['user']+".jpg' style='display: block; width: 100%;' /></div><div class='col s10'><div style='font-size: 20px'><b><a style='color: black; font-weight: 400;' href='/@"+comments[i]['commentthread'][j]['threaduserurl']+"'>"+comments[i]['commentthread'][j]['threadname']+"</a></b></div><div style='font-size: 24px'>"
                                                         +comments[i]['commentthread'][j]['thread']+"</div><div style='font-size: 14px; font-weight: 400;'>"
-                                                        +comments[i]['commentthread'][j]['date']+"</div></div></div>");
+                                                        +comments[i]['commentthread'][j]['date']+" | "+liketext+"</div></div></div>");
                             }
                             $("#comments").append("</div><br>");
                         }
@@ -58,7 +76,7 @@
                         console.log(output);
                     }
                 }
-            })
+            });
        
         });
 
@@ -185,11 +203,17 @@
 
                     </div>
                     <br>
-                    <span id="likes" style="cursor: pointer;"  to="0"><i id="heart" class="fa fa-heart-o" style="color: black;" aria-hidden="true"></i></span>
-                    <span id="maincomment" style="cursor: pointer; color: black;" to='0'><i id="icomment" class="fa fa-comment-o" style="color: black;" aria-hidden="true"></i></span>
+                    <div class="row">
+                        <div class="col s1">
+                            <span id="likes" style="cursor: pointer;"  to="0"><i id="heart" class="fa fa-heart-o" style="color: black;" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="col s1">
+                            <span id="maincomment" style="cursor: pointer; color: black;" to='0'><i id="icomment" class="fa fa-comment-o" style="color: black;" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
                     <br><br>
                     <div id='cmtmainbox' style='display: none;'>
-                        <textarea id='commentboxmain' for="main" style='resize: none;' rows="4" cols="70"></textarea><br>
+                        <textarea id='commentboxmain' for="main" style='font-size: 20px; resize: none;' rows="3" cols="70"></textarea><br>
                         <button for="main" class='commentcheck btn waves-effect waves-light' style="margin-top: 5px; background-color: black;" >Reply <i class="fa fa-arrow-right" style="font-size: 1.1rem;"></i></button>
                     </div>
                     <div>
@@ -271,45 +295,74 @@
         }
 
 
-            $(document).on('click', '.commentcheck', function(){
-                var value = $(this).attr('for');
-                var text = $("#commentbox"+value).val();
-                $.ajax({
-                    type: 'POST',
-                    url: '/commentpush/',
-                    async: false,
-                    data: {
-                        blogid: '{{blogid}}',
-                        commentid: value,
-                        commenttext: text,
-                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    },
-                    success: function(result){
-                        if (result['status']==200){
-                            if (value == "main"){
-                                $("#comments").prepend("<div><div class='row bgfader' id='homebt' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px; border-radius: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+result['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px'><b>"+result['user']+"</b></div><div style='font-size: 24px'>"+result['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+result['date']
-                                                    +" | <span onClick='commentClick("+result['id']+")' for='"+result['id']+"' class='commentreply' style = 'cursor: pointer;' id='"+result['id']+"'>Reply</span><div id='cmtbox"+result['id']+"' style='display: none;'><textarea rows='4' cols='70' id='commentbox"+result['id']+"' style='resize: none;'></textarea><button class='commentcheck btn waves-effect waves-light' style='margin-top: 5px; background-color: black;' for='"+result['id']+"' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+result['id']+"'></div>");
-                                $("#comments").append("</div><br>");
-                                $("#commentbox"+value).val('');
-                                $("#icomment").attr('class', 'fa fa-comment-o');
-                                $("#icomment").attr('style', 'color: #000;');
-                                $("#cmtmainbox").slideToggle(50);
-                            }
-                            else{
-                                $("#threadbox"+result['commentid']).prepend("<div id='newbox' class='row bgfader' style='padding: 1%; margin-left: 15%; border-radius: 10px; box-shadow: 0px 0px 5px #bbb; background-color: #eee; height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 80%;' /></div><div class='col s10'><div style='font-size: 20px'><b>"
-                                                        +result['user']+"</b></div><div style='font-size: 24px;'>"
-                                                        +result['commentthread']+"</div><div style='font-size: 14px;  font-weight: 400;'>"
-                                                        +result['date']+"</div></div></div>");
-                                $("#commentbox"+value).val('');
-                                $("#cmtbox"+value).slideToggle(50);
-                                
-                            }
+        $(document).on('click', '.commentcheck', function(){
+            var value = $(this).attr('for');
+            var text = $("#commentbox"+value).val();
+            $.ajax({
+                type: 'POST',
+                url: '/commentpush/',
+                async: false,
+                data: {
+                    blogid: '{{blogid}}',
+                    commentid: value,
+                    commenttext: text,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    if (result['status']==200){
+                        if (value == "main"){
+                            var liketext = "<span style='cursor: pointer' id='cm"+result['id']+"' class='commentlike'><span>Like</span><i class='fa fa-thumbs-up' style='font-size: 1.1rem;'></i></span>";
+                            $("#comments").prepend("<div><div class='row bgfader' id='homebt' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px; border-radius: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+result['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px'><b><a style='color: black; font-weight: 500;' href='/@"+result['user']+"'>"+result['name']+"</a></b></div><div style='font-size: 24px'>"+result['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+result['date']
+                                                +" | " + liketext + " | <span onClick='commentClick("+result['id']+")' for='"+result['id']+"' class='commentreply' style = 'cursor: pointer;' id='"+result['id']+"'>Reply</span><div id='cmtbox"+result['id']+"' style='display: none;'><textarea rows='3' cols='70' id='commentbox"+result['id']+"' style='resize: none; font-size: 20; height: none !important;'></textarea><button class='commentcheck btn waves-effect waves-light' style='margin-top: 5px; background-color: black;' for='"+result['id']+"' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+result['id']+"'></div>");
+                            $("#comments").append("</div><br>");
+                            $("#commentbox"+value).val('');
+                            $("#icomment").attr('class', 'fa fa-comment-o');
+                            $("#icomment").attr('style', 'color: #000;');
+                            $("#cmtmainbox").slideToggle(50);
+                        }
+                        else{
+                            var liketext = "<span style='cursor: pointer' id='ct"+result['id']+"' class='commentlike'><span>Like</span><i class='fa fa-thumbs-up' style='font-size: 1.1rem;'></i></span>";
+                            $("#threadbox"+result['commentid']).prepend("<div id='newbox' class='row bgfader' style='padding: 1%; margin-left: 15%; border-radius: 10px; box-shadow: 0px 0px 5px #bbb; background-color: #eee; height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 80%;' /></div><div class='col s10'><div style='font-size: 20px'><b><a style='color: black; font-weight: 400;' href='/@"+result['user']+"'>"+result['name']+"</a></b></div><div style='font-size: 24px;'>"
+                                                    +result['commentthread']+"</div><div style='font-size: 14px;  font-weight: 400;'>"
+                                                    +result['date']+" | "+ liketext +"</div></div></div>");
+                            $("#commentbox"+value).val('');
+                            $("#cmtbox"+value).slideToggle(50);
                         }
                     }
-                });
-            });     
+                }
+            });
+        });     
 
-
+        $(document).on('click', '.commentlike', function(){
+            var value = $(this).attr('id');
+            $.ajax({
+                type: 'POST',
+                url: '/commentslikes/',
+                async: false,
+                data: {
+                    commentid: value,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    if (result['status']==200){
+                        var val = "span#"+value+" i";
+                        var textval = "span#"+value+" span";
+                        if (result['created'] == 0){
+                            $(val).removeClass();
+                            $(val).addClass('fa fa-thumbs-up');
+                            $(textval).text("Like");
+                        }
+                        else{
+                            $(val).removeClass();
+                            $(textval).text("Unlike");
+                        }
+                    }
+                    else{
+                        alert("Error");
+                    }
+                }
+            });
+        });     
 
     </script>
 </html>

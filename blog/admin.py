@@ -23,6 +23,9 @@ class Comment(admin.ModelAdmin):
 class Commentthread(admin.ModelAdmin):
     list_display = ('user','blog','comment','commentthread','created_at',)
 
+class CommentsLikes(admin.ModelAdmin):
+    list_display = ('user','comment','commentthread','created_at',)
+
 class Likes(admin.ModelAdmin):
     list_display = ('user','blog','created_at',)
 
@@ -41,6 +44,7 @@ admin.site.register(models.Blog, Blog)
 admin.site.register(models.Follower, Follower)
 admin.site.register(models.Notification, Notification)
 admin.site.register(models.Comment, Comment)
+admin.site.register(models.CommentsLikes, CommentsLikes)
 admin.site.register(models.Commentthread, Commentthread)
 admin.site.register(models.Likes, Likes)
 admin.site.register(models.Views, Views)

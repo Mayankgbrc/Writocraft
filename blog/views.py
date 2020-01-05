@@ -13,6 +13,7 @@ import random
 import time
 import datetime
 from PIL import Image
+import urllib.parse
 
 
 def home(request):
@@ -431,15 +432,20 @@ def commentload(request):
         context['status'] = 110
         if request.user.is_anonymous:
             context['data'] = "Please Login"
-            return data
+            return context
         else:
             comment = models.Comment.objects.filter(blog = blogid).order_by('created_at')
             if comment.count() > 0:
                 data = []
                 for each in comment:
+                    likemain =  models.CommentsLikes.objects.filter(comment = each, user = request.user).count()
+
                     comment = {}
-                    comment['user'] = each.user.username
+                    comment['user'] = each.user.username 
+                    comment['userurl'] = urllib.parse.quote_plus(each.user.username) 
                     comment['comment'] = each.comment
+                    comment['commentname'] = each.user.first_name + " " + each.user.last_name
+                    comment['like'] = likemain
                     comment['id'] = each.id
                     TIME_FORMAT = "%b %d %Y, %I:%M %p"
                     curr_time1 = each.created_at
@@ -448,11 +454,14 @@ def commentload(request):
                     commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
                     data2 = []
                     if commentthreaddata.count() > 0:
-                        
                         for per in commentthreaddata:
+                            likethread =  models.CommentsLikes.objects.filter(commentthread = per, user = request.user).count()
                             commentthread = {}
                             commentthread['user'] = per.user.username
                             commentthread['thread'] = per.commentthread
+                            commentthread['threaduserurl'] = urllib.parse.quote_plus(per.user.username) 
+                            commentthread['threadname'] = per.user.first_name + " " + per.user.last_name
+                            commentthread['like'] = likethread
                             commentthread['id'] = per.id
                             curr_time2 = per.created_at
                             
@@ -467,6 +476,7 @@ def commentload(request):
                 
             else:
                 data = "Comments"
+            print(context)
             return HttpResponse(json.dumps(context), content_type="application/json")
 
 def likes(request):
@@ -526,6 +536,7 @@ def commentpush(request):
             if commentid == "main":
                 comment = models.Comment(blog=blogs, user = request.user, comment = commenttext)
                 comment.save()
+                context['name'] = request.user.first_name + " " + request.user.last_name
                 context['user'] = request.user.username
                 context['commentid'] = commentid
                 context['comment'] = commenttext
@@ -535,6 +546,7 @@ def commentpush(request):
                 f_str2 = curr_time2.strftime(TIME_FORMAT)
                 context['date'] = f_str2
                 context['status'] = 200
+
             else:
                 idnum = commentid.isnumeric()
                 if idnum:
@@ -543,6 +555,7 @@ def commentpush(request):
                         comment = models.Comment.objects.get(blog = blogid, id=commentid)
                         commentthread = models.Commentthread(blog=blogs, user = request.user, comment = comment, commentthread = commenttext)
                         commentthread.save()
+                        context['name'] = request.user.first_name + " " + request.user.last_name
                         context['user'] = request.user.username
                         context['commentid'] = commentid
                         context['commentthread'] = commenttext
@@ -558,6 +571,8 @@ def commentpush(request):
                     context['data'] = "Something Error Occured"
         else:
             context['data'] = "Something Error Occured"
+        print("Context")
+        print(context)
         return HttpResponse(json.dumps(context), content_type="application/json")
             
 def cropper(request):
@@ -589,3 +604,49 @@ def human_format(request, num):
         magnitude += 1
         num /= 1000.0
     return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+
+def commentslikes(request):
+    context = {}
+    context['status'] = 110
+    if request.method == "POST":
+        comment = request.POST.get('commentid','')
+        if len(comment):
+            commenttype = comment[0:2]
+            commentid = comment[2:]
+            if commentid.isnumeric() and (commenttype == "cm"):
+                commentid = int(commentid)
+                if models.CommentsLikes.objects.filter(comment__pk = commentid, user = request.user).exists():
+                    models.CommentsLikes.objects.filter(comment__pk = commentid, user = request.user).delete()
+                    context['status'] = 200
+                    context['created'] = 0
+                else:
+                    try:
+                        comment = models.Comment.objects.get(pk = commentid)
+                    except:
+                        context['status'] = 110
+                    else:
+                        instance = models.CommentsLikes(comment = comment, user = request.user)
+                        instance.save()
+                        context['status'] = 200
+                        context['created'] = 1
+                print(4)
+            elif commentid.isnumeric() and (commenttype == "ct"):
+                commentid = int(commentid)
+                if models.CommentsLikes.objects.filter(commentthread__pk = commentid, user = request.user).exists():
+                    models.CommentsLikes.objects.filter(commentthread__pk = commentid, user = request.user).delete()
+                    context['status'] = 200
+                    context['created'] = 0
+                else:
+                    try:
+                        comment = models.Commentthread.objects.get(pk = commentid)
+                    except:
+                        context['status'] = 110
+                    else:
+                        instance = models.CommentsLikes(commentthread = comment, user = request.user)
+                        instance.save()
+                        context['status'] = 200
+                        context['created'] = 1
+        print(context)
+        return HttpResponse(json.dumps(context), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(context), content_type="application/json")

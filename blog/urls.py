@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^likes/$',views.likes),
     url(r'^likescheck/$',views.likescheck),
     url(r'^notification/$',views.notification),
+    url(r'^commentslikes/$',views.commentslikes),
     url(r'^cropper/$',views.cropper),
     url(r'^followplus/$',views.followers),
     url(r'^photo_upload/$',views.photo_list, name='photo_list'),

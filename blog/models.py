@@ -68,6 +68,12 @@ class Likes(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class CommentsLikes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
+    commentthread = models.ForeignKey(Commentthread, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class Views(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
