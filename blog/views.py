@@ -672,3 +672,5 @@ def readreport(request):
     print(context)
     return HttpResponse(json.dumps(context), content_type="application/json")
 
+def test(request):
+    return render(request, "test.html")
