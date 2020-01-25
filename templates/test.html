@@ -1,11 +1,16 @@
+
 <div id="editor">
     <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
     <textarea style="display:none;">### Hello Editor.md !</textarea>
 </div>
 <script src="/static/js/jquery.min.js"></script>
-<link href="/static/css/editormd.css" rel="stylesheet">
-<script src="/static/js/editormd.js"></script>
+<link href="/static/editor/css/editormd.css" rel="stylesheet">
+<script src="/static/editor/editormd.js"></script>
 <script type="text/javascript">
+    console.log(window.location.href);
+    console.log(window.location.hostname);
+    console.log(window.location.pathname);
+    console.log(window.location.protocol);
     $(function() {
         var editor = editormd("editor", {
             // width: "100%",

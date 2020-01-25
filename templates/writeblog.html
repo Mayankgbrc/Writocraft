@@ -21,7 +21,7 @@
                 {% csrf_token %}
                 <label>Enter the topic of your blog (more than 10 Characters)</label>
                 <input type="text" name="heading" id="heading" value="{{ heading }}" placeholder="Enter a heading" class="form-control" /> <br>
-                
+                <br>
                 <label>Enter the context</label>
                 <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
                     <div id="editor" name="data" style="cursor:pointer">{{ data|safe }}</div>
@@ -36,25 +36,52 @@
 
 
 <script>
+
+const imageHandler = () => {
+  const input = document.createElement('input');
+
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    const formData = new FormData();
+
+    formData.append('image', file);
+
+    // Save current cursor state
+    const range = this.quill.getSelection(true);
+
+    // Insert temporary loading placeholder image
+    this.quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/loaders/placeholder.gif`); 
+
+    // Move cursor to right side of image (easier to continue typing)
+    this.quill.setSelection(range.index + 1);
+
+    const res = await apiPostNewsImage(formData); // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
+    
+    // Remove placeholder image
+    this.quill.deleteText(range.index, 1);
+
+    // Insert uploaded image
+    this.quill.insertEmbed(range.index, 'image', res.body.image); 
+  }
+}
+
+
     var toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
         ['blockquote', 'code-block'],
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
-        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],        // remove formatting button
         ['image'],
-        ['clean']                                         // remove formatting button
-    ];
+    ]
 
     var editor = new Quill('#editor', {
-        modules: { toolbar: toolbarOptions },
+        modules: { 
+            toolbar: toolbarOptions,
+        },
         theme: 'snow',
         placeholder: 'Compose an epic...',
     });
@@ -98,4 +125,37 @@ $(document).ready(function(){
 });
     
 </script>
+
+
+<!--
+var IMGUR_CLIENT_ID = '866888551c6b398';
+var IMGUR_API_URL = 'https://api.imgur.com/3/image';
+
+function imageHandler(image, callback) {
+  var data = new FormData();
+  data.append('image', image);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', IMGUR_API_URL, true);
+  xhr.setRequestHeader('Authorization', 'Client-ID ' + IMGUR_CLIENT_ID);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      var response = JSON.parse(xhr.responseText);
+      if (response.status === 200 && response.success) {
+        callback(response.data.link);
+      } else {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          callback(e.target.result);
+        };
+        reader.readAsDataURL(image);
+      }
+    }
+  }
+  xhr.send(data);
+}
+
+
+
+-->
 </html>

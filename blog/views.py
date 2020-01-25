@@ -14,6 +14,12 @@ import time
 import datetime
 from PIL import Image
 import urllib.parse
+import markdown2
+import tomd
+import html2markdown
+import markdown
+import re
+import base64
 
 
 def home(request):
@@ -90,6 +96,39 @@ def createblog(request):
         context['status'] = 200
         return render(request, "writeblog.html", context)
 
+def convertimage(request, data):
+    x = re.compile("<img[^>]+src=[\"'](.*?)[\"']")
+    links = x.finditer(data)
+    for i in links:
+        print(i)
+        imgdata = i.group(1)
+        formats = ['data:image/jpeg;base64,', 'data:image/png;base64,', 'data:image/webp;base64,'] 
+        for k in formats:
+            if imgdata.startswith(k):
+                print(k)
+                formatedimgdata = re.sub(k, '', imgdata)
+                
+                print("Entering1")
+                imgdata = base64.b64decode(formatedimgdata)
+                filename = 'some_image.png'  # I assume you have a way of picking unique filenames
+                with open(filename, 'wb') as f:
+                    print("Entering 4")
+                    f.write(imgdata)
+                    print("Entering 5")
+        return "a"
+
+
+def htmltomd(request, data):
+    md = html2markdown.convert(data)
+    #md = md.replace("\n\n","<br>")
+    #md = md.replace("/#","#")
+    return md
+
+def mdtohtml(request, md):
+    markd = markdown2.Markdown()
+    html = markd.convert(md)
+    return html
+
 @login_required(login_url='/login/')
 def writeblog(request):
     context = {}
@@ -103,13 +142,12 @@ def writeblog(request):
             if token == "save":
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
+                checkimg = convertimage(request, data)
+                print("Checking",checkimg)
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
-                print(anoaccept)
-                print("data 1 is ",data[0:40])
                 heading = heading.strip()
                 data = data.strip()
-                print(" data 2 is ",data[0:40])
                 context['anoaccept'] = ""
                 if anoaccept == "True":
                     is_anonymous = True
@@ -124,7 +162,7 @@ def writeblog(request):
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if data.count(" ") < 100:
+                if data.count(" ") < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -132,7 +170,7 @@ def writeblog(request):
                     blog = models.Blog.objects.get(user = request.user, id =id)
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
-                    new_data = data.replace("<img", "<img style='width:100%;'")
+                    new_data = htmltomd(request,data)
                     blog.data = new_data
                     blog.is_anonymous = is_anonymous
                     blog.save()
@@ -142,14 +180,13 @@ def writeblog(request):
                     context['status'] = 110
                     context['error'] = "Some Error Occured"
                     
-                print("annoaccept is ",context['anoaccept'])
                 return HttpResponse(json.dumps(context), content_type="application/json")
             
             elif token == "submit":
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
                 id = request.POST.get('id','')
-                heading = heading.strip().strip('<p><br></p>')
+                heading = heading.strip().strip()
                 anoaccept = request.POST.get('anoaccept','')
                 context['anoaccept'] = ""
                 if anoaccept == "True":
@@ -165,7 +202,7 @@ def writeblog(request):
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if data.count(" ") < 100:
+                if data.count(" ") < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -173,7 +210,7 @@ def writeblog(request):
                     blog = models.Blog.objects.get(user = request.user, id = id)
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
-                    new_data = data.replace("<img", "<img style='width:100%;'")
+                    new_data = htmltomd(request,data)
                     blog.data = new_data
                     blog.is_draft = False
                     blog.is_anonymous = is_anonymous
@@ -258,7 +295,6 @@ def userprofile(request, username):
             context['status'] = 110
     else:
         context['status'] = 404
-    print(context)
     return render(request, "userprofile.html", context)
 
 def followers(request):
@@ -294,7 +330,9 @@ def blogs(request, username, title):
             blog = models.Blog.objects.get(user__username = username, url=title, is_anonymous = False)
             context['heading'] = blog.heading
             context['url'] = blog.url
-            context['data'] = blog.data
+            new_data = mdtohtml(request, blog.data)
+            #print(new_data)
+            context['data'] = new_data
             context['title'] = blog.heading + " | " + username
             context['author'] = username
             context['blogid'] = blog.id
@@ -328,7 +366,10 @@ def anoblog(request, timestamp, url):
             blog = models.Blog.objects.get(unix_time = timestamp, is_anonymous = True, url=url)
             context['heading'] = blog.heading
             context['url'] = blog.url
-            context['data'] = blog.data
+            new_data = mdtohtml(request, blog.data)
+            print("New data is ")
+            print(new_data)
+            context['data'] = new_data
             context['title'] = blog.heading + " | Anonymous"
             context['blogid'] = blog.id
             view = models.Views(blog=blog, user = request.user)
@@ -342,6 +383,7 @@ def anoblog(request, timestamp, url):
     else:
         context['heading'] = "404"
         context['status'] = 404
+    print(context)
     return render(request, "blogshow.html", context)
 
 @login_required(login_url='/login/')
@@ -385,7 +427,8 @@ def edit(request, url):
             blog = models.Blog.objects.get(user__username = request.user, url = url)
             context['heading'] = blog.heading
             context['url'] = blog.url
-            context['data'] = blog.data
+            new_data = mdtohtml(request, blog.data)
+            context['data'] = new_data
             context['id'] = blog.id
             if blog.is_anonymous == True:
                 context['anoaccept'] = "checked"
@@ -400,7 +443,7 @@ def edit(request, url):
 
 def notification(request):
     context = {}
-    context['status'] = 110
+    status = 110
     if request.user.is_anonymous:
         context['data'] = "Please Login"
         return HttpResponse(json.dumps(context), content_type="application/json")
@@ -422,7 +465,6 @@ def notification(request):
         else:
             data = "No notification"
         context['status'] = status
-        print(context)
         return HttpResponse(json.dumps(context), content_type="application/json")
 
 def commentload(request):
@@ -476,7 +518,6 @@ def commentload(request):
                 
             else:
                 data = "Comments"
-            print(context)
             return HttpResponse(json.dumps(context), content_type="application/json")
 
 def likes(request):
@@ -571,8 +612,6 @@ def commentpush(request):
                     context['data'] = "Something Error Occured"
         else:
             context['data'] = "Something Error Occured"
-        print("Context")
-        print(context)
         return HttpResponse(json.dumps(context), content_type="application/json")
             
 def cropper(request):
@@ -629,7 +668,6 @@ def commentslikes(request):
                         instance.save()
                         context['status'] = 200
                         context['created'] = 1
-                print(4)
             elif commentid.isnumeric() and (commenttype == "ct"):
                 commentid = int(commentid)
                 if models.CommentsLikes.objects.filter(commentthread__pk = commentid, user = request.user).exists():
@@ -646,7 +684,6 @@ def commentslikes(request):
                         instance.save()
                         context['status'] = 200
                         context['created'] = 1
-        print(context)
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         return HttpResponse(json.dumps(context), content_type="application/json")
@@ -654,7 +691,6 @@ def commentslikes(request):
 def readreport(request):
     context = {}
     context['status'] = 110
-    print("Entered")
     if not request.user.is_anonymous:
         if request.method == "POST":
             work = request.POST.get('work')
@@ -669,7 +705,6 @@ def readreport(request):
                     readlater = models.ReadLater(blog=blog, user = request.user)
                     readlater.save()
                     context['status'] = 200
-    print(context)
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 def test(request):

@@ -88,8 +88,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'social',
-        'USER': 'admin2',
-        'PASSWORD': 'admin2',
+        'USER': 'admin3',
+        'PASSWORD': 'admin3',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -143,5 +143,10 @@ STATICFILES_DIRS = (
     #'/Users/sharypovandrey/Documents/GitHub/GiveMeFive/templates/blockly/google-blockly-bc210ec/'
 )
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elasticsearch:9200'
+    },
+}
 
 django_heroku.settings(locals())
