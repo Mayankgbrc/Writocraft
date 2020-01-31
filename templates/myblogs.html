@@ -1,7 +1,11 @@
 {% include "navbar.html" %}
             {% if blog_num > 0 %}
                 {% for each in blogs %}
-                    <a href="/edit/{{ each.url|urlencode }}/">Heading is {{ each.heading }}</a> <br>
+                Heading is {{ each.heading }} <br>
+                <a href="/edit/{{ each.url|urlencode }}/">Edit</a> 
+                <a href="/@{{ user|urlencode }}/{{ each.url|urlencode }}/">View</a><br>
+                <a href="delete/{{ each.url|urlencode }}/">Delete</a>
+                Published on {{ each.created }}<br>
                 {% endfor %}
             {% endif %}
     </body>

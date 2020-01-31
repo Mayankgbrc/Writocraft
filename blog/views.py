@@ -2,6 +2,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
+import django.core
+from io import BytesIO
 from . import models
 from .forms import PhotoForm, SignUpForm
 from django.contrib.auth.decorators import login_required
@@ -96,26 +98,59 @@ def createblog(request):
         context['status'] = 200
         return render(request, "writeblog.html", context)
 
-def convertimage(request, data):
-    x = re.compile("<img[^>]+src=[\"'](.*?)[\"']")
+def convertimage(request, data, id):
+    x = re.compile("<img[^>]+src=[\"'](.*?)[\"']>")
     links = x.finditer(data)
+    count = 1
     for i in links:
         print(i)
         imgdata = i.group(1)
-        formats = ['data:image/jpeg;base64,', 'data:image/png;base64,', 'data:image/webp;base64,'] 
-        for k in formats:
+        formats_dicts = {'data:image/jpeg;base64,':".jpg", 'data:image/png;base64,':".png", 'data:image/webp;base64,':".webp", "data:image/gif;base64,":".gif"}
+        
+        for k in formats_dicts.keys():
+            print("Check1")
             if imgdata.startswith(k):
+                print("Check2")
                 print(k)
                 formatedimgdata = re.sub(k, '', imgdata)
                 
                 print("Entering1")
-                imgdata = base64.b64decode(formatedimgdata)
-                filename = 'some_image.png'  # I assume you have a way of picking unique filenames
-                with open(filename, 'wb') as f:
+                name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
+                print(name)
+                count += 1
+                '''
+
+                imgdatabs64 = base64.b64decode(formatedimgdata)
+                with open(name, 'wb') as f:
                     print("Entering 4")
-                    f.write(imgdata)
+                    f.write(imgdatabs64)
                     print("Entering 5")
-        return "a"
+                print("Done1")
+                '''
+
+                location = "/static/images/blogimg/"
+                image = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
+                image.thumbnail((800, 800))
+                full_name = location + name
+                if formats_dicts[k] == '.png':
+                    rgb_image = image.convert('RGB')
+                    full_name = full_name.replace("png", "jpg")
+                    rgb_image.save("blog" + full_name, quality=95)
+                else:
+                    image.save("blog" + full_name)
+
+                full_link = "<img src=\'"+full_name+"\'>"
+                print(full_link)
+                data = data.replace(i.group(0), full_link)
+                print(full_link)
+                print("Solved")
+            else:
+                print("Check End")
+            print("Done2")
+        print("Done3")
+    print(data)
+    print("Exiting")
+    return data
 
 
 def htmltomd(request, data):
@@ -142,9 +177,8 @@ def writeblog(request):
             if token == "save":
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
-                checkimg = convertimage(request, data)
-                print("Checking",checkimg)
                 id = request.POST.get('id','')
+                data = convertimage(request, data, id)
                 anoaccept = request.POST.get('anoaccept','')
                 heading = heading.strip()
                 data = data.strip()
@@ -173,6 +207,7 @@ def writeblog(request):
                     new_data = htmltomd(request,data)
                     blog.data = new_data
                     blog.is_anonymous = is_anonymous
+                    blog.is_draft = False
                     blog.save()
                     context['success'] = "Changes Saved Successfully"
                     context['status'] = 200
@@ -248,7 +283,6 @@ def userprofile(request, username):
             userdata = User.objects.get(username=username)
             followers = models.Follower.objects.filter(touser__username=username).count()
             followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
-
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
@@ -284,6 +318,12 @@ def userprofile(request, username):
                         f_str = curr_time.strftime(TIME_FORMAT)
                         blog_content['date'] = f_str
                         blog_content['updated_at'] = each.updated_at
+                        location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
+                        checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                        if checkstorage:
+                            blog_content['src'] = location
+                        else:
+                            blog_content['src'] = "/static/images/parallax1.jpg"
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
@@ -331,7 +371,7 @@ def blogs(request, username, title):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            #print(new_data)
+            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img style='max-width:100%; max-height: 900px;'")
             context['data'] = new_data
             context['title'] = blog.heading + " | " + username
             context['author'] = username
@@ -367,8 +407,6 @@ def anoblog(request, timestamp, url):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            print("New data is ")
-            print(new_data)
             context['data'] = new_data
             context['title'] = blog.heading + " | Anonymous"
             context['blogid'] = blog.id
@@ -383,7 +421,6 @@ def anoblog(request, timestamp, url):
     else:
         context['heading'] = "404"
         context['status'] = 404
-    print(context)
     return render(request, "blogshow.html", context)
 
 @login_required(login_url='/login/')
@@ -401,6 +438,7 @@ def myblogs(request):
             blog_list = []
             blog_num = len(blog_all)
             context['blog_num'] = blog_num
+            context['user'] = request.user.username
             for each in blog_all:
                 if each.heading and each.data:
                     blog_content = {}
@@ -408,6 +446,10 @@ def myblogs(request):
                     blog_content['url'] = each.url
                     blog_content['blogid'] = each.id
                     blog_content['data'] = each.data
+                    TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                    created_time = each.created_at
+                    f_str = created_time.strftime(TIME_FORMAT)
+                    blog_content['created'] = f_str
                     blog_content['updated'] = each.updated_at
                     blog_content['is_anonymous'] = each.is_anonymous
                     blog_list.append(blog_content)
@@ -527,7 +569,7 @@ def likes(request):
         blogid = int(request.POST.get('blogid',''))
         if request.user.is_anonymous:
             context['data'] = "Please Login"
-            return data
+            return context
         else:
             if models.Likes.objects.filter(blog = blogid, user = request.user).exists():
                 models.Likes.objects.filter(blog = blogid, user = request.user).delete()
@@ -542,6 +584,40 @@ def likes(request):
                 else:
                     context['status'] = 200
         return HttpResponse(json.dumps(context), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+def deleteblog(request, title):
+    context = {}
+    context['status'] = 110
+    context['value'] = 0
+    if request.method == "POST":
+        if request.user.is_anonymous:
+            context['data'] = "Please Login"
+            return context
+        else:
+            blog_filter = models.Blog.objects.filter(blog__heading = title, user = request.user)
+            if blog_filter.count() == 1:
+                blog = models.Blog.objects.get(blog__heading = title, user = request.user)
+                blog.delete()
+                context['status'] = 200
+            return HttpResponse(json.dumps(context), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+def deleteuser(request, username):
+    context = {}
+    context['status'] = 110
+    context['value'] = 0
+    if request.method == "POST":
+        if request.user.is_anonymous:
+            context['data'] = "Please Login"
+            return context
+        else:
+            user_obj = User.objects.get(user = request.user)
+            user_obj.delete()
+            context['status'] = 200
+            return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         return HttpResponse(json.dumps(context), content_type="application/json")
 

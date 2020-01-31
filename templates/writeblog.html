@@ -7,29 +7,41 @@
         <!-- Include Quill stylesheet -->
         <link href="/static/css/style.css" rel="stylesheet">
         <link href="/static/css/quill.snow.css" rel="stylesheet">
-        <link href="/static/css/bootstrap.css" rel="stylesheet">
         <script src="/static/js/jquery.min.js"></script>
+        <link href="/static/css/materialize.min.css" rel="stylesheet">
+        <script src="/static/js/materialize.min.js"></script>
         <script src="/static/js/quill.js"  type="text/javascript" charset="UTF-8"></script>
-        <script src="/static/js/bootstrap.min.js"></script>
     </head>
     <body>
-        <div style="width: 100%;">
-            <div style="margin-left:15%;margin-top: 2%; width: 70%;" >
-                <span id="error" class="alert alert-danger" style="display: none;"></span>
-                <span id="success" class="alert alert-success" style="display: none;"></span>
-                <br><br>
-                {% csrf_token %}
-                <label>Enter the topic of your blog (more than 10 Characters)</label>
-                <input type="text" name="heading" id="heading" value="{{ heading }}" placeholder="Enter a heading" class="form-control" /> <br>
-                <br>
-                <label>Enter the context</label>
-                <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
-                    <div id="editor" name="data" style="cursor:pointer">{{ data|safe }}</div>
+        <div class="progress">
+            <div class="determinate" id="progressbar" style="width: 0%"></div>
+        </div>
+        <div class="row">
+            <div class="">
+                <div class="col m8 offset-m2 s12" >
+                    <span id="error" class="alert alert-danger" style="display: none;"></span>
+                    <span id="success" class="alert alert-success" style="display: none;"></span>
+                    <br><br>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input type="text" name="heading" id="heading" value="{{ heading }}" >
+                            <label for="email">Enter the topic of your blog (more than 10 Characters)</label>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <br>
+                    <label>Enter the context</label>
+                    <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
+                        <div id="editor" name="data" style="cursor:pointer">{{ data|safe }}</div>
+                    </div>
+                    <br>
+                    <label>
+                        <input type="checkbox"  id="post_type" {{anoaccept}} />
+                        <span>Post Anonymously</span>
+                    </label>
+                    <button class="waves-effect waves-light btn " name="datacatch" value="save">Submit For Review</button> &nbsp;
+                    <!-- <button name="datacatch" value="submit">Submit for Review</button> -->
                 </div>
-                <br>
-                <input type="checkbox" id="post_type" {{anoaccept}}><label>Post Anonymously</label>
-                <button name="datacatch" value="save">Save</button> &nbsp;
-                <button name="datacatch" value="submit">Submit for Review</button>
             </div>
         </div>
     </body>
@@ -93,11 +105,22 @@ $(document).ready(function(){
         var quillHtml = editor.root.innerHTML.trim();
         var id = "{{id}}";
         var anoaccept = "False";
+        $('#progressbar').css("width","0%");
 		if ($('#post_type').is(":checked"))
 		{
 			anoaccept = "True";
 		}
         $.ajax({
+            xhr : function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        var percent = Math.round((e.loaded / e.total) * 100);
+                        $('#progressbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                    }
+                });
+                return xhr;
+            },
             type: 'POST',
             url: '/writeblog/',
             data: {
@@ -125,37 +148,4 @@ $(document).ready(function(){
 });
     
 </script>
-
-
-<!--
-var IMGUR_CLIENT_ID = '866888551c6b398';
-var IMGUR_API_URL = 'https://api.imgur.com/3/image';
-
-function imageHandler(image, callback) {
-  var data = new FormData();
-  data.append('image', image);
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', IMGUR_API_URL, true);
-  xhr.setRequestHeader('Authorization', 'Client-ID ' + IMGUR_CLIENT_ID);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      var response = JSON.parse(xhr.responseText);
-      if (response.status === 200 && response.success) {
-        callback(response.data.link);
-      } else {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          callback(e.target.result);
-        };
-        reader.readAsDataURL(image);
-      }
-    }
-  }
-  xhr.send(data);
-}
-
-
-
--->
 </html>

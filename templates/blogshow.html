@@ -172,8 +172,7 @@ ul li{
         </nav>
         <div id="doc">
             <div class="row">
-                <div class="col s12 m2 l2  valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
-                <div class="col s12 m8 l8" style="padding: 5vh 5vw;">
+                <div class="col s12 m8 offset-m2" style=" text-align: justify; text-justify: inter-word;">
                     <div>
                         <h1>{{heading}}</h1>
                         <div style="font-size: 22px; letter-spacing: 0.0625em; ">{{data|safe}}</div>
@@ -188,7 +187,7 @@ ul li{
                                         <div class="popover__content">
                                             <div class="row" style="display: flex; align-items : center;">
                                                 <div class="col s5" style="height: 100%; vertical-align: middle;">
-                                                    <img alt="Joseph Francis Joey Tribbiani, Jr." style="width: 100%;" src="/static/images/thumbnail/{{ username }}.jpg">
+                                                    <img alt="@{{ username }}" style="width: 100%;" src="/static/images/thumbnail/{{ username }}.jpg">
                                                 </div>
                                                 <div class="col s7">
                                                     {{ fullname }}<br><span style="font-size: 19px;">Total Blogs: {{ numberblog }}</span><br>
@@ -227,7 +226,6 @@ ul li{
                         </div>
                     </div>
                 </div>
-                <div class="col s12 m2 l2  valign-wrapper center-align" style="min-height: 100vh;"><p>Ads</p></div>
             </div>            
         </div>
         {% csrf_token %}

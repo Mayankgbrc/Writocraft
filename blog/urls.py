@@ -14,6 +14,8 @@ urlpatterns = [
     url(r'^logout/$',views.logout_view),
     url(r'^@(?P<username>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/$', views.userprofile, name='userprofile'),
     url(r'^@(?P<username>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/(?P<title>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/$', views.blogs, name='blogs'),
+    url(r'^delete/(?P<title>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/$', views.deleteblog, name='deleteblog'),
+    url(r'^deleteuser/@(?P<username>[a-zA-Z0-9_\.!,\-\?\:\w\+]+)/$', views.deleteuser, name='deleteuser'),
     url(r'^myblogs/$',views.myblogs),
     url(r'^commentload/$',views.commentload),
     url(r'^commentpush/$',views.commentpush),
