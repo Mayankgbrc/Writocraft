@@ -1,37 +1,36 @@
 <html>
     <head>
         <title>Welcome Onboard</title>
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+        <script src="/static/js/jquery.min.js" ></script>
+        <link href="/static/css/materialize.min.css" rel="stylesheet">
+        <script src="/static/js/materialize.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
     </head>
-    <body>
-
-        <div class="card bg-light">
-            <article class="card-body mx-auto" style="max-width: 400px;">
-                <h4 class="card-title mt-3 text-center">Login your Account</h4>
-                <form method="POST" action="/login/">
-                        {% csrf_token %}
-                    <div class="form-group input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-                        </div>
-                        <input name="email" class="form-control" placeholder="Email address" type="email">
-                    </div> <!-- form-group// -->
-                    <div class="form-group input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                        </div>
-                        <input name="password" class="form-control" placeholder="Create password" type="password">
-                    </div> <!-- form-group// -->                                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block"> Login </button>
-                    </div> <!-- form-group// -->      
-                    <p class="text-center"> New User? <a href="/register"> Sign Up </a> </p>                                                                 
-                </form>
-            </article>
-        </div> <!-- card.// -->
-    
+    <body style="background-color: #444;;">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m6 offset-m3">
+                    <div class="card" style="padding: 25px; background-color: #fff;">
+                        <h4 class="card-title  text-center">Login To Your Account</h4>
+                        <form method="post" action='/login/'>
+                            {% csrf_token %}
+                            <p>
+                                <span style="color: black;"><label for="id_email">Email:</label></span>
+                                <input type="email" name="email" maxlength="254" required>
+                            </p>
+                            <p>
+                                <span style="color: black;"><label for="id_password1">Password:</label></span>
+                                <input type="password" placeholder="Create password" name="password" required>
+                            </p>                                
+                            <div class="center">
+                                <button class=" btn black" type="submit">Login</button>
+                            </div>    
+                            <p class="text-center"> New User? <a href="/signup"> Sign Up </a> </p>                                                                 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

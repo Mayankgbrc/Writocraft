@@ -22,7 +22,10 @@ import html2markdown
 import markdown
 import re
 import base64
-
+import requests
+from django.db.models import Count
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -61,27 +64,38 @@ def signup(request):
 
 @csrf_protect
 def profile_login(request):
-
+    context = {'status':110}
+    print("Entering")
     if request.method == "POST":
+        print(1)
         try:
+            print(2)
             email = request.POST['email']
+            print
             password = request.POST['password']
-            user = User.objects.get(email__iexact=email)
-            if (not user) or (not user.check_password(password)) :
-                context = {}
-                context['login_error'] = True
-                return render(request, "login.html", context)
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            print(email, password)
+            try:
+                user = User.objects.get(email__iexact=email)
+                if (not user) or (not user.check_password(password)) :
+                    context['login_error'] = "Password is not correct."
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+            except:
+                context['login_error'] = "E-mail ID not exists."
+                return HttpResponse(json.dumps(context), content_type="application/json")
         except:
-            context = {}
-            context['login_error'] = True
-            return render(request, "login.html", context)
+            context['login_error'] = "Please fill both fields."
+            return HttpResponse(json.dumps(context), content_type="application/json")
         else:
-            context = {}
-            context['name'] = "Mayank"
-            return render(request, "home.html", context)
+            context['first_name'] = user.first_name
+            context['last_name'] = user.last_name
+            context['email'] = email
+            context['username'] = user.username
+            context['status'] = 200
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return HttpResponse(json.dumps(context), content_type="application/json")
+
     else:
-        return render(request, 'login.html')
+        return HttpResponse(json.dumps(context), content_type="application/json")
 
 @login_required(login_url='/login/')
 def createblog(request):
@@ -98,24 +112,21 @@ def createblog(request):
         context['status'] = 200
         return render(request, "writeblog.html", context)
 
-def convertimage(request, data, id):
+def convertimage(request, data, id, unix_time, is_anonymous):
     x = re.compile("<img[^>]+src=[\"'](.*?)[\"']>")
     links = x.finditer(data)
     count = 1
     for i in links:
-        print(i)
         imgdata = i.group(1)
         formats_dicts = {'data:image/jpeg;base64,':".jpg", 'data:image/png;base64,':".png", 'data:image/webp;base64,':".webp", "data:image/gif;base64,":".gif"}
         
         for k in formats_dicts.keys():
-            print("Check1")
             if imgdata.startswith(k):
-                print("Check2")
-                print(k)
                 formatedimgdata = re.sub(k, '', imgdata)
-                
-                print("Entering1")
-                name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
+                if is_anonymous:
+                    name = str(unix_time) + "_" + str(id) + "_" + str(count) + formats_dicts[k]
+                else:
+                    name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
                 print(name)
                 count += 1
                 '''
@@ -140,16 +151,8 @@ def convertimage(request, data, id):
                     image.save("blog" + full_name)
 
                 full_link = "<img src=\'"+full_name+"\'>"
-                print(full_link)
                 data = data.replace(i.group(0), full_link)
-                print(full_link)
-                print("Solved")
-            else:
-                print("Check End")
-            print("Done2")
-        print("Done3")
-    print(data)
-    print("Exiting")
+
     return data
 
 
@@ -178,10 +181,8 @@ def writeblog(request):
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
                 id = request.POST.get('id','')
-                data = convertimage(request, data, id)
                 anoaccept = request.POST.get('anoaccept','')
                 heading = heading.strip()
-                data = data.strip()
                 context['anoaccept'] = ""
                 if anoaccept == "True":
                     is_anonymous = True
@@ -196,12 +197,18 @@ def writeblog(request):
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if data.count(" ") < 10:
+                total_word = data.count(" ")
+                if total_word < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
+                    print(total_word)
                     blog = models.Blog.objects.get(user = request.user, id =id)
+                    data = convertimage(request, data, id, blog.unix_time, is_anonymous)
+                    data = data.strip()
+                    blog.read_time = int(total_word/200) + 1
+                    print(blog.read_time)
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
                     new_data = htmltomd(request,data)
@@ -237,12 +244,15 @@ def writeblog(request):
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if data.count(" ") < 10:
+                total_word = data.count(" ")
+                if total_word < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
                     blog = models.Blog.objects.get(user = request.user, id = id)
+                    print(total_word)
+                    blog.read_time = int(total_word/200) + 1
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
                     new_data = htmltomd(request,data)
@@ -299,20 +309,24 @@ def userprofile(request, username):
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
             total_views = 0
-
-            if models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).exists():
+            print(context)
+            blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
+            context['blog_num'] = blog_count
+            if blog_count > 0:
                 blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
                 blog_list = []
                 blog_num = len(blog_all)
-                context['blog_num'] = blog_num
                 for each in blog_all:
                     if each.heading and each.data:
                         blog_content = {}
                         blog_content['heading'] = each.heading
                         blog_content['url'] = each.url
                         blog_content['blogid'] = each.id
+                        blog_content['is_anonymous'] = each.is_anonymous
+                        blog_content['timestamp'] = each.unix_time
                         blog_content['views_num'] = human_format(request, each.views_num)
                         blog_content['created_at'] = each.created_at
+                        blog_content['read_time'] = each.read_time
                         TIME_FORMAT = "%b %d %Y"
                         curr_time = each.created_at
                         f_str = curr_time.strftime(TIME_FORMAT)
@@ -330,7 +344,7 @@ def userprofile(request, username):
                     else:
                         context['status'] = 120
                 context['blogs'] = blog_list
-                context['total_views'] = human_format(request, total_views)
+            context['total_views'] = human_format(request, total_views)
         else:
             context['status'] = 110
     else:
@@ -381,7 +395,11 @@ def blogs(request, username, title):
             context['fullname'] = user.first_name + " " + user.last_name
             context['numberblog'] = num_blogs
             context['username'] = username
-            view = models.Views(blog=blog, user = request.user)
+            if not request.user.is_anonymous:
+                user_obj = User.objects.get(username = request.user)
+                view = models.Views(blog=blog, user = user_obj)
+            else:
+                view = models.Views(blog=blog)
             view.save()
             blog.views_num = blog.views_num + 1
             blog.save()
@@ -407,6 +425,8 @@ def anoblog(request, timestamp, url):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
+            print(new_data)
+            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img style='max-width:100%; max-height: 900px;'")
             context['data'] = new_data
             context['title'] = blog.heading + " | Anonymous"
             context['blogid'] = blog.id
@@ -427,20 +447,24 @@ def anoblog(request, timestamp, url):
 def myblogs(request):
     context = {}
     context['status'] = 110
+    if request.user.is_anonymous:
+        return render(request, "login.html", context)
     try:
-        if request.user.is_anonymous:
-            return render(request, "login.html", context)
+        user_obj = User.objects.get(username = request.user)
     except:
         return render(request, "login.html", context)
     else:
-        if models.Blog.objects.filter(user__username = request.user).exists():
-            blog_all = models.Blog.objects.filter(user__username = request.user)
-            blog_list = []
-            blog_num = len(blog_all)
-            context['blog_num'] = blog_num
-            context['user'] = request.user.username
+
+        blog_all = models.Blog.objects.filter(user = user_obj, is_draft=False)
+        blog_num = len(blog_all)
+        context['blog_num'] = blog_num
+        context['user'] = request.user.username
+        context['blogs'] = []
+        blog_list = []
+        if blog_all.count() > 0:
             for each in blog_all:
                 if each.heading and each.data:
+                    print(each.heading)
                     blog_content = {}
                     blog_content['heading'] = each.heading
                     blog_content['url'] = each.url
@@ -449,16 +473,24 @@ def myblogs(request):
                     TIME_FORMAT = "%b %d %Y, %I:%M %p"
                     created_time = each.created_at
                     f_str = created_time.strftime(TIME_FORMAT)
+                    updated_time = each.updated_at
+                    update_str = updated_time.strftime(TIME_FORMAT)
                     blog_content['created'] = f_str
-                    blog_content['updated'] = each.updated_at
+                    blog_content['updated'] = update_str
                     blog_content['is_anonymous'] = each.is_anonymous
+                    location = '/static/images/blogimg/'+request.user.username+"_"+ str(each.id) + "_1.jpg"
+                    checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                    if checkstorage:
+                        blog_content['src'] = location
+                    else:
+                        blog_content['src'] = "/static/images/parallax1.jpg"
+                    blog_content['timestamp'] = each.unix_time
                     blog_list.append(blog_content)
                     #context['notification'] = notification(request)
-            context['status'] = 200
-            context['title'] = request.user
-            context['blogs'] = blog_list
-        else:
-            context['status'] = 120
+        context['blogs'] = blog_list
+        context['status'] = 200
+        context['title'] = request.user
+        print(context)
         return render(request, "myblogs.html", context)
 
 @login_required(login_url='/login/')
@@ -510,57 +542,56 @@ def notification(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
 
 def commentload(request):
+    comment = {}
     if request.method == "POST":
         blogid = request.POST.get('blogid','')
         context = {}
         context['status'] = 110
-        if request.user.is_anonymous:
-            context['data'] = "Please Login"
-            return context
-        else:
-            comment = models.Comment.objects.filter(blog = blogid).order_by('created_at')
-            if comment.count() > 0:
-                data = []
-                for each in comment:
+        comments = models.Comment.objects.filter(blog = blogid).order_by('created_at')
+        if comments.count() > 0:
+            data = []
+            for each in comments:
+                if not request.user.is_anonymous:
                     likemain =  models.CommentsLikes.objects.filter(comment = each, user = request.user).count()
-
-                    comment = {}
-                    comment['user'] = each.user.username 
-                    comment['userurl'] = urllib.parse.quote_plus(each.user.username) 
-                    comment['comment'] = each.comment
-                    comment['commentname'] = each.user.first_name + " " + each.user.last_name
                     comment['like'] = likemain
-                    comment['id'] = each.id
-                    TIME_FORMAT = "%b %d %Y, %I:%M %p"
-                    curr_time1 = each.created_at
-                    f_str1 = curr_time1.strftime(TIME_FORMAT)
-                    comment['date'] = f_str1
-                    commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
-                    data2 = []
-                    if commentthreaddata.count() > 0:
-                        for per in commentthreaddata:
-                            likethread =  models.CommentsLikes.objects.filter(commentthread = per, user = request.user).count()
-                            commentthread = {}
-                            commentthread['user'] = per.user.username
-                            commentthread['thread'] = per.commentthread
-                            commentthread['threaduserurl'] = urllib.parse.quote_plus(per.user.username) 
-                            commentthread['threadname'] = per.user.first_name + " " + per.user.last_name
-                            commentthread['like'] = likethread
-                            commentthread['id'] = per.id
-                            curr_time2 = per.created_at
-                            
-                            TIME_FORMAT = "%b %d %Y, %I:%M %p"
-                            f_str2 = curr_time2.strftime(TIME_FORMAT)
-                            commentthread['date'] = f_str2
-                            data2.append(commentthread)
-                    comment['commentthread'] = data2
-                    data.append(comment)
-                context['status'] = 200
-                context['data'] = data
+                comment['user'] = each.user.username 
+                comment['userurl'] = urllib.parse.quote_plus(each.user.username) 
+                comment['comment'] = each.comment
+                comment['commentname'] = each.user.first_name + " " + each.user.last_name
                 
-            else:
-                data = "Comments"
-            return HttpResponse(json.dumps(context), content_type="application/json")
+                comment['id'] = each.id
+                TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                curr_time1 = each.created_at
+                f_str1 = curr_time1.strftime(TIME_FORMAT)
+                comment['date'] = f_str1
+                commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
+                data2 = []
+                if commentthreaddata.count() > 0:
+                    for per in commentthreaddata:
+                        commentthread = {}
+                        if not request.user.is_anonymous:
+                            likethread =  models.CommentsLikes.objects.filter(commentthread = per, user = request.user).count()
+                            commentthread['like'] = likethread
+                        commentthread['user'] = per.user.username
+                        commentthread['thread'] = per.commentthread
+                        commentthread['threaduserurl'] = urllib.parse.quote_plus(per.user.username) 
+                        commentthread['threadname'] = per.user.first_name + " " + per.user.last_name
+                        
+                        commentthread['id'] = per.id
+                        curr_time2 = per.created_at
+                        
+                        TIME_FORMAT = "%b %d %Y, %I:%M %p"
+                        f_str2 = curr_time2.strftime(TIME_FORMAT)
+                        commentthread['date'] = f_str2
+                        data2.append(commentthread)
+                comment['commentthread'] = data2
+                data.append(comment)
+            context['status'] = 200
+            context['data'] = data
+            
+        else:
+            context['status'] = 400
+        return HttpResponse(json.dumps(context), content_type="application/json")
 
 def likes(request):
     context = {}
@@ -568,8 +599,8 @@ def likes(request):
     if request.method == "POST":
         blogid = int(request.POST.get('blogid',''))
         if request.user.is_anonymous:
-            context['data'] = "Please Login"
-            return context
+            context['status'] = 0
+            return HttpResponse(json.dumps(context), content_type="application/json")
         else:
             if models.Likes.objects.filter(blog = blogid, user = request.user).exists():
                 models.Likes.objects.filter(blog = blogid, user = request.user).delete()
@@ -587,6 +618,34 @@ def likes(request):
     else:
         return HttpResponse(json.dumps(context), content_type="application/json")
 
+def deleteask(request, title):
+    context = {}
+    context['status'] = 110
+    context['value'] = 0
+    if request.user.is_anonymous:
+        context['data'] = "Please Login"
+        return render(request, 'deleteask.html', context)
+    else:
+        blog_filter = models.Blog.objects.filter(url = title, user = request.user, is_visible=True)
+        if blog_filter.count() == 1:
+            blog = models.Blog.objects.get(url = title, user = request.user, is_visible=True)
+            context['heading'] = blog.heading
+            context['created_at'] = blog.created_at
+            context['views'] = blog.views_num
+            context['url'] = title
+            context['status'] = 200
+            return render(request, 'deleteask.html', context)
+        else:
+            context['data'] = "Something unexpected Happened, please contact"
+            return render(request, 'deleteask.html', context)
+
+def logout_view(requests):
+    print("Yo")
+    logout(requests)
+    print("Done")
+    return HttpResponse("Logged Out")
+
+
 def deleteblog(request, title):
     context = {}
     context['status'] = 110
@@ -596,10 +655,10 @@ def deleteblog(request, title):
             context['data'] = "Please Login"
             return context
         else:
-            blog_filter = models.Blog.objects.filter(blog__heading = title, user = request.user)
+            blog_filter = models.Blog.objects.filter(url = title, user = request.user, is_visible=True)
             if blog_filter.count() == 1:
-                blog = models.Blog.objects.get(blog__heading = title, user = request.user)
-                blog.delete()
+                blog = models.Blog.objects.get(url = title, user = request.user, is_visible=True)
+                #blog.delete()
                 context['status'] = 200
             return HttpResponse(json.dumps(context), content_type="application/json")
     else:
@@ -629,7 +688,8 @@ def likescheck(request):
         blogid = int(request.POST.get('blogid',''))
         if request.user.is_anonymous:
             context['data'] = "Please Login"
-            return data
+            context['status'] = 400
+            return HttpResponse(json.dumps(context), content_type="application/json")
         else:
             if models.Likes.objects.filter(blog = blogid, user = request.user).exists():
                 context['value'] = 1
@@ -703,7 +763,7 @@ def photo_list(request):
             obj.refresh_from_db()
             obj.user = User.objects.get(username = request.user)
             obj.save()
-            return redirect('/description')
+            return redirect('/myblogs')
         else:
             print("Print No")
             #return redirect('photo_list')
@@ -785,3 +845,56 @@ def readreport(request):
 
 def test(request):
     return render(request, "test.html")
+
+def dashboard(request):
+    context = {}
+    return render(request, "dashboard.html", context)
+
+def fetchchart(request):
+    print("Entered")
+    context = {}
+    num_days = int(request.POST.get('days',''))
+    last_month = datetime.datetime.now() - datetime.timedelta(days=num_days)
+    data = models.Views.objects.filter(created_at__gt=last_month).extra(select={'day': 'date(created_at)'}).values('day').annotate(sum=Count('blog'))
+
+    base = datetime.datetime.today()
+    date_list = [{"day":(base - datetime.timedelta(days=x)).date(), "sum":0} for x in range(num_days)]
+    date_list.reverse() 
+    #queryset = models.Views.objects.values('created_at__day_month_year').annotate(total=Count('blog')).order_by('created_at__day')
+    #print(queryset)
+    #views_obj = models.Views.objects.filter()
+    print(date_list)
+    count_list = []
+    for i in data:
+        for j in date_list:
+            if i['day'] == j['day']:
+                j['sum'] = i['sum']
+    
+    for i in date_list:
+        count_list.append(i['sum'])
+    print(count_list)
+
+    new_date_list = [(base - datetime.timedelta(days=x)).strftime("%d-%B-%Y") for x in range(num_days)]
+    new_date_list.reverse()
+    print(new_date_list)
+    context['dates'] = new_date_list
+    context['count'] = count_list
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+def team(requests):
+    return render(requests, 'team.html')
+
+def sendmail(request):
+    message = Mail(
+    from_email='from_email@example.com',
+    to_emails='mayankgbrc@gmail.com',
+    subject='Sending with Twilio SendGrid is Fun',
+    html_content='<strong>and easy to do anywhere, even with Python</strong>')
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e.message)

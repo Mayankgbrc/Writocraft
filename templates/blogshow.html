@@ -27,7 +27,7 @@
                             else{
                                 var liketext = "<span style='cursor: pointer' id='cm"+comments[i]['id']+"' class='commentlike'><span>Unlike</span><i class='' style='font-size: 1.1rem;'></i></span>";
                             }
-                            $("#comments").append("<div><div class='row' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+comments[i]['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px;'><b><a style='color: black; font-weight: 500;' href='/@"+comments[i]['userurl']+"'>"+comments[i]['commentname']+"</a></b></div><div style='font-size: 24px'>"+comments[i]['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+comments[i]['date']
+                            $("#comments").append("<div><div class='row' style='padding: 1%; height: auto; letter-spacing: 0.055em; margin-bottom: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+comments[i]['user']+".jpg' style='padding: 1%; margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+comments[i]['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px;'><b><a style='color: black; font-weight: 500;' href='/@"+comments[i]['userurl']+"'>"+comments[i]['commentname']+"</a></b></div><div style='font-size: 24px'>"+comments[i]['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+comments[i]['date']
                                                     +" | "+ liketext +" | <span onClick='commentClick("+comments[i]['id']+")' for='"+comments[i]['id']+"' style='cursor: pointer; ' class='commentreply' id='"+comments[i]['id']+"'>Reply</span><div id='cmtbox"+comments[i]['id']+"' style='display: none;'><textarea rows='3' cols='70' id='commentbox"+comments[i]['id']+"' style='resize: none; font-size: 20; height: none !important;'></textarea><button class='commentcheck  btn waves-effect waves-light' for='"+comments[i]['id']+"' style='margin-top: 5px; background-color: black;' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+comments[i]['id']+"'></div>");
                             for(var j = 0; j < comments[i]['commentthread'].length; j+=1){
                                 var commentlike = comments[i]['commentthread'][j]['like'];
@@ -154,9 +154,45 @@ ul li{
     margin-left: 30px ;
 }
 </style>
+    <!--
         <div class="parallax-container">
             <div class="parallax"><img src="/static/images/parallax1.jpg"></div>
         </div>
+    -->
+
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal" style="top: 1% !important">
+            <div class="modal-content">
+                <div class="row">
+                    <h4 class="center">Please Login</h4>
+                    <div class="col m6">
+                        <div>
+                            <img class="responsive-img" src="/static/images/uploadsfile/mirage.png">
+                        </div>
+                    </div>
+                    <div class="col m6">
+                        <div>
+                            <strong><div id="errorbox" class="center" style="color: red; font-size: 20px;"></div></strong>
+                            {% csrf_token %}
+                            <p>
+                                <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Email:</label></strong>
+                                <input type="email" id="useremail" name="email" maxlength="254" required autocomplete="off">
+                            </p>
+                            <p>
+                                <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Password:</label></strong>
+                                <input type="password" id="userpassword" placeholder="Create password" name="password" required autocomplete="off">
+                            </p>                            
+                            <div class="center">
+                                <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
+                            </div>    
+                            <p class="center"> New User? <a href="/signup"> Sign Up </a> </p>                                                                 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <nav>
             <div class="nav-wrapper black flow-text">
                 <div class="col s12">
@@ -170,16 +206,18 @@ ul li{
                 </div>
             </div>
         </nav>
+
         <div id="doc">
             <div class="row">
                 <div class="col s12 m8 offset-m2" style=" text-align: justify; text-justify: inter-word;">
                     <div>
-                        <h1>{{heading}}</h1>
+                        <h1 style="text-align: left;">{{heading}}</h1>
                         <div style="font-size: 22px; letter-spacing: 0.0625em; ">{{data|safe}}</div>
                         Total Views - {{ blog_views }}
                         {% if fullname %}
                             <div><b>Written By - </b>
                                 <span style="font-family: 'Times New Roman', Times, serif;">
+
                                     <div class="popover__wrapper">
                                         <a href="/@{{ username|urlencode }}/">
                                             <h2 class="popover__title">{{ fullname }}</h2>
@@ -199,6 +237,7 @@ ul li{
                                             </div>
                                         </div>
                                     </div>
+
                                 </span>
                             </div>
                         {% else %}
@@ -229,8 +268,6 @@ ul li{
             </div>            
         </div>
         {% csrf_token %}
-        <div class="sharethis-inline-share-buttons"></div>
-        
     </body>
 
     <script>
@@ -256,6 +293,10 @@ ul li{
                 success: function(result){
                     var output = result['status'];
                     console.log(output);
+                    if (output == 0){
+                        $('#modal1').modal();
+                        $('#modal1').modal('open');
+                    }
                 }
             });
         });
@@ -297,6 +338,28 @@ ul li{
             $("#cmtthread"+x+"_"+y).slideToggle(100);
         }
 
+        $(document).on('click', '#loginbutton', function(){
+            var email = $("#useremail").val();
+            var password = $("#userpassword").val();
+            $.ajax({
+                type: 'POST',
+                url: '/login/',
+                data: {
+                    email: email,
+                    password: password,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    status = result['status']
+                    if (status == 200){
+                        $('#modal1').modal('close');
+                    }
+                    else{
+                        $('#errorbox').text(result['login_error']);
+                    }
+                }
+            });
+        });
 
         $(document).on('click', '.commentcheck', function(){
             var value = $(this).attr('for');
@@ -315,7 +378,7 @@ ul li{
                     if (result['status']==200){
                         if (value == "main"){
                             var liketext = "<span style='cursor: pointer' id='cm"+result['id']+"' class='commentlike'><span>Like</span><i class='fa fa-thumbs-up' style='font-size: 1.1rem;'></i></span>";
-                            $("#comments").prepend("<div><div class='row bgfader' id='homebt' style='height: auto; letter-spacing: 0.055em; margin-bottom: 10px; border-radius: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+result['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px'><b><a style='color: black; font-weight: 500;' href='/@"+result['user']+"'>"+result['name']+"</a></b></div><div style='font-size: 24px'>"+result['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+result['date']
+                            $("#comments").prepend("<div><div class='row bgfader' id='homebt' style='padding: 1%; height: auto; letter-spacing: 0.055em; margin-bottom: 10px; border-radius: 10px;'><div class='col s2' style=' vertical-align: middle;'><img class='circle responsive-img'  src='/static/images/thumbnail/"+result['user']+".jpg' style='margin-left: auto; margin-right: auto; display: block; width: 60%;' /></div><div id='comm"+result['id']+"' class='col s10' style='font-size: 20px;'><div style='font-size: 20px'><b><a style='color: black; font-weight: 500;' href='/@"+result['user']+"'>"+result['name']+"</a></b></div><div style='font-size: 24px'>"+result['comment']+"</div><div style='font-size: 14px; font-weight: 400;'>"+result['date']
                                                 +" | " + liketext + " | <span onClick='commentClick("+result['id']+")' for='"+result['id']+"' class='commentreply' style = 'cursor: pointer;' id='"+result['id']+"'>Reply</span><div id='cmtbox"+result['id']+"' style='display: none;'><textarea rows='3' cols='70' id='commentbox"+result['id']+"' style='resize: none; font-size: 20; height: none !important;'></textarea><button class='commentcheck btn waves-effect waves-light' style='margin-top: 5px; background-color: black;' for='"+result['id']+"' >Reply <i class='fa fa-arrow-right' style='font-size: 1.1rem;'></i></button></div></div></div></div><div id='threadbox"+result['id']+"'></div>");
                             $("#comments").append("</div><br>");
                             $("#commentbox"+value).val('');

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +25,7 @@ SECRET_KEY = 'n1)-yx4q0f+76qvcp0tie%dx2qy-afpjoqi8raf1#byryxxuki'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.29']
 
 
 # Application definition
@@ -39,16 +38,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'quilljs',
+    'haystack',
 ]
-
-from easy_thumbnails.conf import Settings as thumbnail_settings
-THUMBNAIL_PROCESSORS = (
-    'image_cropping.thumbnail_processors.crop_corners',
-) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
 IMAGE_CROPPING_BACKEND_PARAMS = {}
+
+#HAYSTACK settings
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 12
+HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+            'URL': 'http://127.0.0.1:9200/',
+            'INDEX_NAME': 'haystack',
+        },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -144,10 +149,21 @@ STATICFILES_DIRS = (
     #'/Users/sharypovandrey/Documents/GitHub/GiveMeFive/templates/blockly/google-blockly-bc210ec/'
 )
 
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'elasticsearch:9200'
-    },
+# Elasticsearch and Model Mapping
+ELASTIC_CONSTANTS = {
+    'Job': {
+        'index': 'jobs',
+        'doc_type': 'job',
+        'pg_function': 'get_job_data'
+    }
+}
+ELASTIC_HOST = 'http://localhost:9200'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
 }
 
-django_heroku.settings(locals())
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")

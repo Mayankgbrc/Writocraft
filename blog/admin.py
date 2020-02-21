@@ -9,7 +9,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user','img','phone',)
 
 class Blog(admin.ModelAdmin):
-    list_display = ('heading','url','user','views_num','is_visible','is_private','is_verified','is_failed','is_draft','is_anonymous','status','verified_by','unix_time','created_at','updated_at')
+    list_display = ('heading','url','user','views_num','is_visible','is_private','is_verified','is_failed','is_draft','is_anonymous','status','read_time','verified_by','unix_time','created_at','updated_at')
 
 class Follower(admin.ModelAdmin):
     list_display = ('fromuser','touser','created_at',)

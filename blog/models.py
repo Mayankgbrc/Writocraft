@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 
 
@@ -20,6 +19,7 @@ class Blog(models.Model):
     is_failed = models.BooleanField(default=False)
     is_draft = models.BooleanField(default=True)
     is_anonymous = models.BooleanField(default=False)
+    read_time = models.CharField(max_length=128, default="5")
     status = models.CharField(max_length=128, blank=True, null=True)
     verified_by = models.CharField(max_length=128, blank=True, null=True)
     unix_time = models.CharField(max_length=20, blank=True, null=True)

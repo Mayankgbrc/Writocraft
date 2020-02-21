@@ -66,43 +66,67 @@ img {
   max-width: 100%;
 }
 
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
 </style>
-  <h1 class="page-header">Album</h1>
+<div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3"> </div>
+      <div class="col-sm-12 col-md-6 offset-md-3" style="height: 800px; background-color: #fff;">
+        <h1 class="page-header">Upload Your Pic:</h1>
 
-  <!-- FORM TO UPLOAD THE IMAGES -->
-  <form method="post" enctype="multipart/form-data" id="formUpload">
-    {% csrf_token %}
-    {{ form }}
-  </form>
+        <!-- FORM TO UPLOAD THE IMAGES -->
+        <form method="post" enctype="multipart/form-data" id="formUpload">
+          <label for="id_file" class="custom-file-upload">
+            <i class="fa fa-cloud-upload"></i> Custom Upload
+        </label>
+          {% csrf_token %}
+          {{ form }}
+        </form>
+        
 
-  <!-- MODAL TO CROP THE IMAGE -->
-  <div class="modal fade" id="modalCrop">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title">Crop the photo</h4>
-        </div>
-        <div class="modal-body">
-          <img src="" id="image" style="max-width: 100%;">
-        </div>
-        <div class="modal-footer">
-          <div class="btn-group pull-left" role="group">
-            <button type="button" class="btn btn-default js-zoom-in">
-              <span class="glyphicon glyphicon-zoom-in"></span>
-            </button>
-            <button type="button" class="btn btn-default js-zoom-out">
-              <span class="glyphicon glyphicon-zoom-out"></span>
-            </button>
+        <!-- MODAL TO CROP THE IMAGE -->
+        <div class="modal fade" id="modalCrop">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Crop the photo</h4>
+              </div>
+              <div class="modal-body">
+                <img src="" id="image" style="max-width: 100%;">
+              </div>
+              <div class="modal-footer">
+                <div class="btn-group pull-left" role="group">
+                  <button type="button" class="btn btn-default js-zoom-in">
+                    <i class="fa fa-search-plus" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="btn btn-default js-zoom-out">
+                    <i class="fa fa-search-minus" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+                <button type="button" class="btn btn-primary js-crop-and-upload">Crop and upload</button>
+              </div>
+            </div>
           </div>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
-          <button type="button" class="btn btn-primary js-crop-and-upload">Crop and upload</button>
         </div>
       </div>
+
     </div>
   </div>
+</div>
 
 
 {% endblock %}

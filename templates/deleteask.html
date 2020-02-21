@@ -1,0 +1,46 @@
+{% include "navbar.html" %}
+<div class="container">
+    Are you sure, you are going to delete permanently.
+    {% csrf_token %}
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">
+                        <b>{{ heading }}</b>
+                    </span>
+                    <p style="font-size: 19px;">
+                        <span>{{ created_at }}</span>
+                        <span class="right">Views: <b>{{ views }}</b></span>
+                    </p>
+                    <br>
+                    <button class="btn" id='finaldelete'>
+                        Final Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$('#finaldelete').click(function(){
+    $.ajax({
+        type: 'POST',
+        url: '/delete/{{ url }}/confirm/',
+        data: {
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(result){
+            if (result['status']==200){
+                window.location.href = "/myblogs"
+            }
+            else{
+                alert("Error");
+            }
+        }
+    });
+});
+    
+
+
+</script>
