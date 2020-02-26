@@ -13,24 +13,48 @@
                 <div class="col s12 m6 offset-m3">
                     <div class="card" style="padding: 25px; background-color: #fff;">
                         <h4 class="card-title  text-center">Login To Your Account</h4>
-                        <form method="post" action='/login/'>
-                            {% csrf_token %}
-                            <p>
-                                <span style="color: black;"><label for="id_email">Email:</label></span>
-                                <input type="email" name="email" maxlength="254" required>
-                            </p>
-                            <p>
-                                <span style="color: black;"><label for="id_password1">Password:</label></span>
-                                <input type="password" placeholder="Create password" name="password" required>
-                            </p>                                
-                            <div class="center">
-                                <button class=" btn black" type="submit">Login</button>
-                            </div>    
-                            <p class="text-center"> New User? <a href="/signup"> Sign Up </a> </p>                                                                 
-                        </form>
+                        
+                        <strong><div id="errorbox" class="center" style="color: red; font-size: 20px;"></div></strong>
+                        {% csrf_token %}
+                        <p>
+                            <span style="color: black;"><label for="id_email">Email:</label></span>
+                            <input type="email" id="useremail" name="email" maxlength="254" required>
+                        </p>
+                        <p>
+                            <span style="color: black;"><label for="id_password1">Password:</label></span>
+                            <input type="password" id="userpassword" placeholder="Create password" name="password" required>
+                        </p>                                
+                        <div class="center">
+                            <button class="btn black" id="loginbutton" type="submit">Login</button>
+                        </div>    
+                        <p class="text-center"> New User? <a href="/signup"> Sign Up </a> </p>  
                     </div>
                 </div>
             </div>
         </div>
     </body>
+<script>
+    $(document).on('click', '#loginbutton', function(){
+        var email = $("#useremail").val();
+        var password = $("#userpassword").val();
+        $.ajax({
+            type: 'POST',
+            url: '/login/',
+            data: {
+                email: email,
+                password: password,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(result){
+                status = result['status']
+                if (status == 200){
+                    window.location.href = '/myblogs'
+                }
+                else{
+                    $('#errorbox').text(result['login_error']);
+                }
+            }
+        });
+    });
+</script>
 </html>

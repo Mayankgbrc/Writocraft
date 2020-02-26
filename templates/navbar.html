@@ -10,6 +10,175 @@
 
         <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
         <style>
+            /* html { margin-left: calc(100vw - 100%); } */
+
+nav form {
+  position: relative;
+  height: 100%;
+  background: inherit;
+}
+.nav-wrapper{
+  background: inherit;
+  
+}
+
+.search-close-icon{
+  display: none!important;
+  position: absolute;
+  top: 0;
+  left: 100%!important;
+  padding-left: 0px;
+  color: rgba(0, 0, 0, 0.54);
+  transition: color .2s;
+  cursor: pointer;
+}
+
+
+.my-grey{
+  background: #f7f7f7;
+}
+
+input.search-field {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.54);
+  border-radius: 2px;
+  border: 0;
+  border-radius: 5px;
+  height: 36px;
+  padding: 8px 8px 8px 60px;
+  width: 200px;
+  background: #f7f7f7;
+  transition: background 0.2s, width .2s;
+}
+input.search-field:hover {
+  background: #ebebeb;
+}
+.searchbox {
+  position: relative;
+}
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(0, 0, 0, 0.54);
+}
+input.search-field:focus {
+  outline: none;
+  width: 500px;
+  color: #212121;
+}
+input.search-field:focus:hover {
+  background: #f7f7f7;
+}
+.search-icon {
+  position: absolute;
+  top: 0;
+  padding-left: 20px;
+  color: rgba(0, 0, 0, 0.54);
+}
+.search-content {
+  color: #303c42;
+  width: 90%;
+  margin: auto;
+  height: auto;
+  padding: 8px 10px;
+}
+.search-heading {
+  color: #757575;
+  display: block;
+  font-size: 12px;
+  line-height: 30px;
+}
+input.search-field ~ .search-popup {
+  overflow: hidden;
+  left: 0px;
+  min-height: 50px;
+  max-height: 700px;
+  width: 200px;
+  top: -450px; 
+  position: absolute;
+  z-index: 1;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  transition: width .2s, top .2s ease-in-out;
+  border-radius: 2px;
+  background-color: #fff;
+}
+input.search-field:focus ~ .search-popup {
+  width: 500px;
+  top: 50px;
+}
+nav ul.popup-list a:hover {
+  background-color: initial;
+}
+nav ul.popup-list li {
+  float: none;
+}
+nav ul.popup-list li a {
+  line-height: 30px;
+  padding: 0;
+  font-size: 12px;
+  color: #212121 !important;
+}
+nav ul.popup-list li a:hover {
+  background-color: #f7f7f7;
+}
+
+p {
+  font-size: 1.3rem;
+}
+
+.top-margin {
+  margin-top: 8px;
+}
+
+@media only screen and (max-width: 600px) {
+  
+  nav form {
+/*     left: calc(90vw - 100%); */
+  }
+  
+  ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: transparent;
+  }
+
+  input.search-field {
+    width: 1px;
+    margin-right: 0px;
+    padding: 8px 25px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+  input.search-field ~ .search-popup {
+    width: 1px;
+    margin-right: 0px;
+    padding: 8px 25px;
+  }
+
+  .search-icon {
+    top: 0;
+    padding-left: 15px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  input.search-field:focus {
+    margin-right: 0px;
+    width: 100vw;
+    padding: 8px 8px 8px 50px;
+  }
+
+  input.search-field:focus ~ .search-popup {
+    width: 100vw;
+  }
+
+  .search-content {
+    width: 100%;
+    padding: 8px 8px;
+  }
+
+  nav .nav-wrapper {
+    margin-right: 0px;
+  }
+}
+
             body { 
                 font-family: "Helvetica Neue"; 
                 font-size: 24px; 
@@ -59,12 +228,60 @@
         <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5df46af8d59bd4001220ef92&product=inline-share-buttons" async="async"></script> 
     </head>
     <body to="0">
+       
         
         <div class="navbar-fixed">
             <nav>
-                <div class="nav-wrapper black lighten-3 ">
+                <div class="nav-wrapper grey lighten-3 " style="line-height: 57px;">
+                    <a href="#" class="sidenav-trigger" data-target="mobile-links">
+                        <i class="material-icons left">menu</i>
+                    </a>
                     <a href="#!" class="brand-logo black-text text-darken-2">Logo</a>
                     <ul class="right hide-on-med-and-down black-text text-darken-2">
+                        <li>    
+                            <div class="center row">
+                                <div class="col s12 " >
+                                    <div class="row" id="topbarsearch">
+                                        <form method="GET" autocomplete="off"> 
+                                            <div class="input-field col s12 red-text">
+                                                <i class="red-text material-icons prefix">search</i>
+                                                <input type="text" placeholder="search" id="" class=" red-text" autocomplete="false">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>          
+                        </li> 
+                        <li>    
+                            <div class="nav-wrapper container">
+                                <a href="#" class="brand-logo blue-text left truncate">Expandable Search Box</a>
+                                
+                                <form action="" class="browser-default right">
+                                  <input id="search-input" placeholder="Search" type="text" class="browser-default search-field" name="q" value="" autocomplete="off" aria-label="Search box">
+                                  <label for="search-input"><i class="material-icons search-icon">search</i></label> 
+                                  <i class="material-icons search-close-icon">cancel</i>
+                                  <div class="search-popup">
+                                    <div class="search-content">
+                                      <label class="search-heading">Most Visited</label>
+                                      <ul class="popup-list">
+                                        <li class=""><a class="grey-text" href="#">Google</a></li>
+                                        <li class=""><a class="grey-text" href="#">Apple</a></li><li class=""><a class="grey-text" href="#">Microsoft</a></li><li class=""><a class="grey-text" href="#">Github</a></li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </form>
+                          
+                              </div>
+                                <div class="my-grey">
+                                <div class="nav-content container">
+                                  <ul class="tabs tabs-transparent">
+                                    <li id="scale" class="nav-btn top-margin scale-transition scale-out "><a  class="waves-effect waves-light btn blue search-hide" href="#">this will hide!</a></li>
+                                  </ul>
+                              </div>
+                              
+                            </div>
+                            
+                        </li> 
                         <li>
                             <div class="switch">
                                 <label>
@@ -91,12 +308,25 @@
                                 <div class="notify__content" id="content"  style=" max-height: 60vh; overflow: scroll;"> </div>
                             </span>
                         </li>
-                        <li><a href="sass.html">My Profile</a></li>
+                        <li><a href="/myblogs">My Profile</a></li>
                         <li><a href="badges.html">Components</a></li>
                     </ul>
                 </div>
             </nav>
         </div>
+        <ul class="sidenav" id="mobile-links">
+            <div class="">
+                <ul >
+                <div class=" center" >
+                    <img src="http://bit.ly/2ulBGC6" width="95px" >
+                </div>  
+                <li class=""><a href="/">Home</a></li>
+                <li class=""> <a href="/about">About</a></li>
+                <li class=""><a href="/services">Services</a></li>
+                <li class=""><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+        </ul>
 
         {% csrf_token %}
         <div class="" style="z-index: 2; position:fixed; right: 0; width:100%; display: none;" id="notification">
@@ -106,6 +336,154 @@
             </div>
         </div>
         <script>
+
+            // Delay Button display for effect
+document.addEventListener("DOMContentLoaded", function() {
+  let box = document.getElementById("scale");
+  setTimeout(function() {
+    box.classList.add("scale-in");
+  }, 500);
+});
+
+/* hide when expanded*/
+document.querySelector(".search-field").addEventListener("focus", function() {
+  let hidden = document.querySelectorAll(".search-hide");
+
+  for (let i = 0; i < hidden.length; ++i) {
+    hidden[i].style.display = "none";
+  }
+});
+
+/* show when expanded*/
+document
+  .querySelector(".search-field")
+  .addEventListener("focusout", function() {
+    let hidden = document.querySelectorAll(".search-hide");
+    for (let i = 0; i < hidden.length; ++i) {
+      hidden[i].style.display = "block";
+    }
+  });
+
+
+
+
+// Event listener for keypress in search box/open
+document.getElementById('search-input').addEventListener('keyup', searchEngine);
+document.getElementById('search-input').addEventListener('focus', searchEngine);
+
+  
+  // Local Search Engine *Basic
+function searchEngine(e){
+  
+  let input = document.getElementById('search-input');
+  let html = '';
+  let matchingResults = [];
+  let heading = document.querySelector('.search-heading');
+  
+//   Find Matching Results
+  if(input.value === ''){
+    
+    searchResults.forEach(function(obj){
+      heading.textContent = 'Most Visited';
+      
+      if(obj.frequent === true){
+        matchingResults.push(obj);
+      }
+    })
+  } else {
+    
+    heading.textContent = 'Search Results';
+    searchResults.forEach(function(obj){
+      if(obj.title.toUpperCase().includes(input.value.toUpperCase())){
+        matchingResults.push(obj);
+      }
+    })
+  }
+  
+
+
+  if(matchingResults.length > 0){
+
+    matchingResults.forEach(function(el){
+      html += `<li><a class="grey-text" href="${el.link}">${boldString(el.title, input.value)}</a></li>`
+    })
+    document.querySelector('.popup-list').innerHTML = html;
+  } else{
+    html = `<li>There are no suggestions for your query.</li>`
+    document.querySelector('.popup-list').innerHTML = html;
+  }
+
+}
+
+
+
+
+// Stored search results
+let searchResults = [
+  {
+    title: 'CodePen',
+    description: 'This is just a test',
+    link: '#test1',
+    frequent: false
+  },
+  {
+    title: 'Facebook',
+    description: 'Something else to test',
+    link: '#test2',
+    frequent: false
+  },
+  {
+    title: 'Font Awesome',
+    description: 'Something else to test',
+    link: '#test3',
+    frequent: false
+  },
+  {
+    title: 'Link 1',
+    description: 'Something else to test, just a link name.',
+    link: '#test4',
+    frequent: false
+  },
+  {
+    title: 'Stack Overflow',
+    description: 'Something else to test, just another link name.',
+    link: '#test5',
+    frequent: false
+  },
+  {
+    title: 'Google',
+    description: 'Something else to test, just another link name.',
+    link: '#googletest',
+    frequent: true
+  },
+  {
+    title: 'Apple',
+    description: 'Something else to test, just another link name.',
+    link: '#appletest',
+    frequent: true
+  },
+  {
+    title: 'Microsoft',
+    description: 'Something else to test, just another link name.',
+    link: '#Microsofttest',
+    frequent: true
+  },
+  {
+    title: 'Github',
+    description: 'Something else to test, just another link name.',
+    link: '#githubtest',
+    frequent: true
+  }
+]
+
+// Help bold matching results
+function boldString(str, find){
+  var re = new RegExp(find, 'i');
+  find = re.exec(str);
+  return str.replace(re, '<b>'+find+'</b>');
+}
+
+
             $(".switch").find("#colortoggle").on("change",function() {
                 console.log("Working color");
                 var value = $("body").attr('to');
@@ -142,6 +520,10 @@
                     $("#content").removeClass("notify__click");
                     $("#notify").attr("for","0");
                 }
+            });
+
+            $(document).ready(function(){
+                $('.sidenav').sidenav();
             });
 
 

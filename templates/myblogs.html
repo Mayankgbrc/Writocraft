@@ -10,42 +10,59 @@
     display: block; 
     border-radius: 8px;
 }
+.leftbar{
+  height: 100%;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
 </style>
-<div class="container">
-
+    <div class="row" >
+        <div class="col m3 s12 leftbar">
+            <div class="">
+                Hello
+            </div>
+        </div>
+        <div class="col m9 s12">
 
             {% if blog_num > 0 %}
+            <div class="row " style="padding: 10px;">
                 {% for each in blogs %}
-                    <div class="grad1" style="margin-top: 10px; border-radius: 11px;">
-                        <div class="row " style="padding: 10px; border-radius: 10px;">
-                            <div class="col m2 s4 valign-wrapper" style="height: 100px;">
-                                <img src="{{ each.src }}" style="max-width: 100%; max-height: 95px; display:block; margin:auto; padding: 4px; background-color: #fff;">
-                            </div>
-                            <div class="col m5 s8 valign-wrapper"  style="height: auto;">
-                                <div style="width: 100%; display:block;  margin:auto; ">
-                                    <span style="font-weight: 400; line-height: 48px;">{{ each.heading }}</span><br>
+                    <div class="col m4 s12"  style="height: auto;">
+                        <div class="card" style="position: relative; background: #fff; margin-right: 0; z-index: 1; margin-bottom: 5px; border-left: 5px solid #1976D2;">
+                            <div class="card-content">
+                                <div style="width: 100%;">
+                                    <h6 style="font-family: 'Raleway', sans-serif; font-size: 1.4rem; margin-top: 10px; margin-bottom: 10px; color: #616161;">{{ each.heading }}</h6>
                                     <span style="font-size: 18px; font-family: Arial, Helvetica, sans-serif; line-height: 18px;">Published on {{ each.created }}</span><br>
                                     <span style="font-size: 18px; font-family: Arial, Helvetica, sans-serif; ">Updated on {{ each.updated }}</span>
                                 </div>
-                            </div>
-                            <div class="col m2 s5 valign-wrapper"  style="height: 100px;">
-                                <a class="btn btn-large black buttoncustom" href="/edit/{{ each.url|urlencode }}/">Edit</a> 
-                            </div>
-                            <div class="col m2 s5 valign-wrapper"  style="height: 100px;">
-                                {% if each.is_anonymous %}
-                                    <a class="btn btn-large black buttoncustom" href="/anonymous/{{ each.timestamp }}/{{ each.url|urlencode }}/">View</a><br>
-                                {% else %}
-                                    <a class="btn btn-large black buttoncustom" href="/@{{ user|urlencode }}/{{ each.url|urlencode }}/">View</a><br>
-                                {% endif %}
-                            </div>
-                            <div class="col m1 s2 valign-wrapper"  style="height: 100px;">
-                                <a class="btn btn-large red" style="width: 100%; display:block; padding: 0px; border-radius: 4px;" href="/delete/{{ each.url|urlencode }}/"><i class="material-icons">delete</i></a>
+                                <div class=""  style="height: 100px;">
+                                    <a class="btn btn-large black buttoncustom" href="/edit/{{ each.url|urlencode }}/">Edit</a> 
+                                </div>
+                                <div class=""  style="height: 100px;">
+                                    {% if each.is_anonymous %}
+                                        <a class="btn btn-large black buttoncustom" href="/anonymous/{{ each.timestamp }}/{{ each.url|urlencode }}/">View</a><br>
+                                    {% else %}
+                                        <a class="btn btn-large black buttoncustom" href="/@{{ user|urlencode }}/{{ each.url|urlencode }}/">View</a><br>
+                                    {% endif %}
+                                </div>
+                                <div class=""  style="height: 100px;">
+                                    <a class="btn btn-large red" style="width: 100%; display:block; padding: 0px; border-radius: 4px;" href="/delete/{{ each.url|urlencode }}/"><i class="material-icons">delete</i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
+            </div>
             {% endif %}
-
         </div>
+    </div>
+
+
+
     </body>
 </html>

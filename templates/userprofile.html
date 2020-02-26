@@ -57,6 +57,39 @@ a {
 
 </style>
         <br>
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal" >
+            <div class="modal-content">
+                <div class="row">
+                    <h4 class="center">Please Login</h4>
+                    <div class="col m6">
+                        <div>
+                            <img class="responsive-img" src="/static/images/uploadsfile/mirage.png">
+                        </div>
+                    </div>
+                    <div class="col m6">
+                        <div>
+                            <strong><div id="errorbox" class="center" style="color: red; font-size: 20px;"></div></strong>
+                            {% csrf_token %}
+                            <p>
+                                <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Email:</label></strong>
+                                <input type="email" id="useremail" name="email" maxlength="254" required autocomplete="off">
+                            </p>
+                            <p>
+                                <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Password:</label></strong>
+                                <input type="password" id="userpassword" placeholder="Create password" name="password" required autocomplete="off">
+                            </p>                            
+                            <div class="center">
+                                <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
+                            </div>    
+                            <p class="center"> New User? <a href="/signup"> Sign Up </a> </p>                                                                 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Modal Structure -->
+
         <div  class="flow-text">
             <div class="row">
                 <div class="col m2 s8 offset-m3 offset-s2">
@@ -109,25 +142,29 @@ a {
                                 </a>
                             </div>
                         </div>
-                        <div class="card-content">
-                            <span class="card-title activator grey-text text-darken-4">
-                                <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/" id="link{{ each.blogid }}" class="activator grey-text text-darken-4">
-                                    <b>{{ each.heading|truncatechars:30 }}</b>
-                                </a>
-                                <div class="dropdowndiv right" for="{{ each.blogid }}">
-                                    <i class="fa fa-chevron-down" id="dropbton" style="font-size: 1.2rem;"></i>
-                                    <div class="dropdown-content1" id="drop{{ each.blogid }}" style="box-shadow: 5px 5px 10px #222; right:0px;">
-                                        <a class="dropbutton black-text" id="readlater" for="{{ each.blogid }}"><b>Add to Read Later</b></a>
-                                        <a class="dropbutton black-text" id="reportblog" for="{{ each.blogid }}"><b>Report Content</b></a>
-                                        <a class="dropbutton black-text" id="copylink" for="{{ each.blogid }}"><b>Copy Blog Link</b></a>
-                                    </div>
+                        <div class="card-content" style="padding: 0px;">
+                            <div style="position: relative; transform: skewY(3deg); transform-origin: bottom right; background-color: #fff; z-index: 1;">
+                                <div style=" transform: skewY(-3deg); padding: 24px 24px 10px 24px;">
+                                    <span class="card-title activator grey-text text-darken-4">
+                                        <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/" id="link{{ each.blogid }}" class="activator grey-text text-darken-4">
+                                            <b>{{ each.heading|truncatechars:30 }}</b>
+                                        </a>
+                                        <div class="dropdowndiv right" for="{{ each.blogid }}">
+                                            <i class="fa fa-chevron-down" id="dropbton" style="font-size: 1.2rem;"></i>
+                                            <div class="dropdown-content1" id="drop{{ each.blogid }}" style="box-shadow: 5px 5px 10px #222; right:0px;">
+                                                <a class="dropbutton black-text" id="readlater" for="{{ each.blogid }}"><b>Add to Read Later</b></a>
+                                                <a class="dropbutton black-text" id="reportblog" for="{{ each.blogid }}"><b>Report Content</b></a>
+                                                <a class="dropbutton black-text" id="copylink" for="{{ each.blogid }}"><b>Copy Blog Link</b></a>
+                                            </div>
+                                        </div>
+                                        
+                                    </span>
+                                    <p style="font-size: 19px;">
+                                        <span>{{ each.date }}</span> | <span>{{ each.read_time }} min read</span>
+                                        <span class="right">Views: <b>{{ each.views_num }}</b></span>
+                                    </p>
                                 </div>
-                                
-                            </span>
-                            <p style="font-size: 19px;">
-                                <span>{{ each.date }}</span> | <span>{{ each.read_time }} min read</span>
-                                <span class="right">Views: <b>{{ each.views_num }}</b></span>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,12 +178,13 @@ a {
 <script>
     $(document).ready(function(){
         
-        //$(".dropdowndiv").click(function(){
-          //  var idname = $(this).attr("for");
-            //$("#drop"+idname).show();
-        //});
-
         $("#followbutton").click(function(){
+            var loginned = {{ loginned }};
+            if (loginned == 0){
+                $('#modal1').modal();
+                $('#modal1').modal('open');
+                return 0;
+            }
             $.ajax({
                 type: 'POST',
                 url: '/followplus/',
@@ -173,7 +211,6 @@ a {
         });
 
         $(".dropbutton").on('click', function(){
-            
             var id = $(this).attr('id');
             var forid = $(this).attr('for');
             if (id == "copylink"){
@@ -188,9 +225,16 @@ a {
                 $("#spanforcopy").hide();
                 $(this).html('<b>Copied</b>');
                 $(this).css({"background-color":"#999"});
+                return 0
             }
-
-            if (id == "readlater" || id == "reportblog"){
+            else if (id == "readlater" || id == "reportblog"){
+                var block = $(this);
+                var loginned = {{ loginned }};
+                if (loginned == 0){
+                    $('#modal1').modal();
+                    $('#modal1').modal('open');
+                    return 0;
+                }
                 $.ajax({
                 type: 'POST',
                 url: '/readreport/',
@@ -200,15 +244,40 @@ a {
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function(result){
+                    console.log(result['status'])
                     if (result['status']==200){
-                        if (result['stats'] == 1){
-                        }
-                        else{
-                        }
+                        console.log("Yo")
+                        console.log(block)
+                        $(block).html('<b>'+ result['message'] +'</b>');
+                        $(block).css({"background-color":"#999"});
                     }
                 }
             });
 
+            }
+        });
+    });
+
+    $(document).on('click', '#loginbutton', function(){
+        var email = $("#useremail").val();
+        var password = $("#userpassword").val();
+        $.ajax({
+            type: 'POST',
+            url: '/login/',
+            data: {
+                email: email,
+                password: password,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(result){
+                status = result['status']
+                if (status == 200){
+                    $('#modal1').modal('close');
+                    location.reload(true);
+                }
+                else{
+                    $('#errorbox').text(result['login_error']);
+                }
             }
         });
     });

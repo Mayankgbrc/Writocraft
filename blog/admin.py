@@ -5,8 +5,8 @@ import os
 from django.conf import settings
 from django.contrib.auth.admin import UserAdmin
 
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user','img','phone',)
+#class ProfileAdmin(admin.ModelAdmin):
+#    list_display = ('user','img','phone',)
 
 class Blog(admin.ModelAdmin):
     list_display = ('heading','url','user','views_num','is_visible','is_private','is_verified','is_failed','is_draft','is_anonymous','status','read_time','verified_by','unix_time','created_at','updated_at')
@@ -44,7 +44,7 @@ class Report(admin.ModelAdmin):
 
 admin.site.register(models.Photo, Photo)
 
-admin.site.register(models.Profile, ProfileAdmin)
+#admin.site.register(models.Profile, ProfileAdmin)
 admin.site.register(models.Blog, Blog)
 admin.site.register(models.Follower, Follower)
 admin.site.register(models.Notification, Notification)

@@ -27,19 +27,22 @@
                 <div class="col m8 offset-m2 s12" >
                     <span id="error" class="alert alert-danger" style="display: none;"></span>
                     <span id="success" class="alert alert-success" style="display: none;"></span>
-                    <br><br>
+                    <br>
                     <div class="row">
                         <div class="input-field col s12">
-                            <input type="text" name="heading" id="heading" value="{{ heading }}" >
-                            <label for="email">Enter the topic of your blog (more than 10 Characters)</label>
+                            <input type="text" name="heading" id="heading" value="{{ heading }}" placeholder="Enter the topic of your blog (more than 10 Characters)">
                         </div>
                     </div>
                     {% csrf_token %}
-                    <br>
                     <label>Enter the context</label>
                     <div style="height: 50%; overflow: scroll; border: 1px solid black; border-radius: 4px;">
                         <div id="editor" name="data" style="cursor:pointer; font-size: 22px;">{{ data|safe }}</div>
                     </div>
+                    <br>
+  <!-- Customizable input  -->
+  <div class="chips">
+    <input class="custom-class" name="tags">
+  </div>
                     <br>
                     <label>
                         <input type="checkbox"  id="post_type" {{anoaccept}} />
@@ -54,6 +57,23 @@
 
 
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    var tag_list = {{ tag_list|safe }};
+    tags = [];
+    for (i = 0; i < tag_list.length; i++) {
+        tags.push({tag: tag_list[i]});
+    }
+    options = {
+    placeholder: 'Enter a tag',
+    secondaryPlaceholder: '+Tag',
+    limit: 20,
+    data: tags,
+  }
+    var elems = document.querySelectorAll('.chips');
+    var instances = M.Chips.init(elems, options);
+});
+
 
 const imageHandler = () => {
   const input = document.createElement('input');
@@ -101,11 +121,12 @@ const imageHandler = () => {
             toolbar: toolbarOptions,
         },
         theme: 'snow',
-        placeholder: 'Compose an epic...',
+        placeholder: 'Write Content Here...',
     });
     
 $(document).ready(function(){
     $("button[name ='datacatch']").click(function(){
+        var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
         var token = $(this).val(); 
         var delta = editor.getContents();
         var quillHtml = editor.root.innerHTML.trim();
@@ -135,6 +156,7 @@ $(document).ready(function(){
                 id: "{{id}}",
                 data: quillHtml,
                 token: token,
+                tags: tags,
                 anoaccept: anoaccept,
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },

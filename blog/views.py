@@ -65,15 +65,10 @@ def signup(request):
 @csrf_protect
 def profile_login(request):
     context = {'status':110}
-    print("Entering")
     if request.method == "POST":
-        print(1)
         try:
-            print(2)
             email = request.POST['email']
-            print
             password = request.POST['password']
-            print(email, password)
             try:
                 user = User.objects.get(email__iexact=email)
                 if (not user) or (not user.check_password(password)) :
@@ -95,7 +90,7 @@ def profile_login(request):
             return HttpResponse(json.dumps(context), content_type="application/json")
 
     else:
-        return HttpResponse(json.dumps(context), content_type="application/json")
+        return render(request, 'login.html')
 
 @login_required(login_url='/login/')
 def createblog(request):
@@ -182,8 +177,15 @@ def writeblog(request):
                 data = request.POST.get('data','')
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
+                tags = json.loads(request.POST.get('tags',''))
+                taglist = [each['tag'] for each in tags]
+                if len(taglist)>20:
+                    context['error'] = "Tag List is Greater than 20"
+                    context['status'] = 110
+                    return HttpResponse(json.dumps(context), content_type="application/json")
                 heading = heading.strip()
                 context['anoaccept'] = ""
+                
                 if anoaccept == "True":
                     is_anonymous = True
                     context['anoaccept'] = "checked"
@@ -203,12 +205,10 @@ def writeblog(request):
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
-                    print(total_word)
                     blog = models.Blog.objects.get(user = request.user, id =id)
                     data = convertimage(request, data, id, blog.unix_time, is_anonymous)
                     data = data.strip()
-                    blog.read_time = int(total_word/200) + 1
-                    print(blog.read_time)
+                    blog.read_time = int(total_word/150) + 1
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
                     new_data = htmltomd(request,data)
@@ -216,6 +216,20 @@ def writeblog(request):
                     blog.is_anonymous = is_anonymous
                     blog.is_draft = False
                     blog.save()
+                    tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
+                    print(tagdb)
+                    if tagdb.exists():
+                        tagdb.delete()
+                    if len(taglist):
+                        objs = [
+                            models.Tags(
+                                tag = each,
+                                user = request.user,
+                                blog = blog
+                            )
+                            for each in taglist
+                        ]
+                        models.Tags.objects.bulk_create(objs)
                     context['success'] = "Changes Saved Successfully"
                     context['status'] = 200
                 else: 
@@ -252,7 +266,7 @@ def writeblog(request):
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
                     blog = models.Blog.objects.get(user = request.user, id = id)
                     print(total_word)
-                    blog.read_time = int(total_word/200) + 1
+                    blog.read_time = int(total_word/150) + 1
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
                     new_data = htmltomd(request,data)
@@ -285,7 +299,7 @@ def writeblog(request):
 
 def logout_view(request):
     logout(request)
-
+'''
 def userprofile(request, username):
     context = {"username":"Anonymous"}
     if User.objects.filter(username=username).exists():
@@ -308,6 +322,10 @@ def userprofile(request, username):
             user_views = models.Views.objects.filter(user__username = username).count()
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
+            context['loginned'] = 0
+            if not request.user.is_anonymous:
+                context['loginned'] = 1
+
             total_views = 0
             print(context)
             blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
@@ -349,8 +367,8 @@ def userprofile(request, username):
             context['status'] = 110
     else:
         context['status'] = 404
-    return render(request, "userprofile.html", context)
-
+    return render(request, "profile.html", context)
+'''
 def followers(request):
     if request.method == 'POST':
         context = {}
@@ -395,10 +413,13 @@ def blogs(request, username, title):
             context['fullname'] = user.first_name + " " + user.last_name
             context['numberblog'] = num_blogs
             context['username'] = username
+            
             if not request.user.is_anonymous:
+                context['loginned'] = 1
                 user_obj = User.objects.get(username = request.user)
                 view = models.Views(blog=blog, user = user_obj)
             else:
+                context['loginned'] = 0
                 view = models.Views(blog=blog)
             view.save()
             blog.views_num = blog.views_num + 1
@@ -504,6 +525,9 @@ def edit(request, url):
             new_data = mdtohtml(request, blog.data)
             context['data'] = new_data
             context['id'] = blog.id
+            tags = models.Tags.objects.filter(user = request.user, blog = blog)
+            tag_list = [i.tag for i in tags]
+            context['tag_list'] = tag_list
             if blog.is_anonymous == True:
                 context['anoaccept'] = "checked"
             else:
@@ -513,6 +537,7 @@ def edit(request, url):
             context['status'] = 110
     else:
         context['status'] = 404
+    print(context)
     return render(request, "writeblog.html", context)
 
 def notification(request):
@@ -551,14 +576,19 @@ def commentload(request):
         if comments.count() > 0:
             data = []
             for each in comments:
-                if not request.user.is_anonymous:
+                comment = {}
+                if request.user.is_anonymous:
+                    comment['like'] = 0
+                else:
                     likemain =  models.CommentsLikes.objects.filter(comment = each, user = request.user).count()
                     comment['like'] = likemain
                 comment['user'] = each.user.username 
                 comment['userurl'] = urllib.parse.quote_plus(each.user.username) 
                 comment['comment'] = each.comment
                 comment['commentname'] = each.user.first_name + " " + each.user.last_name
-                
+                print("---comment---")
+                print(comment)
+                print("-----")
                 comment['id'] = each.id
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 curr_time1 = each.created_at
@@ -569,7 +599,9 @@ def commentload(request):
                 if commentthreaddata.count() > 0:
                     for per in commentthreaddata:
                         commentthread = {}
-                        if not request.user.is_anonymous:
+                        if request.user.is_anonymous:
+                            commentthread['like'] = 0
+                        else:
                             likethread =  models.CommentsLikes.objects.filter(commentthread = per, user = request.user).count()
                             commentthread['like'] = likethread
                         commentthread['user'] = per.user.username
@@ -586,6 +618,8 @@ def commentload(request):
                         data2.append(commentthread)
                 comment['commentthread'] = data2
                 data.append(comment)
+                print("----data -----")
+                print(data)
             context['status'] = 200
             context['data'] = data
             
@@ -701,6 +735,11 @@ def likescheck(request):
 def commentpush(request):
     context = {}
     context['status'] = 110
+    if request.user.is_anonymous:
+        context['status'] = 400
+        context['data'] = "Something Error Occured"
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
     if request.method == "POST":
         blogid = request.POST.get('blogid','')
         commentid = request.POST.get('commentid','')
@@ -784,6 +823,10 @@ def commentslikes(request):
     context = {}
     context['status'] = 110
     if request.method == "POST":
+        if request.user.is_anonymous:
+            context['status'] = 400
+            return HttpResponse(json.dumps(context), content_type="application/json")
+
         comment = request.POST.get('commentid','')
         if len(comment):
             commenttype = comment[0:2]
@@ -827,20 +870,26 @@ def commentslikes(request):
 def readreport(request):
     context = {}
     context['status'] = 110
-    if not request.user.is_anonymous:
-        if request.method == "POST":
-            work = request.POST.get('work')
-            blogid = request.POST.get('blogid')
-            if models.Blog.objects.filter(id = blogid).exists():
-                blog = models.Blog.objects.get(id = blogid)
-                if work == "reportblog":
-                    report = models.Report(blog=blog, user = request.user)
-                    report.save()
-                    context['status'] = 200
-                elif work == "readlater":
-                    readlater = models.ReadLater(blog=blog, user = request.user)
-                    readlater.save()
-                    context['status'] = 200
+    if request.user.is_anonymous:
+        context['status'] = 400
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+    if request.method == "POST":
+        work = request.POST.get('work')
+        blogid = request.POST.get('blogid')
+        if models.Blog.objects.filter(id = blogid).exists():
+            blog = models.Blog.objects.get(id = blogid)
+            if work == "reportblog":
+                report = models.Report(blog=blog, user = request.user)
+                report.save()
+                context['message'] = "Reported"
+                context['status'] = 200
+            elif work == "readlater":
+                readlater = models.ReadLater(blog=blog, user = request.user)
+                readlater.save()
+                context['message'] = "Added to Read Later"
+                context['status'] = 200
+    print(context)
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 def test(request):
@@ -898,3 +947,80 @@ def sendmail(request):
         print(response.headers)
     except Exception as e:
         print(e.message)
+
+
+def search(request):
+    context = {}
+    context['status'] = 110
+    if request.method == "GET":
+        q = request.GET.get('q')
+        print(q)
+    
+def profile(request, username):
+    context = {"username":"Anonymous"}
+    if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).count() == 1:
+            userdata = User.objects.get(username=username)
+            followers = models.Follower.objects.filter(touser__username=username).count()
+            followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
+            context['username'] = username
+            context['email'] = userdata.email
+            context['fname'] = userdata.first_name
+            context['lname'] = userdata.last_name
+            TIME_FORMAT = "%b %d, %Y"
+            curr_time = userdata.date_joined
+            f_str = curr_time.strftime(TIME_FORMAT)
+            context['datejoined'] = f_str
+            context['fullname'] = userdata.first_name + " " + userdata.last_name
+            context['title'] = username
+            context['followers'] = followers
+            context['followcheck'] = followcheck
+            user_views = models.Views.objects.filter(user__username = username).count()
+            context['user_views'] = human_format(request, user_views)
+            context['status'] = 200
+            context['loginned'] = 0
+            if not request.user.is_anonymous:
+                context['loginned'] = 1
+
+            total_views = 0
+            print(context)
+            blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
+            context['blog_num'] = blog_count
+            if blog_count > 0:
+                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
+                blog_list = []
+                blog_num = len(blog_all)
+                for each in blog_all:
+                    if each.heading and each.data:
+                        blog_content = {}
+                        blog_content['heading'] = each.heading
+                        blog_content['url'] = each.url
+                        blog_content['blogid'] = each.id
+                        blog_content['is_anonymous'] = each.is_anonymous
+                        blog_content['timestamp'] = each.unix_time
+                        blog_content['views_num'] = human_format(request, each.views_num)
+                        blog_content['created_at'] = each.created_at
+                        blog_content['read_time'] = each.read_time
+                        TIME_FORMAT = "%b %d %Y"
+                        curr_time = each.created_at
+                        f_str = curr_time.strftime(TIME_FORMAT)
+                        blog_content['date'] = f_str
+                        blog_content['updated_at'] = each.updated_at
+                        location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
+                        checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                        if checkstorage:
+                            blog_content['src'] = location
+                        else:
+                            blog_content['src'] = "/static/images/parallax1.jpg"
+                        blog_list.append(blog_content)
+                        total_views += each.views_num
+                        context['status'] = 200
+                    else:
+                        context['status'] = 120
+                context['blogs'] = blog_list
+            context['total_views'] = human_format(request, total_views)
+        else:
+            context['status'] = 110
+    else:
+        context['status'] = 404
+    return render(request, "profile.html", context)

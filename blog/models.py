@@ -5,8 +5,36 @@ from django.contrib.auth.models import AbstractUser
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    img = models.CharField(max_length=200, null=True, blank=True)
+    description = models.CharField(max_length=128, blank=True, null=True)
+    country = models.CharField(max_length=128, blank=True, null=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
+    dob = models.DateTimeField(null=True, blank=True)
+    tag = models.CharField(max_length=128, default = "noob")
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Education(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.CharField(max_length=128, blank=True, null=True)
+    degree = models.CharField(max_length=128, blank=True, null=True)
+    from_year = models.CharField(max_length=128, blank=True, null=True)
+    to_year = models.CharField(max_length=128, blank=True, null=True)
+    school = models.CharField(max_length=128, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Work(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.CharField(max_length=128, blank=True, null=True)
+    role = models.CharField(max_length=128, blank=True, null=True)
+    from_year = models.CharField(max_length=128, blank=True, null=True)
+    to_year = models.CharField(max_length=128, blank=True, null=True)
+    company = models.CharField(max_length=128, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Interest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Blog(models.Model):
     heading = models.CharField(max_length=128, blank=True, null=True)
@@ -26,6 +54,12 @@ class Blog(models.Model):
     views_num = models.IntegerField(default = 0, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Tags(models.Model):
+    tag = models.CharField(max_length=128, blank=True, null=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Follower(models.Model):
     fromuser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fromuser')
