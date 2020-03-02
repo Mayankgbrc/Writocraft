@@ -16,7 +16,9 @@ class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=128, blank=True, null=True)
     degree = models.CharField(max_length=128, blank=True, null=True)
+    from_month = models.CharField(max_length=128, blank=True, null=True)
     from_year = models.CharField(max_length=128, blank=True, null=True)
+    to_month = models.CharField(max_length=128, blank=True, null=True)
     to_year = models.CharField(max_length=128, blank=True, null=True)
     school = models.CharField(max_length=128, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,9 +27,12 @@ class Work(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=128, blank=True, null=True)
     role = models.CharField(max_length=128, blank=True, null=True)
+    from_month = models.CharField(max_length=128, blank=True, null=True)
     from_year = models.CharField(max_length=128, blank=True, null=True)
+    to_month = models.CharField(max_length=128, blank=True, null=True)
     to_year = models.CharField(max_length=128, blank=True, null=True)
     company = models.CharField(max_length=128, blank=True, null=True)
+    present = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
 class Interest(models.Model):

@@ -44,7 +44,8 @@ def urlshort(request, link):
             return url
 
 def index(request):
-    return HttpResponse("Hlo buddy")
+    form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
 
 
 def signup(request):
@@ -819,6 +820,229 @@ def human_format(request, num):
         num /= 1000.0
     return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
 
+@login_required
+def EducationForm(requests):
+    return render(requests, 'EducationForm.html')
+
+
+def checkperfectnumber(requests, digit, digittype):
+    context = {'status': 110}
+    context['error_mes'] = ""
+
+    if len(digit) == 0:
+        context['error_mes'] = "Please Fill all details"
+        return context
+
+    if not digit.isnumeric():
+        context['error_mes'] = "Error in Data"
+        return context
+    digit = int(digit)
+    if digittype == "M":
+        if 1 <= digit <= 12:
+            context['status'] = 200
+            context['data'] = digit
+            return context
+        else:
+            context['error_mes'] = "Error in Data"
+            return context
+    elif digittype == "Y":
+        if 1950 <= digit <= 2030:
+            context['status'] = 200
+            context['data'] = digit
+            return context
+        else:
+            context['error_mes'] = "Error in Data"
+            return context
+    else:
+        context['error_mes'] = "Error in Data"
+        return context
+
+@login_required
+def WorkForm(requests):
+    return render(requests, 'WorkForm.html')
+
+@login_required
+def editwork(requests, num):
+    context = {"status": 110}
+    if requests.method == "POST":
+        if requests.user.is_anonymous:
+            context['error'] = "Please Login"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        elif num.isnumeric():
+            try:
+                work = models.Work.objects.get(pk = int(num), user__username = requests.user.username)
+            except:
+                context['error'] = "Some Error Occured"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+            else:
+                companyname = requests.POST.get('companyname','')
+                jobtitle = requests.POST.get('jobtitle','')
+                frommonth = requests.POST.get('frommonth','')
+                fromyear = requests.POST.get('fromyear','')
+                tomonth = requests.POST.get('tomonth','')
+                toyear = requests.POST.get('toyear','')
+                currentwork = requests.POST.get('currentwork','')
+                description = requests.POST.get('description','')
+
+                if len(companyname) == 0 or len(jobtitle) == 0 :
+                    context['error'] = "Please fill all details"
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                
+                checkfrommonth =  checkperfectnumber(requests, frommonth, "M")
+                if checkfrommonth['status'] == 200:
+                    frommonth = checkfrommonth['data']
+                else:
+                    context['error'] = checkfrommonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                    
+                checkfromyear =  checkperfectnumber(requests, fromyear, "Y")
+                if checkfromyear['status'] == 200:
+                    fromyear = checkfromyear['data']
+                else:
+                    context['error'] = checkfrommonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+
+                if currentwork == "false":
+                    checktomonth =  checkperfectnumber(requests, tomonth, "M")
+                    if checktomonth['status'] == 200:
+                        tomonth = checktomonth['data']
+                    else:
+                        context['error'] = checktomonth['error_mes']
+                        return HttpResponse(json.dumps(context), content_type="application/json")
+                        
+                    checktoyear =  checkperfectnumber(requests, toyear, "Y")
+                    if checkfromyear['status'] == 200:
+                        toyear = checktoyear['data']
+                    else:
+                        context['error'] = checktoyear['error_mes']
+                        return HttpResponse(json.dumps(context), content_type="application/json")
+                    
+                    work.company = companyname
+                    work.description = description
+                    work.role = jobtitle
+                    work.from_month = frommonth
+                    work.from_year = fromyear
+                    work.to_month = tomonth
+                    work.to_year = toyear
+                    work.present = False
+                    work.save()
+                else:
+                    work.company = companyname
+                    work.description = description
+                    work.role = jobtitle
+                    work.from_month = frommonth
+                    work.from_year = fromyear
+                    work.to_month = ""
+                    work.to_year = ""
+                    work.present = True
+                    work.save()
+                    work.save()
+                context['status'] = 200
+                context['user'] = requests.user.username
+                return HttpResponse(json.dumps(context), content_type="application/json")
+        else:
+            context['error'] = "Some Error Occured"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+
+    if not requests.user.is_anonymous:
+        if num.isnumeric(): 
+            try:
+                work = models.Work.objects.get(pk = int(num), user__username = requests.user.username)
+            except:
+                return HttpResponse(context)
+            else:
+                work_list = []
+                work_dict = {}
+                work_dict['id'] = work.id
+                work_dict['company'] = work.company
+                work_dict['role'] = work.role
+                work_dict['description'] = work.description
+                work_dict['from_month'] = work.from_month
+                work_dict['from_year'] = work.from_year
+                if work.to_month and work.to_year:
+                    work_dict['to_month'] = work.to_month
+                    work_dict['to_year'] = work.to_year
+                work_dict['present'] = work.present
+                work_dict['updated_at'] = work.updated_at
+                work_list.append(work_dict)
+                context['work'] = work_dict
+                return render(requests, 'WorkFormEdit.html', context)
+
+@login_required
+def workupdate(requests):
+    context = {"status": 110}
+    if requests.method == "POST":
+        if not requests.user.is_anonymous:
+            companyname = requests.POST.get('companyname','')
+            jobtitle = requests.POST.get('jobtitle','')
+            frommonth = requests.POST.get('frommonth','')
+            fromyear = requests.POST.get('fromyear','')
+            tomonth = requests.POST.get('tomonth','')
+            toyear = requests.POST.get('toyear','')
+            currentwork = requests.POST.get('currentwork','')
+            description = requests.POST.get('description','')
+
+
+            try:
+                userobj = User.objects.get(username = requests.user)
+            except:
+                context['error'] = "Please login"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+            print(type(currentwork))
+            print(companyname, jobtitle, frommonth, fromyear, tomonth, toyear, currentwork, description)
+
+            if len(companyname) == 0 or len(jobtitle) == 0 :
+                context['error'] = "Please fill all details"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+            
+            checkfrommonth =  checkperfectnumber(requests, frommonth, "M")
+            if checkfrommonth['status'] == 200:
+                frommonth = checkfrommonth['data']
+            else:
+                context['error'] = checkfrommonth['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+                
+            checkfromyear =  checkperfectnumber(requests, fromyear, "Y")
+            if checkfromyear['status'] == 200:
+                fromyear = checkfromyear['data']
+            else:
+                context['error'] = checkfrommonth['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+
+            if currentwork == "false":
+                checktomonth =  checkperfectnumber(requests, tomonth, "M")
+                if checktomonth['status'] == 200:
+                    tomonth = checktomonth['data']
+                else:
+                    context['error'] = checktomonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                    
+                checktoyear =  checkperfectnumber(requests, toyear, "Y")
+                if checkfromyear['status'] == 200:
+                    toyear = checktoyear['data']
+                else:
+                    context['error'] = checktoyear['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                
+                saveData = models.Work(user = userobj, company = companyname, description = description, role = jobtitle, from_month = frommonth, 
+                                        from_year = fromyear, to_month = tomonth, to_year = toyear)
+                saveData.save()
+            else:
+                saveData = models.Work(user = userobj, company = companyname, description = description, role = jobtitle, from_month = frommonth, 
+                                        from_year = fromyear, present = True)
+                saveData.save()
+            context['status'] = 200
+            context['user'] = requests.user.username
+            return HttpResponse(json.dumps(context), content_type="application/json")
+
+        else:
+            context['error'] = "Please Login"
+    
+    else:
+        return HttpResponse(context)
+
 def commentslikes(request):
     context = {}
     context['status'] = 110
@@ -955,6 +1179,10 @@ def search(request):
     if request.method == "GET":
         q = request.GET.get('q')
         print(q)
+
+def getmonth(request,digit):
+    month_dict = {"1":"Jan","2":"Feb","3":"Mar","4":"Apr","5":"May","6":"June","7":"July","8":"Aug","9":"Sept","10":"Oct","11":"Nov","12":"Dec"}
+    return month_dict[digit]
     
 def profile(request, username):
     context = {"username":"Anonymous"}
@@ -983,7 +1211,28 @@ def profile(request, username):
                 context['loginned'] = 1
 
             total_views = 0
-            print(context)
+            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
+
+            work_list = []
+            if work.count() > 0:
+                for each in work:
+                    work_dict = {}
+                    work_dict['company'] = each.company
+                    work_dict['role'] = each.role
+                    work_dict['description'] = each.description
+                    work_dict['from_month'] = getmonth(request, each.from_month)
+                    work_dict['from_year'] = each.from_year
+                    if each.to_month and each.to_year:
+                        work_dict['to_month'] = getmonth(request, each.to_month)
+                        work_dict['to_year'] = each.to_year
+                    work_dict['present'] = each.present
+                    work_dict['updated_at'] = each.updated_at
+                    work_list.append(work_dict)
+            context['work'] = work_list
+            context['work_num'] = work.count()
+            print(work_list)
+
+
             blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
             context['blog_num'] = blog_count
             if blog_count > 0:
@@ -1024,3 +1273,90 @@ def profile(request, username):
     else:
         context['status'] = 404
     return render(request, "profile.html", context)
+
+    
+def myprofile(request):
+    context = {"username":"Anonymous"}
+    if not request.user.is_anonymous:
+        username = request.user.username
+        if User.objects.filter(username=username).count() == 1:
+            userdata = User.objects.get(username=username)
+            followers = models.Follower.objects.filter(touser__username=username).count()
+            followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
+            context['username'] = username
+            context['email'] = userdata.email
+            context['fname'] = userdata.first_name
+            context['lname'] = userdata.last_name
+            TIME_FORMAT = "%b %d, %Y"
+            curr_time = userdata.date_joined
+            f_str = curr_time.strftime(TIME_FORMAT)
+            context['datejoined'] = f_str
+            context['fullname'] = userdata.first_name + " " + userdata.last_name
+            context['title'] = username
+            context['followers'] = followers
+            context['followcheck'] = followcheck
+            user_views = models.Views.objects.filter(user__username = username).count()
+            context['user_views'] = human_format(request, user_views)
+            context['status'] = 200
+            total_views = 0
+            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
+
+            work_list = []
+            if work.count() > 0:
+                for each in work:
+                    work_dict = {}
+                    work_dict['company'] = each.company
+                    work_dict['id'] = each.id
+                    work_dict['role'] = each.role
+                    work_dict['description'] = each.description
+                    work_dict['from_month'] = getmonth(request, each.from_month)
+                    work_dict['from_year'] = each.from_year
+                    if each.to_month and each.to_year:
+                        work_dict['to_month'] = getmonth(request, each.to_month)
+                        work_dict['to_year'] = each.to_year
+                    work_dict['present'] = each.present
+                    work_dict['updated_at'] = each.updated_at
+                    work_list.append(work_dict)
+            context['work'] = work_list
+            context['work_num'] = work.count()
+
+            blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
+            context['blog_num'] = blog_count
+            if blog_count > 0:
+                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
+                blog_list = []
+                blog_num = len(blog_all)
+                for each in blog_all:
+                    if each.heading and each.data:
+                        blog_content = {}
+                        blog_content['heading'] = each.heading
+                        blog_content['url'] = each.url
+                        blog_content['blogid'] = each.id
+                        blog_content['is_anonymous'] = each.is_anonymous
+                        blog_content['timestamp'] = each.unix_time
+                        blog_content['views_num'] = human_format(request, each.views_num)
+                        blog_content['created_at'] = each.created_at
+                        blog_content['read_time'] = each.read_time
+                        TIME_FORMAT = "%b %d %Y"
+                        curr_time = each.created_at
+                        f_str = curr_time.strftime(TIME_FORMAT)
+                        blog_content['date'] = f_str
+                        blog_content['updated_at'] = each.updated_at
+                        location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
+                        checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                        if checkstorage:
+                            blog_content['src'] = location
+                        else:
+                            blog_content['src'] = "/static/images/parallax1.jpg"
+                        blog_list.append(blog_content)
+                        total_views += each.views_num
+                        context['status'] = 200
+                    else:
+                        context['status'] = 120
+                context['blogs'] = blog_list
+            context['total_views'] = human_format(request, total_views)
+        else:
+            context['status'] = 110
+    else:
+        context['status'] = 404
+    return render(request, "myprofile.html", context)

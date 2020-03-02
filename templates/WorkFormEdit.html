@@ -1,0 +1,241 @@
+{% include "navbar.html" %}
+<style>
+    .dropdown-content li>span {
+        color: black;
+    }
+    .error{
+        color: red;
+        font-size: 18px;
+        font-weight: 400;
+        display: none;
+    }
+    .labelfied{
+        font-size: 1rem; 
+        line-height: 0.9; 
+        letter-spacing: 0.6;
+    }
+</style>
+<div class="container">
+    
+ 
+
+    <div class="row">
+
+        <div class="col s12 offset-m2 m8">
+
+          <div class="card-panel">
+            <div id="errorbox" class="error center">Hlo</div>
+              <h3 class="center">Professional Details</h3>
+            <div class="row" style="padding: 10px; margin-bottom: 0px;">
+                <div class="input-field col s12">
+                    <input placeholder="Company Name" id="companyname" type="text" class="validate" value="{{ work.company }}" required>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px; margin-bottom: 0px;">
+                <div class="input-field col s12">
+                    <input placeholder="Job Title" id="jobtitle" type="text" class="validate" value="{{ work.role }}" required>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px;">
+                <div class=" col s6">
+                    <div class="labelfied">Start Month and Year</div>
+                    <div class="input-field col s6" style="margin-top: 0px; padding-left: 0px;">
+                        <select id="frommonth">
+                            <option value="" disabled selected>Month</option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sept</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="input-field col s6" style="margin-top: 0px;">
+                        <select id="fromyear">
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class=" col s6" id="EndMonthYear">
+                    <div class="labelfied">End Month and Year</div>
+                    <div class="input-field col s6" style="margin-top: 0px; padding-left: 0px;">
+                        <select id="tomonth">
+                            <option value="" disabled selected>Month</option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sept</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="input-field col s6" style="margin-top: 0px;">
+                        <select id="toyear">
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row" style="padding: 10px;">
+                <label style="padding: 10px;">
+                    <input type="checkbox"  id="currentwork" {{anoaccept}} />
+                    <span>I currently work here</span>
+                </label>
+            </div>
+        
+        
+            <div class="row">
+                <div class="input-field col s12" style="padding: 20px;">
+                    <textarea id="description" placeholder="Any Description" class="materialize-textarea" length="140"  >{{ work.description }}</textarea>
+                    <label for="description">Any Description</label>
+                </div>
+            </div>
+            <div class="center">
+                <button id="save" class="btn-large">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+
+
+            $(document).ready(function(){
+                var d = new Date();
+                var n = d.getFullYear();
+                for (i = 1950; i <= n; i++) {
+                    $('#fromyear').append($("<option></option>").attr("value", i).text(i));
+                }
+
+                var from_month = "{{ work.from_month }}";
+                $("select#frommonth").val(from_month).attr("selected","");
+
+                var from_year = "{{ work.from_year }}";
+                $("select#fromyear").val(from_year).attr("selected","");
+
+
+                for (i = 1950; i <= 2030; i++) {
+                    $('#toyear').append($("<option></option>").attr("value", i).text(i));
+                }
+
+                present = "{{ work.present }}";
+
+                if (present == "False"){
+                    var to_month = "{{ work.to_month }}";
+                    $("select#tomonth").val(to_month).attr("selected","");
+
+                    var to_year = "{{ work.to_year }}";
+                    $("select#toyear").val(to_year).attr("selected","");
+                }
+                else{
+                    $('#currentwork').attr("checked","");
+                    $("#EndMonthYear").hide();
+                }
+
+                $('select').formSelect({classes:"optiontext"});
+                
+                $('#currentwork').change(function(){
+                    if ($('#currentwork').is(":checked"))
+                    {
+                        $("#EndMonthYear").hide(100);
+                    }
+                    else{
+                        $("#EndMonthYear").show(100);
+                    }
+                });
+            });
+
+            $(document).on('click', '#save', function(){
+                $("#errorbox").text("");
+                $("#errorbox").hide();
+                var companyname = $("#companyname").val();
+                var jobtitle = $("#jobtitle").val();
+                var frommonth = $("#frommonth").val();
+                var fromyear = $("#fromyear").val();
+                var tomonth = $("#tomonth").val();
+                var toyear = $("#toyear").val();
+                var currentwork = false;
+                if ($('#currentwork').is(":checked"))
+                {
+                    currentwork = true;
+                }
+                var description = $("#description").val();
+
+                if (companyname.length == 0){
+                    $("#errorbox").text("Please enter Company Name");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(jobtitle.length == 0){
+                    $("#errorbox").text("Please enter your Job Title");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(frommonth == null){
+                    $("#errorbox").text("Please select From Month");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(fromyear == null){
+                    $("#errorbox").text("Please select From Year");
+                    $("#errorbox").show();
+                    return false;
+                }
+                if (currentwork == false){
+                    if(tomonth == null){
+                        $("#errorbox").text("Please select To Month");
+                        $("#errorbox").show();
+                        return false;
+                    }
+                    else if(toyear == null){
+                        $("#errorbox").text("Please select To Year");
+                        $("#errorbox").show();
+                        return false;
+                    }
+                }
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/editwork/{{ work.id }}/',
+                    data: {
+                        companyname: companyname,
+                        jobtitle: jobtitle,
+                        frommonth: frommonth,
+                        fromyear: fromyear,
+                        tomonth: tomonth,
+                        toyear: toyear,
+                        currentwork: currentwork,
+                        description: description,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(result){
+                        status = result['status']
+                        if (status == 200){
+                            window.location.href = '/myprofile';
+                        }
+                        else{
+                            $('#errorbox').text(result['error']);
+                            $("#errorbox").show();
+                        }
+                    }
+                });
+                
+            });
+
+      </script>
+</div>

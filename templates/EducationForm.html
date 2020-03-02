@@ -1,0 +1,189 @@
+{% include "navbar.html" %}
+<style>
+    .dropdown-content li>span {
+        color: black;
+    }
+    .error{
+        color: red;
+        font-size: 18px;
+        font-weight: 400;
+        display: none;
+    }
+    .labelfied{
+        font-size: 1rem; 
+        line-height: 0.9; 
+        letter-spacing: 0.6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col s12 offset-m2 m8">
+
+          <div class="card-panel">
+              <div id="errorbox" class="error center"></div>
+              <h3 class="center">Education Details</h3>
+            <div class="row" style="padding: 10px; margin-bottom: 0px;">
+                <div class="input-field col s12">
+                    <input placeholder="School Name" id="schoolname" type="text" class="validate" required>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px;">
+                <div class="input-field col s6" >
+                <div class="labelfied">Education type</div>
+                <select id="schooltype">
+                    <option value="" disabled selected>Education type</option>
+                    <option value="1">High School</option>
+                    <option value="2">High School Diploma</option>
+                    <option value="3">Bachelor's Degree</option>
+                    <option value="4">Master's Degree</option>
+                    <option value="5">Doctoral's Degree</option>
+                    <option value="6">Others</option>
+                </select>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px;">
+                <div class="col s6">
+                    <div class="labelfied">Start Month and Year</div>
+                    <div class="input-field col s6" style="margin-top: 0px; padding-left: 0px;">
+                        <select id="frommonth" >
+                            <option value="" disabled selected>Month</option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sept</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="input-field col s6" style="margin-top: 0px;">
+                        <select id="fromyear" >
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class=" col s6">
+                    <div class="labelfied">End Month and Year</div>
+                    <div class="input-field col s6" style="margin-top: 0px; padding-left: 0px;">
+                        <select id="tomonth" >
+                            <option value="" disabled selected>Month</option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sept</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="input-field col s6" style="margin-top: 0px;">
+                        <select id="toyear">
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        
+        
+            <div class="row">
+                <div class="input-field col s12"  style="padding: 20px; ">
+                    <textarea id="description" placeholder="Any Description" class="materialize-textarea" length="140"></textarea>
+                </div>
+            </div>
+            <div class="center">
+                <button class="btn-large" id="save">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <script>
+
+
+            $(document).ready(function(){
+                var d = new Date();
+                var n = d.getFullYear();
+                for (i = 1950; i <= n; i++) {
+                    $('#fromyear').append($("<option></option>").attr("value", i).text(i));
+                }
+                for (i = 1950; i <= 2030; i++) {
+                    $('#toyear').append($("<option></option>").attr("value", i).text(i));
+                }
+                $('select').formSelect({classes:"optiontext"});
+            });
+
+            $(document).on('click', '#save', function(){
+                var schoolname = $("#schoolname").val();
+                var schooltype = $("#schooltype").val();
+                var frommonth = $("#frommonth").val();
+                var fromyear = $("#fromyear").val();
+                var tomonth = $("#tomonth").val();
+                var toyear = $("#toyear").val();
+                var description = $("#description").val();
+                if (schoolname == null){
+                    $("#errorbox").text("Please enter School Name");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(schooltype == null){
+                    $("#errorbox").text("Please select your School Type");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(frommonth == null){
+                    $("#errorbox").text("Please select From Month");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(fromyear == null){
+                    $("#errorbox").text("Please select From Year");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(tomonth == null){
+                    $("#errorbox").text("Please select To Month");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(toyear == null){
+                    $("#errorbox").text("Please select To Year");
+                    $("#errorbox").show();
+                    return false;
+                }
+                console.log(schoolname, schooltype, frommonth, fromyear, tomonth, toyear, description);
+
+                /*
+                $.ajax({
+                    type: 'POST',
+                    url: '/login/',
+                    data: {
+                        email: email,
+                        password: password,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(result){
+                        status = result['status']
+                        if (status == 200){
+                            window.location.href = '/myblogs'
+                        }
+                        else{
+                            $('#errorbox').text(result['login_error']);
+                        }
+                    }
+                });
+                */
+            });
+
+      </script>
+</div>

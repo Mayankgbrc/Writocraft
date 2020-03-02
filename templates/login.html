@@ -6,6 +6,8 @@
         <script src="/static/js/materialize.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body style="background-color: #444;;">
         <div class="container">
@@ -18,11 +20,11 @@
                         {% csrf_token %}
                         <p>
                             <span style="color: black;"><label for="id_email">Email:</label></span>
-                            <input type="email" id="useremail" name="email" maxlength="254" required>
+                            <input type="email" id="useremail" name="email" placeholder="E-mail" maxlength="254" required>
                         </p>
                         <p>
                             <span style="color: black;"><label for="id_password1">Password:</label></span>
-                            <input type="password" id="userpassword" placeholder="Create password" name="password" required>
+                            <input type="password" id="userpassword" placeholder="password" name="password" required>
                         </p>                                
                         <div class="center">
                             <button class="btn black" id="loginbutton" type="submit">Login</button>

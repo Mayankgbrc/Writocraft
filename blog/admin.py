@@ -41,10 +41,12 @@ class ReadLater(admin.ModelAdmin):
 class Report(admin.ModelAdmin):
     list_display = ('user','blog','created_at',)
 
+class Work(admin.ModelAdmin):
+    list_display = ('user','description','role','from_month','from_year','to_month','to_year','company','present','updated_at',)
 
+
+admin.site.register(models.Work, Work)
 admin.site.register(models.Photo, Photo)
-
-#admin.site.register(models.Profile, ProfileAdmin)
 admin.site.register(models.Blog, Blog)
 admin.site.register(models.Follower, Follower)
 admin.site.register(models.Notification, Notification)
