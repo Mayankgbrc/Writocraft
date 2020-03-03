@@ -60,6 +60,7 @@ def signup(request):
             return redirect('/photo_upload/')
     else:
         form = SignUpForm()
+        print("Working")
     return render(request, 'signup.html', {'form': form})
 
 
