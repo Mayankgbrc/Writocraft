@@ -44,7 +44,15 @@ class Report(admin.ModelAdmin):
 class Work(admin.ModelAdmin):
     list_display = ('user','description','role','from_month','from_year','to_month','to_year','company','present','updated_at',)
 
+class Education(admin.ModelAdmin):
+    list_display = ('user','school','description','degree','from_month','from_year','to_month','to_year','updated_at',)
 
+class Interest(admin.ModelAdmin):
+    list_display = ('user','description','created_at',)
+
+
+admin.site.register(models.Interest, Interest)
+admin.site.register(models.Education, Education)
 admin.site.register(models.Work, Work)
 admin.site.register(models.Photo, Photo)
 admin.site.register(models.Blog, Blog)

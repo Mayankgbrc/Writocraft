@@ -60,7 +60,6 @@ def signup(request):
             return redirect('/photo_upload/')
     else:
         form = SignUpForm()
-        print("Working")
     return render(request, 'signup.html', {'form': form})
 
 
@@ -107,6 +106,7 @@ def createblog(request):
         blog.save()
         context['id'] = blog.id
         context['status'] = 200
+        context['tag_list'] = []
         return render(request, "writeblog.html", context)
 
 def convertimage(request, data, id, unix_time, is_anonymous):
@@ -825,6 +825,170 @@ def human_format(request, num):
 def EducationForm(requests):
     return render(requests, 'EducationForm.html')
 
+@login_required
+def editeducation(requests, num):
+    print("1")
+    context = {"status": 110}
+    if requests.method == "POST":
+        print(2)
+        if requests.user.is_anonymous:
+            context['error'] = "Please Login"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        elif num.isnumeric():
+            print(3)
+            try:
+                education = models.Education.objects.get(pk = int(num), user__username = requests.user.username)
+            except:
+                context['error'] = "Some Error Occured"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+            else:
+                print("iiii")
+                schoolname = requests.POST.get('schoolname','')
+                schooltype = requests.POST.get('schooltype','')
+                fieldofstudy = requests.POST.get('fieldofstudy','')
+                frommonth = requests.POST.get('frommonth','')
+                fromyear = requests.POST.get('fromyear','')
+                tomonth = requests.POST.get('tomonth','')
+                toyear = requests.POST.get('toyear','')
+                description = requests.POST.get('description','')
+                
+                if len(schoolname) == 0 or len(schooltype) == 0 or len(fieldofstudy)==0:
+                    context['error'] = "Please fill all details"
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                
+                checkfrommonth =  checkperfectnumber(requests, frommonth, "M")
+                if checkfrommonth['status'] == 200:
+                    frommonth = checkfrommonth['data']
+                else:
+                    context['error'] = checkfrommonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                    
+                checkfromyear =  checkperfectnumber(requests, fromyear, "Y")
+                if checkfromyear['status'] == 200:
+                    fromyear = checkfromyear['data']
+                else:
+                    context['error'] = checkfrommonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+
+                checktomonth =  checkperfectnumber(requests, tomonth, "M")
+                if checktomonth['status'] == 200:
+                    tomonth = checktomonth['data']
+                else:
+                    context['error'] = checktomonth['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                    
+                checktoyear =  checkperfectnumber(requests, toyear, "Y")
+                if checkfromyear['status'] == 200:
+                    toyear = checktoyear['data']
+                else:
+                    context['error'] = checktoyear['error_mes']
+                    return HttpResponse(json.dumps(context), content_type="application/json")
+                
+                
+                education.school = schoolname
+                education.fieldofstudy = fieldofstudy
+                education.degree = schooltype
+                education.description = description
+                education.from_month = frommonth
+                education.from_year = fromyear
+                education.to_month = tomonth
+                education.to_year = toyear
+                education.save()
+                
+                context['status'] = 200
+                context['user'] = requests.user.username
+                return HttpResponse(json.dumps(context), content_type="application/json")
+        else:
+            context['error'] = "Some Error Occured"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+
+    if not requests.user.is_anonymous:
+        if num.isnumeric(): 
+            try:
+                education = models.Education.objects.get(pk = int(num), user__username = requests.user.username)
+            except:
+                return HttpResponse(context)
+            else:
+                education_list = []
+                education_dict = {}
+                education_dict['id'] = education.id
+                education_dict['school'] = education.school
+                education_dict['degree'] = education.degree
+                education_dict['fieldofstudy'] = education.fieldofstudy
+                education_dict['description'] = education.description
+                education_dict['from_month'] = education.from_month
+                education_dict['from_year'] = education.from_year
+                education_dict['to_month'] = education.to_month
+                education_dict['to_year'] = education.to_year
+                education_dict['updated_at'] = education.updated_at
+                education_list.append(education_dict)
+                context['education'] = education_dict
+                print(context)
+                return render(requests, 'EducationFormEdit.html', context)
+
+@login_required
+def educationupdate(requests):
+    context = {"status": 110}
+    if requests.method == "POST":
+        if not requests.user.is_anonymous:
+            schoolname = requests.POST.get('schoolname','')
+            schooltype = requests.POST.get('schooltype','')
+            fieldofstudy = requests.POST.get('fieldofstudy','')
+            frommonth = requests.POST.get('frommonth','')
+            fromyear = requests.POST.get('fromyear','')
+            tomonth = requests.POST.get('tomonth','')
+            toyear = requests.POST.get('toyear','')
+            description = requests.POST.get('description','')
+
+            try:
+                userobj = User.objects.get(username = requests.user)
+            except:
+                context['error'] = "Please login"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+
+            if len(schoolname) == 0 or len(schooltype) == 0 or len(fieldofstudy)==0:
+                context['error'] = "Please fill all details"
+                return HttpResponse(json.dumps(context), content_type="application/json")
+            
+            checkfrommonth =  checkperfectnumber(requests, frommonth, "M")
+            if checkfrommonth['status'] == 200:
+                frommonth = checkfrommonth['data']
+            else:
+                context['error'] = checkfrommonth['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+                
+            checkfromyear =  checkperfectnumber(requests, fromyear, "Y")
+            if checkfromyear['status'] == 200:
+                fromyear = checkfromyear['data']
+            else:
+                context['error'] = checkfrommonth['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+
+            checktomonth =  checkperfectnumber(requests, tomonth, "M")
+            if checktomonth['status'] == 200:
+                tomonth = checktomonth['data']
+            else:
+                context['error'] = checktomonth['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+                
+            checktoyear =  checkperfectnumber(requests, toyear, "Y")
+            if checkfromyear['status'] == 200:
+                toyear = checktoyear['data']
+            else:
+                context['error'] = checktoyear['error_mes']
+                return HttpResponse(json.dumps(context), content_type="application/json")
+            
+            saveData = models.Education(user = userobj, school = schoolname, description = description, degree = schooltype, 
+                                    from_month = frommonth, from_year = fromyear, to_month = tomonth, to_year = toyear, fieldofstudy = fieldofstudy)
+            saveData.save()
+            context['status'] = 200
+            context['user'] = requests.user.username
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        else:
+            context['error'] = "Please Login"
+    else:
+        return HttpResponse(context)
+
 
 def checkperfectnumber(requests, digit, digittype):
     context = {'status': 110}
@@ -1037,10 +1201,8 @@ def workupdate(requests):
             context['status'] = 200
             context['user'] = requests.user.username
             return HttpResponse(json.dumps(context), content_type="application/json")
-
         else:
             context['error'] = "Please Login"
-    
     else:
         return HttpResponse(context)
 
@@ -1212,8 +1374,8 @@ def profile(request, username):
                 context['loginned'] = 1
 
             total_views = 0
-            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
 
+            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
             work_list = []
             if work.count() > 0:
                 for each in work:
@@ -1229,6 +1391,26 @@ def profile(request, username):
                     work_dict['present'] = each.present
                     work_dict['updated_at'] = each.updated_at
                     work_list.append(work_dict)
+            
+            education = models.Education.objects.filter(user__username = username).order_by('-from_year','-to_year')
+            education_list = []
+            if education.count() > 0:
+                for each in education:
+                    education_dict = {}
+                    education_dict['school'] = each.school
+                    education_dict['id'] = each.id
+                    education_dict['degree'] = each.degree
+                    education_dict['fieldofstudy'] = each.fieldofstudy
+                    education_dict['description'] = each.description
+                    education_dict['from_month'] = getmonth(request, each.from_month)
+                    education_dict['from_year'] = each.from_year
+                    education_dict['to_month'] = getmonth(request, each.to_month)
+                    education_dict['to_year'] = each.to_year
+                    education_dict['updated_at'] = each.updated_at
+                    education_list.append(education_dict)
+
+            context['education'] = education_list
+            context['education_num'] = education.count()
             context['work'] = work_list
             context['work_num'] = work.count()
             print(work_list)
@@ -1300,8 +1482,8 @@ def myprofile(request):
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
             total_views = 0
-            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
 
+            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
             work_list = []
             if work.count() > 0:
                 for each in work:
@@ -1320,6 +1502,32 @@ def myprofile(request):
                     work_list.append(work_dict)
             context['work'] = work_list
             context['work_num'] = work.count()
+
+            education = models.Education.objects.filter(user__username = username).order_by('-from_year','-to_year')
+            education_list = []
+            if education.count() > 0:
+                for each in education:
+                    education_dict = {}
+                    education_dict['school'] = each.school
+                    education_dict['id'] = each.id
+                    education_dict['degree'] = each.degree
+                    education_dict['fieldofstudy'] = each.fieldofstudy
+                    education_dict['description'] = each.description
+                    education_dict['from_month'] = getmonth(request, each.from_month)
+                    education_dict['from_year'] = each.from_year
+                    education_dict['to_month'] = getmonth(request, each.to_month)
+                    education_dict['to_year'] = each.to_year
+                    education_dict['updated_at'] = each.updated_at
+                    education_list.append(education_dict)
+            print(education_list)
+            context['education'] = education_list
+            context['education_num'] = education.count()
+
+            interest = models.Interest.objects.filter(user = request.user).order_by('created_at')
+            interest_list = [i.description for i in interest]
+            context['interest_list'] = interest_list
+            context['interest_list_length'] = interest.count()
+
 
             blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
             context['blog_num'] = blog_count
@@ -1361,3 +1569,42 @@ def myprofile(request):
     else:
         context['status'] = 404
     return render(request, "myprofile.html", context)
+
+def interestsave(request):
+    context = {"status": 110}
+    if not request.user.is_anonymous:
+        try:
+            user = User.objects.get(username = request.user)
+        except:
+            context['message'] = "Please Log In"
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        else:
+            interest = json.loads(request.POST.get('interest',''))
+            print(interest)
+            interestdb = models.Interest.objects.filter(user = user)
+            interest_list = [each['tag'] for each in interest]
+            interestdb_list = [each.description for each in interestdb]
+            deletelist = []
+            appendlist = []
+            
+            for each in interestdb:
+                if each.description not in interest_list:
+                    print(each.description)
+                    deletelist.append(each.description)
+            for each in interest_list:
+                if each not in interestdb_list:
+                    appendlist.append(each)
+            print("deletelist is ",deletelist)
+            print("append list is ",appendlist)
+            
+            context['status'] = 200
+            print("Testing Delete")
+            if len(deletelist):
+                models.Interest.objects.filter(user = user, description__in = deletelist).delete()
+                print("Deleted")
+            if len(appendlist):
+                objs = [models.Interest(user = request.user, description = each) for each in appendlist]
+                models.Interest.objects.bulk_create(objs)
+                print("Added Successfully")
+            
+            return HttpResponse(json.dumps(context), content_type="application/json")

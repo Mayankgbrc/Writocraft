@@ -27,18 +27,14 @@
                     <input placeholder="School Name" id="schoolname" type="text" class="validate" required>
                 </div>
             </div>
-            <div class="row" style="padding: 10px;">
-                <div class="input-field col s6" >
-                <div class="labelfied">Education type</div>
-                <select id="schooltype">
-                    <option value="" disabled selected>Education type</option>
-                    <option value="1">High School</option>
-                    <option value="2">High School Diploma</option>
-                    <option value="3">Bachelor's Degree</option>
-                    <option value="4">Master's Degree</option>
-                    <option value="5">Doctoral's Degree</option>
-                    <option value="6">Others</option>
-                </select>
+            <div class="row" style="padding: 10px; margin-bottom: 0px;">
+                <div class="input-field col s12">
+                    <input placeholder="Degree" id="degree" type="text" class="validate" required>
+                </div>
+            </div>
+            <div class="row" style="padding: 10px; margin-bottom: 0px;">
+                <div class="input-field col s12">
+                    <input placeholder="Field of Study" id="fieldofstudy" type="text" class="validate" required>
                 </div>
             </div>
             <div class="row" style="padding: 10px;">
@@ -125,19 +121,25 @@
 
             $(document).on('click', '#save', function(){
                 var schoolname = $("#schoolname").val();
-                var schooltype = $("#schooltype").val();
+                var schooltype = $("#degree").val();
+                var fieldofstudy = $("#fieldofstudy").val();
                 var frommonth = $("#frommonth").val();
                 var fromyear = $("#fromyear").val();
                 var tomonth = $("#tomonth").val();
                 var toyear = $("#toyear").val();
                 var description = $("#description").val();
-                if (schoolname == null){
+                if (schoolname.length == 0){
                     $("#errorbox").text("Please enter School Name");
                     $("#errorbox").show();
                     return false;
                 }
-                else if(schooltype == null){
-                    $("#errorbox").text("Please select your School Type");
+                else if(schooltype.length == 0){
+                    $("#errorbox").text("Please Enter the degree");
+                    $("#errorbox").show();
+                    return false;
+                }
+                else if(fieldofstudy.length == 0){
+                    $("#errorbox").text("Please Enter the Field of Study");
                     $("#errorbox").show();
                     return false;
                 }
@@ -161,28 +163,32 @@
                     $("#errorbox").show();
                     return false;
                 }
-                console.log(schoolname, schooltype, frommonth, fromyear, tomonth, toyear, description);
 
-                /*
                 $.ajax({
                     type: 'POST',
-                    url: '/login/',
+                    url: '/educationupdate/',
                     data: {
-                        email: email,
-                        password: password,
+                        schoolname: schoolname,
+                        schooltype: schooltype,
+                        fieldofstudy: fieldofstudy,
+                        frommonth: frommonth,
+                        fromyear: fromyear,
+                        tomonth: tomonth,
+                        toyear: toyear,
+                        description: description,
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                     },
                     success: function(result){
                         status = result['status']
                         if (status == 200){
-                            window.location.href = '/myblogs'
+                            window.location.href = '/myprofile';
                         }
                         else{
-                            $('#errorbox').text(result['login_error']);
+                            $('#errorbox').text(result['error']);
+                            $("#errorbox").show();
                         }
                     }
                 });
-                */
             });
 
       </script>

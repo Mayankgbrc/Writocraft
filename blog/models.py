@@ -16,6 +16,7 @@ class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=128, blank=True, null=True)
     degree = models.CharField(max_length=128, blank=True, null=True)
+    fieldofstudy = models.CharField(max_length=128, blank=True, null=True)
     from_month = models.CharField(max_length=128, blank=True, null=True)
     from_year = models.CharField(max_length=128, blank=True, null=True)
     to_month = models.CharField(max_length=128, blank=True, null=True)
