@@ -1413,8 +1413,11 @@ def profile(request, username):
             context['education_num'] = education.count()
             context['work'] = work_list
             context['work_num'] = work.count()
-            print(work_list)
 
+            interest = models.Interest.objects.filter(user = request.user).order_by('created_at')
+            interest_list = [i.description for i in interest]
+            context['interest_list'] = interest_list
+            context['interest_num'] = len(interest_list)
 
             blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
             context['blog_num'] = blog_count
@@ -1526,7 +1529,6 @@ def myprofile(request):
             interest = models.Interest.objects.filter(user = request.user).order_by('created_at')
             interest_list = [i.description for i in interest]
             context['interest_list'] = interest_list
-            context['interest_list_length'] = interest.count()
 
 
             blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
