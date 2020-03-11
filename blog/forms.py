@@ -49,4 +49,6 @@ class PhotoForm(forms.ModelForm):
         resized_image_big.save(file_name)
         resized_image = rgb_im.resize((200, 200))
         resized_image.save('blog/static/images/thumbnail/'+str(self.user) + "_" + unix_time + '.jpg')
+        resized_image_small = rgb_im.resize((100, 100))
+        resized_image_small.save('blog/static/images/minithumbnail/'+str(self.user) + "_" + unix_time + '.jpg')
         return photo_name
