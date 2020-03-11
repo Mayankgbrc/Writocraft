@@ -785,8 +785,6 @@ def photo_list(request):
                     profile_obj = models.Profile(user = user_obj, image_src = obj)
                 profile_obj.save()
                 return redirect('/myblogs')
-            else:
-                #return redirect('photo_list')
     else:
         form = PhotoForm()
     return render(request, 'photo_list.html', {'form': form, 'photos': photos})
