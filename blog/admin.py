@@ -5,9 +5,6 @@ import os
 from django.conf import settings
 from django.contrib.auth.admin import UserAdmin
 
-#class ProfileAdmin(admin.ModelAdmin):
-#    list_display = ('user','img','phone',)
-
 class Blog(admin.ModelAdmin):
     list_display = ('heading','url','user','views_num','is_visible','is_private','is_verified','is_failed','is_draft','is_anonymous','status','read_time','verified_by','unix_time','created_at','updated_at')
 
@@ -50,7 +47,10 @@ class Education(admin.ModelAdmin):
 class Interest(admin.ModelAdmin):
     list_display = ('user','description','created_at',)
 
+class Profile(admin.ModelAdmin):
+    list_display = ('user','description','country','phone','dob','tag','image_src','created_at','updated_at',)
 
+admin.site.register(models.Profile, Profile)
 admin.site.register(models.Interest, Interest)
 admin.site.register(models.Education, Education)
 admin.site.register(models.Work, Work)

@@ -124,17 +124,7 @@ def convertimage(request, data, id, unix_time, is_anonymous):
                     name = str(unix_time) + "_" + str(id) + "_" + str(count) + formats_dicts[k]
                 else:
                     name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
-                print(name)
                 count += 1
-                '''
-
-                imgdatabs64 = base64.b64decode(formatedimgdata)
-                with open(name, 'wb') as f:
-                    print("Entering 4")
-                    f.write(imgdatabs64)
-                    print("Entering 5")
-                print("Done1")
-                '''
 
                 location = "/static/images/blogimg/"
                 image = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
@@ -219,7 +209,6 @@ def writeblog(request):
                     blog.is_draft = False
                     blog.save()
                     tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
-                    print(tagdb)
                     if tagdb.exists():
                         tagdb.delete()
                     if len(taglist):
@@ -267,7 +256,6 @@ def writeblog(request):
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
                     blog = models.Blog.objects.get(user = request.user, id = id)
-                    print(total_word)
                     blog.read_time = int(total_word/150) + 1
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
@@ -299,8 +287,6 @@ def writeblog(request):
         context['status'] = "Error Occured"
         return HttpResponse(json.dumps(context), content_type="application/json")
 
-def logout_view(request):
-    logout(request)
 '''
 def userprofile(request, username):
     context = {"username":"Anonymous"}
@@ -448,7 +434,6 @@ def anoblog(request, timestamp, url):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            print(new_data)
             new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img style='max-width:100%; max-height: 900px;'")
             context['data'] = new_data
             context['title'] = blog.heading + " | Anonymous"
@@ -487,7 +472,6 @@ def myblogs(request):
         if blog_all.count() > 0:
             for each in blog_all:
                 if each.heading and each.data:
-                    print(each.heading)
                     blog_content = {}
                     blog_content['heading'] = each.heading
                     blog_content['url'] = each.url
@@ -513,7 +497,6 @@ def myblogs(request):
         context['blogs'] = blog_list
         context['status'] = 200
         context['title'] = request.user
-        print(context)
         return render(request, "myblogs.html", context)
 
 @login_required(login_url='/login/')
@@ -539,7 +522,6 @@ def edit(request, url):
             context['status'] = 110
     else:
         context['status'] = 404
-    print(context)
     return render(request, "writeblog.html", context)
 
 def notification(request):
@@ -588,9 +570,6 @@ def commentload(request):
                 comment['userurl'] = urllib.parse.quote_plus(each.user.username) 
                 comment['comment'] = each.comment
                 comment['commentname'] = each.user.first_name + " " + each.user.last_name
-                print("---comment---")
-                print(comment)
-                print("-----")
                 comment['id'] = each.id
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 curr_time1 = each.created_at
@@ -620,8 +599,6 @@ def commentload(request):
                         data2.append(commentthread)
                 comment['commentthread'] = data2
                 data.append(comment)
-                print("----data -----")
-                print(data)
             context['status'] = 200
             context['data'] = data
             
@@ -676,9 +653,7 @@ def deleteask(request, title):
             return render(request, 'deleteask.html', context)
 
 def logout_view(requests):
-    print("Yo")
     logout(requests)
-    print("Done")
     return HttpResponse("Logged Out")
 
 
@@ -794,20 +769,24 @@ def commentpush(request):
 def cropper(request):
     return render(request, "cropper.html")
 
-
+@login_required
 def photo_list(request):
     photos = models.Photo.objects.all()
     if request.method == 'POST':
-        form = PhotoForm(request.POST, request.FILES, user=request.user)
-        if form.is_valid():
-            obj = form.save()
-            obj.refresh_from_db()
-            obj.user = User.objects.get(username = request.user)
-            obj.save()
-            return redirect('/myblogs')
-        else:
-            print("Print No")
-            #return redirect('photo_list')
+        if not request.user.is_anonymous:
+            form = PhotoForm(request.POST, request.FILES, user=request.user)
+            if form.is_valid():
+                obj = form.save()
+                user_obj = User.objects.get(username = request.user.username)
+                try:
+                    profile_obj = models.Profile.objects.get(user = user_obj)
+                    profile_obj.image_src = obj
+                except:
+                    profile_obj = models.Profile(user = user_obj, image_src = obj)
+                profile_obj.save()
+                return redirect('/myblogs')
+            else:
+                #return redirect('photo_list')
     else:
         form = PhotoForm()
     return render(request, 'photo_list.html', {'form': form, 'photos': photos})
@@ -827,22 +806,18 @@ def EducationForm(requests):
 
 @login_required
 def editeducation(requests, num):
-    print("1")
     context = {"status": 110}
     if requests.method == "POST":
-        print(2)
         if requests.user.is_anonymous:
             context['error'] = "Please Login"
             return HttpResponse(json.dumps(context), content_type="application/json")
         elif num.isnumeric():
-            print(3)
             try:
                 education = models.Education.objects.get(pk = int(num), user__username = requests.user.username)
             except:
                 context['error'] = "Some Error Occured"
                 return HttpResponse(json.dumps(context), content_type="application/json")
             else:
-                print("iiii")
                 schoolname = requests.POST.get('schoolname','')
                 schooltype = requests.POST.get('schooltype','')
                 fieldofstudy = requests.POST.get('fieldofstudy','')
@@ -923,7 +898,6 @@ def editeducation(requests, num):
                 education_dict['updated_at'] = education.updated_at
                 education_list.append(education_dict)
                 context['education'] = education_dict
-                print(context)
                 return render(requests, 'EducationFormEdit.html', context)
 
 @login_required
@@ -1154,10 +1128,6 @@ def workupdate(requests):
                 context['error'] = "Please login"
                 return HttpResponse(json.dumps(context), content_type="application/json")
 
-
-            print(type(currentwork))
-            print(companyname, jobtitle, frommonth, fromyear, tomonth, toyear, currentwork, description)
-
             if len(companyname) == 0 or len(jobtitle) == 0 :
                 context['error'] = "Please fill all details"
                 return HttpResponse(json.dumps(context), content_type="application/json")
@@ -1276,7 +1246,6 @@ def readreport(request):
                 readlater.save()
                 context['message'] = "Added to Read Later"
                 context['status'] = 200
-    print(context)
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 def test(request):
@@ -1287,7 +1256,6 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 def fetchchart(request):
-    print("Entered")
     context = {}
     num_days = int(request.POST.get('days',''))
     last_month = datetime.datetime.now() - datetime.timedelta(days=num_days)
@@ -1299,7 +1267,6 @@ def fetchchart(request):
     #queryset = models.Views.objects.values('created_at__day_month_year').annotate(total=Count('blog')).order_by('created_at__day')
     #print(queryset)
     #views_obj = models.Views.objects.filter()
-    print(date_list)
     count_list = []
     for i in data:
         for j in date_list:
@@ -1308,11 +1275,9 @@ def fetchchart(request):
     
     for i in date_list:
         count_list.append(i['sum'])
-    print(count_list)
 
     new_date_list = [(base - datetime.timedelta(days=x)).strftime("%d-%B-%Y") for x in range(num_days)]
     new_date_list.reverse()
-    print(new_date_list)
     context['dates'] = new_date_list
     context['count'] = count_list
     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -1329,9 +1294,6 @@ def sendmail(request):
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
     except Exception as e:
         print(e.message)
 
@@ -1341,19 +1303,32 @@ def search(request):
     context['status'] = 110
     if request.method == "GET":
         q = request.GET.get('q')
-        print(q)
 
 def getmonth(request,digit):
     month_dict = {"1":"Jan","2":"Feb","3":"Mar","4":"Apr","5":"May","6":"June","7":"July","8":"Aug","9":"Sept","10":"Oct","11":"Nov","12":"Dec"}
     return month_dict[digit]
-    
+
+
 def profile(request, username):
     context = {"username":"Anonymous"}
+    loggined = 1
+    if request.user.is_anonymous:
+        loggined = 0
+        
     if User.objects.filter(username=username).exists():
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
+            profile = models.Profile.objects.filter(user = userdata)
+            context['image_src'] = '/static/images/pic/default.jpg'
+            if profile.count():
+                if profile[0].image_src:
+                    location = '/static/images/pic/' + str(profile[0].image_src)
+                    checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                    context['image_src'] = location
             followers = models.Follower.objects.filter(touser__username=username).count()
-            followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
+            if loggined:
+                followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
+                context['followcheck'] = followcheck
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
@@ -1365,13 +1340,10 @@ def profile(request, username):
             context['fullname'] = userdata.first_name + " " + userdata.last_name
             context['title'] = username
             context['followers'] = followers
-            context['followcheck'] = followcheck
             user_views = models.Views.objects.filter(user__username = username).count()
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
-            context['loginned'] = 0
-            if not request.user.is_anonymous:
-                context['loginned'] = 1
+            context['loginned'] = loggined
 
             total_views = 0
 
@@ -1414,7 +1386,7 @@ def profile(request, username):
             context['work'] = work_list
             context['work_num'] = work.count()
 
-            interest = models.Interest.objects.filter(user = request.user).order_by('created_at')
+            interest = models.Interest.objects.filter(user = userdata).order_by('created_at')
             interest_list = [i.description for i in interest]
             context['interest_list'] = interest_list
             context['interest_num'] = len(interest_list)
@@ -1443,8 +1415,12 @@ def profile(request, username):
                         blog_content['updated_at'] = each.updated_at
                         location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
                         checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                        location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.png"
+                        checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
                         if checkstorage:
                             blog_content['src'] = location
+                        elif checkstorage2:
+                            blog_content['src'] = location2
                         else:
                             blog_content['src'] = "/static/images/parallax1.jpg"
                         blog_list.append(blog_content)
@@ -1460,13 +1436,20 @@ def profile(request, username):
         context['status'] = 404
     return render(request, "profile.html", context)
 
-    
+@login_required(login_url='/login/')
 def myprofile(request):
     context = {"username":"Anonymous"}
     if not request.user.is_anonymous:
         username = request.user.username
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
+            profile = models.Profile.objects.filter(user = userdata)
+            context['image_src'] = '/static/images/pic/default.jpg'
+            if profile.count():
+                if profile[0].image_src:
+                    location = '/static/images/pic/' + str(profile[0].image_src) + ".jpg"
+                    checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                    context['image_src'] = location
             followers = models.Follower.objects.filter(touser__username=username).count()
             followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
             context['username'] = username
@@ -1522,7 +1505,6 @@ def myprofile(request):
                     education_dict['to_year'] = each.to_year
                     education_dict['updated_at'] = each.updated_at
                     education_list.append(education_dict)
-            print(education_list)
             context['education'] = education_list
             context['education_num'] = education.count()
 
@@ -1582,7 +1564,6 @@ def interestsave(request):
             return HttpResponse(json.dumps(context), content_type="application/json")
         else:
             interest = json.loads(request.POST.get('interest',''))
-            print(interest)
             interestdb = models.Interest.objects.filter(user = user)
             interest_list = [each['tag'] for each in interest]
             interestdb_list = [each.description for each in interestdb]
@@ -1591,22 +1572,16 @@ def interestsave(request):
             
             for each in interestdb:
                 if each.description not in interest_list:
-                    print(each.description)
                     deletelist.append(each.description)
             for each in interest_list:
                 if each not in interestdb_list:
                     appendlist.append(each)
-            print("deletelist is ",deletelist)
-            print("append list is ",appendlist)
             
             context['status'] = 200
-            print("Testing Delete")
             if len(deletelist):
                 models.Interest.objects.filter(user = user, description__in = deletelist).delete()
-                print("Deleted")
             if len(appendlist):
                 objs = [models.Interest(user = request.user, description = each) for each in appendlist]
                 models.Interest.objects.bulk_create(objs)
-                print("Added Successfully")
             
             return HttpResponse(json.dumps(context), content_type="application/json")
