@@ -141,7 +141,7 @@ class ReadLater(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class HTMLData(models.Model):
-    data = models.CharField(max_length=1000)
+    data = models.CharField(max_length=50000)
     page = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
