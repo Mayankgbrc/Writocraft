@@ -50,6 +50,10 @@ class Interest(admin.ModelAdmin):
 class Profile(admin.ModelAdmin):
     list_display = ('user','description','country','phone','dob','tag','image_src','created_at','updated_at',)
 
+class HTMLData(admin.ModelAdmin):
+    list_display = ('data','page','created_at')
+
+admin.site.register(models.HTMLData, HTMLData)
 admin.site.register(models.Profile, Profile)
 admin.site.register(models.Interest, Interest)
 admin.site.register(models.Education, Education)

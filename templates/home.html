@@ -1,2 +1,33 @@
-<h1>THis is {{name}}</h1>
-<a href="home2.html">Click</a>
+<!-- templates/home.html -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<h1>HTML Coding Area - {{page}}</h1>
+<form id="data_form">
+    {% csrf_token %}
+    <textarea rows="5" cols="80" name="firstname" id="textdata" style="font-size: 14px; resize: none;">{{data}}</textarea><br>
+    <button type="submit" style="border-radius: 5px; font-size: 16px; background-color: #6deb6d; padding: 5px; margin: 5px;">Submit</button>
+</form>
+
+<iframe id="frame" src="/temp/{{page}}" style="height: 300px; width: 500px;border: 1px solid black"> </iframe>
+
+<script type="text/javascript">
+    $(document).on('submit','#data_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/html/{{page}}/',
+            data: {
+                textdata: $('#textdata').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(){
+                var iframe = document.getElementById('frame');
+                iframe.src = "/temp/{{page}}";
+                $("#frame").show();
+            }
+        })
+    })
+
+
+
+</script>

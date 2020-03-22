@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^work/$',views.WorkForm),
     url(r'^workupdate/$',views.workupdate),
     url(r'^logout/$',views.logout_view),
-    url(r'^search/$',views.search),
+    url(r'^search/',include('haystack.urls')),
     url(r'^myprofile/$',views.myprofile),
     url(r'^editwork/(?P<num>[0-9_\+]+)/$', views.editwork, name='editwork'),
     url(r'^editeducation/(?P<num>[0-9_\+]+)/$', views.editeducation, name='editeducation'),
@@ -45,5 +45,7 @@ urlpatterns = [
     url(r'^profile/$',views.profile),
     url(r'^photo_upload/$',views.photo_list, name='photo_list'),
     url(r'^edit/(?P<url>[\w\s\-\?]+)/$', views.edit, name='edit'),
+    url(r'^html/(?P<page>[\w\s\-\?]+)/$', views.html_page),
+    url(r'^temp/(?P<page>[\w\s\-\?]+)/$', views.temppage),
     url(r'^anonymous/(?P<timestamp>[0-9]{10})/(?P<url>[\w\s\-\?]+)/$', views.anoblog, name='anoblog'),
 ]

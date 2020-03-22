@@ -1583,3 +1583,26 @@ def interestsave(request):
                 models.Interest.objects.bulk_create(objs)
             
             return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+def html_page(request,page):
+    if page=="bks" or page=="sks":
+        context = {}
+        if request.method=="POST":
+            textcode = request.POST.get('textdata','')
+            res = models.HTMLData(data=textcode, page=page)
+            res.save()
+            f= open("templates/temp"+page+".html","w+")
+            f.write(textcode)
+            context['status'] = 200
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        res = models.HTMLData.objects.filter(page=page).order_by('-created_at')
+        context['data'] = ""
+        if res.count():
+            context['data'] = res[0].data
+        context['page'] = page
+        return render(request, "home.html", context)
+    return HttpResponse("Error"+" page"+ page)
+
+def temppage(request,page):
+    return render(request,"temp"+page+".html")
