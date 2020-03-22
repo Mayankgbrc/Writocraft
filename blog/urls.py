@@ -17,7 +17,6 @@ urlpatterns = [
     url(r'^work/$',views.WorkForm),
     url(r'^workupdate/$',views.workupdate),
     url(r'^logout/$',views.logout_view),
-    url(r'^search/',include('haystack.urls')),
     url(r'^myprofile/$',views.myprofile),
     url(r'^editwork/(?P<num>[0-9_\+]+)/$', views.editwork, name='editwork'),
     url(r'^editeducation/(?P<num>[0-9_\+]+)/$', views.editeducation, name='editeducation'),
