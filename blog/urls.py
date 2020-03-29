@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', views.home),
-    path('', views.signup),
+    path('', views.index),
     url(r'^signup/$', views.signup),
     url(r'^login/$', views.profile_login),
     url(r'^createblog/$',views.createblog),

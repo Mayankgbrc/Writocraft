@@ -1,80 +1,415 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <link rel="stylesheet" href='/media/styles/bootstrap.min.css' type="text/css" media="screen"/>
-    <link rel="stylesheet" href='/media/styles/bootstrap-responsive.min.css' type="text/css" media="screen"/>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Writocraft</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="/static/css/materialize-1.0.0.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/material-icons.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+	</head>
+	<style>
+		.menu-button{
+			font-size: 20px;
+			color: #000;
+		}
+		.menu-button-outer{
+			background-color: #fff;
+			border-radius: 50%;
+			position: fixed;
+			margin: 15px;
+		}
+		.in-box{
+			width: 20%;
+			float: left;
+		}
+		.card{
+			margin-bottom: 0px !important;
+		}
+		.custom-circle{
+			width: 50px !important;
+    		height: 50px !important;
+			text-align: center;
+			line-height: 50px;
+			font-size: 30px;
+			top: 25px;
+		}
+		.collection .collection-item.avatar i.circle {
+			line-height: 50px !important;
+			font-size: 30px;
+		}
+		.collection-item{
+			background-color: #f3f3f3 !important;
 
-    <title>Bogotobogo Django Haystack with Elasticsearch</title>
-    <style type="text/css">
-        body {
-            padding-top: 60px;
-        }
-    </style>
-</head>
-<body>
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <a href="/" class="brand">Bogotobogo Django Haystack with Elasticsearch</a>
+		}
+		.top-title{
+			font-size: 18px;
+    		font-weight: 400;
+		}
+		#top-button{
+			background-color: #fff;
+			border-radius: 23px;
+			height: 54px;
+			line-height: 47px;
+			font-size: 19px;
+			padding: 0px 70px;
+			color: #000;
+			text-align: center; 
+			margin-top: 30px;
+		}
+	</style>
+    <body>
 
-            <div class="nav-collapse">
-                <ul class="nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/admin">Admin</a></li>
-                </ul>
-                <ul class="nav pull-right">
-                    <li class="divider-vertical"></li>
-                    <form action="/search" method="get" class="navbar-search pull-left">
-                        <input type="text" placeholder="Search" class="search-query span2" name="q">
-                    </form>
-                </ul>
-            </div>
-            <!-- /.nav-collapse -->
-        </div>
-    </div>
-    <!-- /navbar-inner -->
-</div>
+		<ul id="slide-out" class="sidenav">
+			<li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+			<li><a href="#!">Second Link</a></li>
+			<li><div class="divider"></div></li>
+			<li><a class="subheader">Subheader</a></li>
+			<li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+		  </ul>
+		  <div class="menu-button-outer">
+			<a href="#" data-target="slide-out" class="sidenav-trigger menu-button"><i class="material-icons" style="padding: 10px; font-size: 2.1rem;">menu</i></a>  
+		  </div>
+	
 
-<div class="container">
-
-    {% block content %}
-
-        <div class="row">
-            <div class="span12">
-                <div class="hero-unit">
-                    <h1>
-                        Bogotobogo Django Haystack with Elasticsearch.</h1>
-                    <br/>
-
-                    <p>
-                        This example illustrates basic search features of <a href="http://www.einsteinish.com" target="_blank">einsteinish.com</a>
-                        (Search as a service powered by <a href="http://www.elasticsearch.org" target="_blank">Elastisearch</a>).
-                    </p>
-
-                    <p>
-                        Each CRUD operation on documents is reflected to search index in real time.</p>
-
-                    <p>
-                        To test Einsteinish's search features, please register and create resources/topics.</p>
-
-                    <p>
-                        The search feature is using <a href="http://haystacksearch.org/" target="_blank">Haystack</a> moduler search
-                        for Django.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-    {% endblock %}
-
-    <hr>
-    <footer class="footer"><p>2016 einsteinish.com</p>
-
-        <p>Built with<a href="http://twitter.github.com/bootstrap" target="_blank"> Bootstrap</a></p></footer>
-
-</div>
-
-</body>
+		<div class="row" style="background-color: #000; margin-bottom: 0px;">
+			<div class="col m6 s12">
+				<img src="/static/images/uploadsfile/logo-main.jpeg" style="width: 100%; margin-top: 15px;">
+			</div>
+			<div class="col m6 s12" style="color: #fff; text-align: center; ">
+				<div style="text-align: center; padding: 20px;">
+					<div style="margin-top: 25%;">
+						<h2 style="font-weight: 200;">Unleash your creativity with Us.</h2>
+					</div>
+					<div>
+						<h3 style="font-weight: 200;">Spend your leisure time with Writocraft.</h3>
+					</div>
+				</div>
+				<button id="top-button" class="btn-large"><span style="border-radius: 50%;"><i class="fa fa-pencil circle" aria-hidden="true"></i>  </span>Sign Up </button>
+			</div>
+		</div>
+		<div style="background-color: #333; display: flex; padding: 20px 5px;">
+			<div style=" text-align: center; width: 20%; float: left; color: #fff; margin: auto; font-size: 4.2rem;">
+				Our Top Writers
+			</div>
+			<div style="float: right; background-color: #333; overflow: hidden; width: 80%;">
+				<div style="width: 250%; display: flex; transform: translateX(0%); transition: transform 2s;" id="user-box">
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">1Arghadeepa</div>
+								<p>A fun loving girl who loves to play with words</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">2Baishakhi</div>
+								<p>An Unsocial Woman with Large Dream</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">3Sakshi Kumari</div>
+								<p>Creative soul with cheerful mind</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">4Sakshi Kumari</div>
+								<p>Creative soul with cheerful mind</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">5Arghadeepa</div>
+								<p>A fun loving girl who loves to play with words</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">6Baishakhi</div>
+								<p>An Unsocial Woman with Large Dream</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">7Sakshi Kumari</div>
+								<p>Creative soul with cheerful mind</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">8Sakshi Kumari</div>
+								<p>Creative soul with cheerful mind</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">9Arghadeepa</div>
+								<p>A fun loving girl who loves to play with words</p>
+							</div>
+						</div>
+					</div>
+					<div class="in-box">
+						<div class="card">
+							<div class="card-content">
+								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
+							</div>
+							<div class="card-content center" style="padding-top: 0px; height: 150px;">
+								<div class=" card-title" style="font-weight: 400;">10Baishakhi</div>
+								<p>An Unsocial Woman with Large Dream</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="display:flow-root; margin-bottom: 0.5rem;">
+					<div style="float: left;" id="left-btn">
+						<button class="btn" id="left-btn-main" style="background-color: #fff; color: #000;" disabled>
+							<i class="fa fa-chevron-left" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div style="float: right;" id="right-btn">
+						<button class="btn" id="right-btn-main" style="background-color: #fff; color: #000;">
+							<i class="fa fa-chevron-right" aria-hidden="true"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col m3 s12">
+				<ul class="collection" style="z-index: 0;">
+					<li class="collection-item" style="padding: 15px; background-color: #000 !important; color: #fff; font-size: 30px; text-align: center; font-size: 46px; line-height: unset;"> 
+						Recently Published
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">1</span>
+						<h6>India - Land of Gods</h6>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">2</span>
+						<h6>India - Land of Gods</h6>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">3</span>
+						<h6>India - Land of Gods</h6>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">4</span>
+						<h6>India - Land of Gods</h6>
+						<p>Abc Kumar</p>
+					</li>
+					<span id="blockhide" style="display: none;">
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">5</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">6</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">7</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">8</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">9</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+						<li class="collection-item avatar">
+							<span class="circle custom-circle white">10</span>
+							<h6>India - Land of Gods</h6>
+							<p>Abc Kumar</p>
+						</li>
+					</span>
+					<a id="flip">
+						<li class="collection-item" style="padding: 5px; background-color: #000 !important; color: #fff; font-size: 16px; text-align: center; line-height: unset;"> 
+							View More
+						</li>
+					</a>
+				</ul>
+			</div>
+			<div class="col m9 s12">
+				<ul class="collection">
+					<li class="collection-item" style="padding: 15px; background-color: #000 !important; color: #fff; font-size: 30px; text-align: center; font-size: 46px; line-height: unset;"> 
+						Weekly Top
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">1</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">2</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">3</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">4</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">5</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">6</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">7</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">8</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">9</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+					<li class="collection-item avatar">
+						<span class="circle custom-circle white">10</span>
+						<h5>India - Land of Gods</h5>
+						<p>Abc Kumar</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+        <footer class="page-footer" style="background-color: #444;">
+			<div class="container">
+			  <div class="row">
+				<div class="col l6 s12">
+				  <h5 class="white-text">Footer Content</h5>
+				  <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+				</div>
+				<div class="col l4 offset-l2 s12">
+				  <h5 class="white-text">Links</h5>
+				  <ul>
+					<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+					<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+					<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+					<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+				  </ul>
+				</div>
+			  </div>
+			</div>
+			<div class="footer-copyright" style="background-color: #333;">
+			  <div class="container">
+			  © 2014 Copyright Text
+			  <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+			  </div>
+			</div>
+		  </footer>
+		<script src="/static/js/jquery-3.4.1.min.js"></script>
+		<script src="/static/js/materialize-1.0.0.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('.sidenav').sidenav();
+			});
+			window.div_user_loc = 0;
+			$("#right-btn").click(function(){
+				$("#left-btn-main").removeAttr("disabled","");
+				cur_loc = window.div_user_loc;
+				var diff = 60 - cur_loc;
+				if (diff<=40){
+					window.div_user_loc = cur_loc+diff;
+					$("#user-box").css("transform","translateX(-"+window.div_user_loc+"%)");
+					$("#right-btn-main").attr("disabled","");
+					return true;
+				}
+				if (diff > 40){
+					window.div_user_loc = cur_loc+40;
+					$("#user-box").css("transform","translateX(-"+window.div_user_loc+"%)");
+					return true;
+				}
+			});
+			$("#left-btn").click(function(){
+				$("#right-btn-main").removeAttr("disabled","");
+				cur_loc = window.div_user_loc;
+				if (cur_loc<=40){
+					window.div_user_loc = 0;
+					$("#user-box").css("transform","translateX(+"+window.div_user_loc+"%)");
+					$("#left-btn-main").attr("disabled","");
+					return true;
+				}
+				if (cur_loc > 40){
+					window.div_user_loc = cur_loc-40;
+					$("#user-box").css("transform","translateX(-"+window.div_user_loc+"%)");
+					return true;
+				}
+			});
+			$(document).ready(function(){
+				$("#flip").click(function(){
+					$("#blockhide").slideToggle("slow");
+				});
+			});
+		</script>
+    </body>
 </html>

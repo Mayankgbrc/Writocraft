@@ -147,3 +147,17 @@ class HTMLData(models.Model):
 
     def __str__(self):
         return self.data
+
+class TopBlogs(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    rank = models.IntegerField()
+    is_visible = models.BooleanField(default = False)
+    thought = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+
+class TopWriters(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rank = models.IntegerField()
+    is_visible = models.BooleanField(default = False)
+    thought = models.CharField(max_length=128, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)

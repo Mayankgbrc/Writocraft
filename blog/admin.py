@@ -53,6 +53,14 @@ class Profile(admin.ModelAdmin):
 class HTMLData(admin.ModelAdmin):
     list_display = ('data','page','created_at')
 
+class TopBlogs(admin.ModelAdmin):
+    list_display = ('blog', 'rank','is_visible', 'thought','created_at')
+
+class TopWriters(admin.ModelAdmin):
+    list_display = ('user', 'rank','is_visible', 'thought','created_at')
+
+admin.site.register(models.TopWriters, TopWriters)
+admin.site.register(models.TopBlogs, TopBlogs)
 admin.site.register(models.HTMLData, HTMLData)
 admin.site.register(models.Profile, Profile)
 admin.site.register(models.Interest, Interest)

@@ -44,8 +44,7 @@ def urlshort(request, link):
             return url
 
 def index(request):
-    form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'index.html')
 
 
 def signup(request):
@@ -1586,7 +1585,7 @@ def interestsave(request):
 
 
 def html_page(request,page):
-    if page=="bks" or page=="sks":
+    if page=="bks" or page=="sks" or page=="sln":
         context = {}
         if request.method=="POST":
             textcode = request.POST.get('textdata','')
@@ -1606,3 +1605,30 @@ def html_page(request,page):
 
 def temppage(request,page):
     return render(request,"temp"+page+".html")
+
+def topblogs(request):
+    context = {}
+    top_blogs = models.TopBlogs.objects.filter(is_visible = True).order_by('rank')
+    blog_list = []
+    for each in top_blogs:
+        blog_dict = {}
+        blog_dict['user'] = each.user.username
+        blog_dict['blog'] = each.blog.heading
+        blog_dict['read_time'] = each.blog.read_time
+        blog_dict['views_num'] = each.blog.views_num
+        blog_dict['created_at'] = each.blog.created_at
+        blog_list.append(blog_dict)
+    context['blog_list'] = blog_list
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+def topbwriters(request):
+    top_writers = models.TopWriters.objects.filter(is_visible = True).order_by('rank')
+    writers_list = []
+    context = {}
+    for each in top_writers:
+        writers_dict = {}
+        writers_dict['user'] = each.user.username
+        writers_dict['full_name'] = each.user.first_name + " " + each.user.last_name
+        writers_list.append(writers_dict)
+    context['writers_list'] = writers_list
+    return HttpResponse(json.dumps(context), content_type="application/json")
