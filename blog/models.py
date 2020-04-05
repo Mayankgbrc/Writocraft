@@ -155,6 +155,9 @@ class TopBlogs(models.Model):
     thought = models.CharField(max_length=128, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add = True)
 
+    def __str__(self):
+        return self.blog.heading
+
 class TopWriters(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rank = models.IntegerField()

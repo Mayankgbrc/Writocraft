@@ -38,13 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'haystack',
 ]
 
 IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
 IMAGE_CROPPING_BACKEND_PARAMS = {}
 
-#HAYSTACK settings
+'''
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 12
 HAYSTACK_CONNECTIONS = {
@@ -54,7 +53,7 @@ HAYSTACK_CONNECTIONS = {
             'INDEX_NAME': 'haystack',
         },
 }
-
+'''
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,6 +141,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # STAR_RATINGS_RATING_MODEL = 'GiveMeFive.GM5Rating'
 
 STATICFILES_DIRS = (

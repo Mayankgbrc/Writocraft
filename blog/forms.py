@@ -41,14 +41,12 @@ class PhotoForm(forms.ModelForm):
         cropped_image = image.crop((x, y, w+x, h+y))
         rgb_im = cropped_image.convert('RGB')
         unix_time = str(int(time.time()))
-        
-        print(unix_time)
-        photo_name = str(self.user) + "_" + unix_time + '.jpg'
-        file_name = 'blog/static/images/pic/' + str(self.user) + "_" + unix_time + '.jpg'
+        photo_name = str(self.user) + '.jpg'
+        file_name = 'media/profile/org/' + str(self.user) + '.jpg'
         resized_image_big = rgb_im.resize((500, 500))
         resized_image_big.save(file_name)
         resized_image = rgb_im.resize((200, 200))
-        resized_image.save('blog/static/images/thumbnail/'+str(self.user) + "_" + unix_time + '.jpg')
+        resized_image.save('media/profile/200/' + str(self.user) + '.jpg')
         resized_image_small = rgb_im.resize((100, 100))
-        resized_image_small.save('blog/static/images/minithumbnail/'+str(self.user) + "_" + unix_time + '.jpg')
+        resized_image_small.save('media/profile/100/' + str(self.user) + '.jpg')
         return photo_name

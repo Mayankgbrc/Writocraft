@@ -82,6 +82,9 @@
                 color: #222f3e;
                 margin-right: 2px;
             }
+            .sidebar .info{
+                border-bottom: 1px solid #111;
+            }
         </style>
         
     </head>
@@ -94,7 +97,7 @@
                            SIDEBAR   
             ==========================================-->
                 <!-- Start Sidebar -->
-                <aside class="col l4 m12 s12 sidebar z-depth-1" id="sidebar">
+                <aside class="col l4 m12 s12 sidebar z-depth-1" id="sidebar" style="background-color: #2f3640;">
                     <!--  Sidebar row -->
                     <div class="row">                      
                         <!--  top section   -->
@@ -103,19 +106,21 @@
                                       IMAGE   
                             ==========================-->
                             <div class="feature-img">
-                                <a href="index.html"><img src="/static/images/pic/{{ username }}.jpg" class="responsive-img" alt=""></a> 
+                                <img src="/media/profile/org/{{ image_src }}" class="responsive-img" alt="">
                             </div>                            
                          
                             <!-- ========================================
                                        NAME AND TAGLINE
                             ==========================================-->
-                            <div class="title col s12 m12 l9 right  wow fadeIn" data-wow-delay="0.1s">   
-                                <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
-                                <span style="text-shadow: 2px 1px 2px #000 !important;">UI & UX Expert</span>  <!-- tagline -->
-                            </div>                         
+                                               
                         </div>
+                        <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
+                            <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
+                            <span style="text-shadow: 2px 1px 2px #000 !important;">UI & UX Expert</span>  <!-- tagline -->
+                        </div>      
                          <!-- sidebar info -->
                         <div class="col l12 m12 s12 sort-info sidebar-item">
+                            
                             <div class="row">                               
                                 <div class="col m12 s12 l3 icon"> <!-- icon -->
                                    <i class="fa fa-user"></i>
@@ -127,26 +132,6 @@
                                     </div>             
                                 </div>
                             </div>         
-                        </div>
-                        <!-- MOBILE NUMBER -->
-                        <div class="col l12 m12 s12  mobile sidebar-item">
-                            <div class="row">                                
-                                <div class="col m12 s12 l3 icon">
-                                    <i class="fa fa-phone"></i> <!-- icon -->
-                                </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a2" data-wow-delay="0.2s" >
-                                    <div class="section-item-details">
-                                        <div class="personal">
-                                            <h4><a href="tel:555-555-5555">(111)-333-4444</a></h4> <!-- Number -->             
-                                            <span>mobile</span> 
-                                        </div>
-                                        <div class="work">
-                                            <h4><a href="tel:555-555-5555">(121)-323-3494</a></h4> <!-- Number -->
-                                            <span>work</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>             
                         </div>
                         <!--  EMAIL -->
                         <div class="col l12 m12 s12  email sidebar-item ">
@@ -166,11 +151,11 @@
                         </div>
                         <!-- ADDRESS  -->
                         <div class="col l12 m12 s12  address sidebar-item ">
-                            <div class="row">                                
+                            <div class="row" style="margin-bottom: 0px;">                                
                                 <div class="col l3 m12  s12 icon">
                                     <i class="fa fa-home"></i> <!-- icon -->
                                 </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s">
+                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
                                             <h4>24 Golden Tower <span>(2nd floor)</span><br>
@@ -287,21 +272,19 @@
                                 <h2>BLOGS </h2>
                             </div>
                             <div class="interests col s12 m12 l12 wow fadeIn" data-wow-delay="0.1s"> 
-                                <div id="masonry-grid" class="row">
+                                <div class="row">
                                     {% for each in blogs %}
                                         <div class="col s12 m6">
                                             <div class="card">
                                                 <div class="card-image">
                                                     <img src="{{ each.src }}" style="object-position: center; max-width:100%; max-height:300px;" >
                                                 </div>
-                                                <div class="card-content">
+                                                <div class="card-content" style="padding: 15px 24px 5px 24px;">
                                                     <span class="card-title">{{ each.heading|truncatechars:40 }}</span>
-                                                    <p>I am a very simple card. I am good at containing small bits of information.
-                                                    I am convenient because I require little markup to use effectively.</p>
                                                 </div>
                                                 <div class="card-action">
-                                                    <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View Now</a>
-                                                    <a href='#'>This is a link</a>
+                                                    <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">Read Now</a>
+                                                    <a href="/edit/{{ each.url|urlencode }}/">Edit</a>
                                                 </div>
                                             </div>
                                         </div>

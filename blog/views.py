@@ -44,7 +44,74 @@ def urlshort(request, link):
             return url
 
 def index(request):
-    return render(request, 'index.html')
+    Topblogs = models.TopBlogs.objects.filter(is_visible=True)
+    print(Topblogs)
+    context = {}
+    blog_list = []
+    for each in Topblogs:
+        temp = {}
+        temp['heading'] = each.blog.heading
+        print(temp)
+        temp['url'] = each.blog.url
+        new_data = mdtohtml(request, each.blog.data)
+        cleanedhtml = cleanhtml(request, new_data)
+        temp['data'] = cleanedhtml
+        temp['fullname'] = each.blog.user.first_name + " " + each.blog.user.last_name
+        temp['blogid'] = each.blog.id
+        temp['url'] = each.blog.url
+        temp['readtime'] = each.blog.read_time
+        temp['viewsnum'] = each.blog.views_num
+        temp['username'] = each.blog.user.username
+        likes_count = models.Likes.objects.filter(blog = each.blog).count()
+        comment_count = models.Comment.objects.filter(blog = each.blog).count() + models.Commentthread.objects.filter(blog = each.blog).count()
+        temp['likes_count'] = likes_count
+        temp['comments_count'] = comment_count
+        temp['img_src']  = findimg(request, new_data)
+        date_time = each.blog.created_at
+        temp['date_time']  = date_time.strftime("%b %d, %Y")
+        blog_list.append(temp)
+    context['blogs'] = blog_list
+
+
+    Topwriters = models.TopWriters.objects.filter(is_visible=True)
+    writer_list = []
+    for each in Topwriters:
+        temp = {}
+        temp['fullname'] = each.user.first_name + " " + each.user.last_name
+        temp['username'] = each.user.username
+        profile = models.Profile.objects.filter(user = each.user)
+        if profile.count():
+            temp['profilepic'] = profile[0].image_src
+            temp['description'] = profile[0].description
+        else:
+            temp['profilepic'] = "default.jpg"
+            temp['description'] = ""
+        work_user = models.Work.objects.filter(user__username = each.user.username).order_by('-present','-from_year')
+        if work_user.count():
+            work_curr = work_user[0]
+            if work_curr.present == True:
+                if work_curr.role:
+                    temp['currentwork'] = work_curr.role + " - " + work_curr.company
+            else:
+                temp['currentwork'] = work_curr.role
+        else:
+            education_user = models.Education.objects.filter(user__username = each.user.username).order_by('-to_year')
+            if education_user.count():
+                education_curr = education_user[0]
+                if education_curr.degree and education_curr.school:
+                    temp['currentwork'] = education_curr.degree + " at " + education_curr.school
+                elif education_curr.degree:
+                    temp['currentwork'] = education_curr.degree 
+                elif education_curr.school:
+                    temp['currentwork'] = education_curr.school 
+            else:
+                temp['currentwork'] = "Writer"
+                    
+        
+        writer_list.append(temp)
+    context['writers'] = writer_list
+    #print(context)
+    return render(request, 'index.html', context)
 
 
 def signup(request):
@@ -1441,12 +1508,9 @@ def myprofile(request):
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
             profile = models.Profile.objects.filter(user = userdata)
-            context['image_src'] = '/static/images/pic/default.jpg'
+            context['image_src'] = 'default.jpg'
             if profile.count():
-                if profile[0].image_src:
-                    location = '/static/images/pic/' + str(profile[0].image_src) + ".jpg"
-                    checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
-                    context['image_src'] = location
+                context['image_src'] = profile[0].image_src
             followers = models.Follower.objects.filter(touser__username=username).count()
             followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
             context['username'] = username
@@ -1537,7 +1601,7 @@ def myprofile(request):
                         if checkstorage:
                             blog_content['src'] = location
                         else:
-                            blog_content['src'] = "/static/images/parallax1.jpg"
+                            blog_content['src'] = "/static/images/blogimg/default.jpg"
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
@@ -1632,3 +1696,14 @@ def topbwriters(request):
         writers_list.append(writers_dict)
     context['writers_list'] = writers_list
     return HttpResponse(json.dumps(context), content_type="application/json")
+
+def cleanhtml(request,raw_html):
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
+
+def findimg(request, raw_html):
+    matches = re.findall(r'\ssrc="([^"]+)"', raw_html)
+    if len(matches):
+        return matches[0]
+    return '/static/images/blogimg/default.jpg'

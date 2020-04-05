@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,4 +49,5 @@ urlpatterns = [
     url(r'^html/(?P<page>[\w\s\-\?]+)/$', views.html_page),
     url(r'^temp/(?P<page>[\w\s\-\?]+)/$', views.temppage),
     url(r'^anonymous/(?P<timestamp>[0-9]{10})/(?P<url>[\w\s\-\?]+)/$', views.anoblog, name='anoblog'),
+    url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 ]
