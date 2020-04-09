@@ -180,7 +180,7 @@ p {
                       <li class="search" style='margin-top: 5px; background-color: #eee; border-radius: 5px; border-radius: 5px; margin-right: 30px;'>
                         <form style="margin:0px; height: 85%; width: 350px;">
                              <span class="input-field">
-                               <input id="search" type="search" required>
+                               <input id="search" type="search" placeholder="Search Writocraft">
                                <label class="label-icon" for="search"><i class="material-icons" style='line-height: 55px;color: #333;'>search</i></label>
                              </span>
                            </form>
@@ -321,4 +321,14 @@ function boldString(str, find){
                     }
                 })
             });
+
+$(document).ready(function(){
+    $('#search').keypress(function(e){
+      query = $('#search').val();
+      if(e.keyCode==13 && query!=""){
+        window.location.href = "/search/?q="+query;
+        return false;
+      }
+    });
+});
         </script>

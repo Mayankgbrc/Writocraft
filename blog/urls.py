@@ -44,6 +44,8 @@ urlpatterns = [
     url(r'^dashboard/$',views.dashboard),
     url(r'^interestsave/$',views.interestsave),
     url(r'^profile/$',views.profile),
+    url(r'^search/$',views.search),
+    url(r'^logsign/$',views.logsign),
     url(r'^photo_upload/$',views.photo_list, name='photo_list'),
     url(r'^edit/(?P<url>[\w\s\-\?]+)/$', views.edit, name='edit'),
     url(r'^html/(?P<page>[\w\s\-\?]+)/$', views.html_page),

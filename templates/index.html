@@ -66,6 +66,24 @@
 		.grid-news .blog-content {
 			border: none;
 		}
+		.headtop{
+			color: #fff;
+			font-size: 3.56rem;
+			line-height: 110%;
+			margin: 2.3733333333rem 0 1.424rem 0;
+			font-weight: 200;
+		}
+		.tag{
+			text-shadow: 1px 1px 1px #222;
+			font-weight: 600;
+			border-radius: 25px;
+			padding: 10px 20px;
+			background-color: #f00;
+			color: #fff;
+			font-size: 2rem;
+			line-height: 6rem;
+			margin: 3px;
+		}
 	</style>
     <body>
 
@@ -88,395 +106,43 @@
 			<div class="col m6 s12" style="color: #fff; text-align: center; ">
 				<div style="text-align: center; padding: 20px;">
 					<div style="margin-top: 25%;">
-						<h2 style="font-weight: 200;">Unleash your creativity with Us.</h2>
+						<h2 class="headtop">Unleash your creativity with Us.</h2>
 					</div>
 					<div>
-						<h3 style="font-weight: 200;">Spend your leisure time with Writocraft.</h3>
+						<h3 class="headtop" style="font-size: 2.92rem;">Spend your leisure time with Writocraft.</h3>
 					</div>
 				</div>
-				<button id="top-button" class="btn-large"><span style="border-radius: 50%;"><i class="fa fa-pencil circle" aria-hidden="true"></i>  </span>Sign Up </button>
+				<a href="/signup">
+					<button id="top-button" class="btn-large">
+						<span style="border-radius: 50%;">
+							<i class="fa fa-pencil circle" aria-hidden="true"></i>  
+						</span>Sign Up 
+					</button>
+				</a>
 				<br><br>
 			</div>
 		</div>
-		<div style="background-color: #333; display: flex; padding: 20px 5px;" class="hide-on-med-and-down">
-			<div style=" text-align: center; width: 20%; float: left; color: #fff; margin: auto; font-size: 4.2rem;">
-				Our Top Writers
-			</div>
-			<div style="float: right; background-color: #333; overflow: hidden; width: 80%;">
-				<div style="width: 250%; display: flex; transform: translateX(0%); transition: transform 2s;" id="user-box">
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">1Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">2Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">3Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">4Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">5Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">6Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">7Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">8Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">9Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">10Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
+		
+		<section class="section-padding grid-news">
+			<div class="container">
+				<div class="text-center mb-50">
+					<h2 class="section-title">Top Tags</h2>
 				</div>
-				<div style="display:flow-root; margin-bottom: 0.5rem;">
-					<div style="float: left;" id="left-btn">
-						<button class="btn" id="left-btn-main" style="background-color: #fff; color: #000;" disabled>
-							<i class="fa fa-chevron-left" aria-hidden="true"></i>
-						</button>
-					</div>
-					<div style="float: right;" id="right-btn">
-						<button class="btn" id="right-btn-main" style="background-color: #fff; color: #000;">
-							<i class="fa fa-chevron-right" aria-hidden="true"></i>
-						</button>
-					</div>
+				<div class="center">
+					{% for each in tag_list %}
+						<a href="/search/?q={{each.tag}}">
+							<span class="tag" style="background-color: {{each.color}};">#{{each.tag}}</span>
+						</a>
+					{% endfor %}
 				</div>
 			</div>
-		</div>
-		<div class="hide-on-large-only">
-			<br>
-			<div class="collection-item" style="padding: 15px; background-color: #000 !important; color: #fff; font-size: 30px; text-align: center; font-size: 46px; line-height: unset;"> 
-				Our Top Writers
-			</div>
-			<div style="background-color: #333; overflow: hidden; width: 100%;">
-				<div style="width: 250%; display: flex; transform: translateX(0%); transition: transform 2s;" id="user-box">
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">1Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">2Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">3Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">4Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">5Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">6Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">7Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/saurav.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">8Sakshi Kumari</div>
-								<p>Creative soul with cheerful mind</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">9Arghadeepa</div>
-								<p>A fun loving girl who loves to play with words</p>
-							</div>
-						</div>
-					</div>
-					<div class="in-box">
-						<div class="card">
-							<div class="card-content">
-								<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/sakshi.jpg" alt="Avishek" >
-							</div>
-							<div class="card-content center" style="padding-top: 0px; height: 150px;">
-								<div class=" card-title" style="font-weight: 400;">10Baishakhi</div>
-								<p>An Unsocial Woman with Large Dream</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div style="display:flow-root; margin-bottom: 0.5rem;">
-					<div style="float: left;" id="left-btn-phone">
-						<button class="btn" id="left-btn-main-phone" style="background-color: #fff; color: #000;" disabled>
-							<i class="fa fa-chevron-left" aria-hidden="true"></i>
-						</button>
-					</div>
-					<div style="float: right;" id="right-btn-phone">
-						<button class="btn" id="right-btn-main-phone" style="background-color: #fff; color: #000;">
-							<i class="fa fa-chevron-right" aria-hidden="true"></i>
-						</button>
-					</div>
-				</div>
-			</div>
-
-		</div>
-		<div class="row">
-			<div class="col m3 s12">
-				<ul class="collection" style="z-index: 0;">
-					<li class="collection-item" style="padding: 15px; background-color: #000 !important; color: #fff; font-size: 30px; text-align: center; font-size: 46px; line-height: unset;"> 
-						Recently Published
-					</li>
-					<li class="collection-item avatar">
-						<span class="circle custom-circle white">1</span>
-						<h6>India - Land of Gods</h6>
-						<p>Abc Kumar</p>
-					</li>
-					<li class="collection-item avatar">
-						<span class="circle custom-circle white">2</span>
-						<h6>India - Land of Gods</h6>
-						<p>Abc Kumar</p>
-					</li>
-					<li class="collection-item avatar">
-						<span class="circle custom-circle white">3</span>
-						<h6>India - Land of Gods</h6>
-						<p>Abc Kumar</p>
-					</li>
-					<li class="collection-item avatar">
-						<span class="circle custom-circle white">4</span>
-						<h6>India - Land of Gods</h6>
-						<p>Abc Kumar</p>
-					</li>
-					<span id="blockhide" style="display: none;">
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">5</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">6</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">7</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">8</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">9</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-						<li class="collection-item avatar">
-							<span class="circle custom-circle white">10</span>
-							<h6>India - Land of Gods</h6>
-							<p>Abc Kumar</p>
-						</li>
-					</span>
-					<a id="flip">
-						<li class="collection-item" style="padding: 5px; background-color: #000 !important; color: #fff; font-size: 16px; text-align: center; line-height: unset;"> 
-							View More
-						</li>
-					</a>
-				</ul>
-			</div>
-			
-		</div>
+		</section>
 
 		<section class="section-padding grid-news">
 			<div class="container">
 				<h2>Check Box</h2>
 				<div id="owl-demo1" class="owl-carousel owl-theme">
 				{% for each in writers %}
-				<!--
-				hello
-				<div class="in-box">
-					<div class="card">
-						<div class="card-content">
-							<img class="responsive-img circle" style="width: 100%;" src="/static/images/team/baishakhi.jpeg" alt="Avishek">
-						</div>
-						<div class="card-content center" style="padding-top: 0px; height: 150px;">
-							<div class=" card-title" style="font-weight: 400;">1Arghadeepa</div>
-							<p>A fun loving girl who loves to play with words</p>
-						</div>
-					</div>
-				</div>
-				
-				<div class="">
-					<article class="post-wrapper">
-						<div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px;">
-							<a href="#"><img src="/media/profile/org/{{each.profilepic}}" class="img-responsive" style="max-height: 240px;" alt=""></a>
-						</div>
-						<div class="blog-content">
-							<header class="entry-header-wrapper">
-								<div class="entry-header">
-									<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.fullname|truncatechars:35 }}</a></h2>
-									<div class="entry-meta">
-										<ul class="list-inline">
-											<li>
-												<i class="fa fa-user"></i> <a href="#">{{ each.fullname }}</a>
-											</li>
-											<li>
-												<i class="fa fa-clock-o"></i> <a href="#">{{ each.date_time }}</a>
-											</li>
-										</ul>
-									</div>
-								</div>
-							</header>
-							<div class="entry-content text-justify" style="height: 150px; max-height: 150px;">
-								<p>{{ each.data|truncatechars:200 }}</p>
-							</div>
-						</div>
-					</article>
-				</div>-->
-
 				<div>
 					<article class="post-wrapper" style="border: 1px solid #eee;">
 						<div class="thumb-wrapper waves-effect waves-block waves-light" style="padding: 20px;">
@@ -491,8 +157,12 @@
 									</div>
 								</div>
 							</header>
-							<div class="entry-content text-justify" style="height: 100px; max-height: 050px;">
-								<p>{{ each.description|truncatechars:100 }}</p>
+							<div class="entry-content text-justify" style="height: 100px; max-height: 150px;">
+								<p>
+									{{ each.description|truncatechars:100 }}<br>
+									<b>Total Blogs: </b> {{each.totalblogs}}
+								</p>
+
 							</div>
 							<footer class="entry-footer">
 								<a class="readmore pull-right" href="/@{{ each.username|urlencode }}"> View Profile <i class="fa fa-long-arrow-right"></i></a>

@@ -51,7 +51,6 @@ def index(request):
     for each in Topblogs:
         temp = {}
         temp['heading'] = each.blog.heading
-        print(temp)
         temp['url'] = each.blog.url
         new_data = mdtohtml(request, each.blog.data)
         cleanedhtml = cleanhtml(request, new_data)
@@ -79,6 +78,7 @@ def index(request):
         temp = {}
         temp['fullname'] = each.user.first_name + " " + each.user.last_name
         temp['username'] = each.user.username
+        temp['totalblogs'] = models.Blog.objects.filter(user=each.user).count()
         profile = models.Profile.objects.filter(user = each.user)
         if profile.count():
             temp['profilepic'] = profile[0].image_src
@@ -110,7 +110,16 @@ def index(request):
         
         writer_list.append(temp)
     context['writers'] = writer_list
-    #print(context)
+
+    tags = models.Tags.objects.all().values('tag').annotate(total=Count('tag')).order_by('-total')
+    tag_list = []
+    for each in tags:
+        r = lambda: random.randint(0,255)
+        color = '#%02X%02X%02X' % (r(),r(),r())
+        tag_list.append({"color":color, 'tag':each['tag']})
+
+    context['tag_list'] = tag_list
+
     return render(request, 'index.html', context)
 
 
@@ -352,6 +361,9 @@ def writeblog(request):
         context['status'] = 110
         context['status'] = "Error Occured"
         return HttpResponse(json.dumps(context), content_type="application/json")
+
+def logsign(request):
+    return render(request, 'logsign.html')
 
 '''
 def userprofile(request, username):
@@ -1361,13 +1373,6 @@ def sendmail(request):
     except Exception as e:
         print(e.message)
 
-
-def search(request):
-    context = {}
-    context['status'] = 110
-    if request.method == "GET":
-        q = request.GET.get('q')
-
 def getmonth(request,digit):
     month_dict = {"1":"Jan","2":"Feb","3":"Mar","4":"Apr","5":"May","6":"June","7":"July","8":"Aug","9":"Sept","10":"Oct","11":"Nov","12":"Dec"}
     return month_dict[digit]
@@ -1707,3 +1712,42 @@ def findimg(request, raw_html):
     if len(matches):
         return matches[0]
     return '/static/images/blogimg/default.jpg'
+
+def search(request):
+    queryset = []
+    context = {}
+    query = request.GET.get('q','')
+    queries = query.split()
+    for q in queries:
+        posts = models.Blog.objects.filter(
+            Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
+        ).distinct().order_by('-views_num')[:10]
+        post_list = [each for each in posts]
+        post_tag = models.Tags.objects.filter(tag__icontains=q).distinct().order_by('-blog__views_num')[:10]
+        [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]
+        post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
+
+        for each in post_list:
+            temp = {}
+            temp['heading'] = each.heading
+            temp['url'] = each.url
+            new_data = mdtohtml(request, each.data)
+            cleanedhtml = cleanhtml(request, new_data)
+            temp['data'] = cleanedhtml
+            temp['fullname'] = each.user.first_name + " " + each.user.last_name
+            temp['blogid'] = each.id
+            temp['url'] = each.url
+            temp['readtime'] = each.read_time
+            temp['viewsnum'] = each.views_num
+            temp['username'] = each.user.username
+            temp['readtime'] = each.read_time
+            likes_count = models.Likes.objects.filter(blog = each).count()
+            comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
+            temp['likes_count'] = likes_count
+            temp['comments_count'] = comment_count
+            temp['img_src']  = findimg(request, new_data)
+            date_time = each.created_at
+            temp['date_time']  = date_time.strftime("%b %d, %Y")
+            queryset.append(temp)
+    context['blogs'] = queryset
+    return render(request, "search.html", context)

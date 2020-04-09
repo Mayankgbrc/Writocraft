@@ -59,6 +59,10 @@ class TopBlogs(admin.ModelAdmin):
 class TopWriters(admin.ModelAdmin):
     list_display = ('user', 'rank','is_visible', 'thought','created_at')
 
+class Tags(admin.ModelAdmin):
+    list_display = ('tag', 'blog','user','created_at')
+
+admin.site.register(models.Tags, Tags)
 admin.site.register(models.TopWriters, TopWriters)
 admin.site.register(models.TopBlogs, TopBlogs)
 admin.site.register(models.HTMLData, HTMLData)
