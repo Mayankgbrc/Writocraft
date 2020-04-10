@@ -26,6 +26,7 @@ import requests
 from django.db.models import Count
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from django.core.mail import send_mail
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -1718,36 +1719,46 @@ def search(request):
     context = {}
     query = request.GET.get('q','')
     queries = query.split()
+    post_list = []
     for q in queries:
         posts = models.Blog.objects.filter(
             Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
         ).distinct().order_by('-views_num')[:10]
-        post_list = [each for each in posts]
+        [post_list.append(each) for each in posts if each not in post_list]
         post_tag = models.Tags.objects.filter(tag__icontains=q).distinct().order_by('-blog__views_num')[:10]
+        print(post_list)
         [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]
-        post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
-
-        for each in post_list:
-            temp = {}
-            temp['heading'] = each.heading
-            temp['url'] = each.url
-            new_data = mdtohtml(request, each.data)
-            cleanedhtml = cleanhtml(request, new_data)
-            temp['data'] = cleanedhtml
-            temp['fullname'] = each.user.first_name + " " + each.user.last_name
-            temp['blogid'] = each.id
-            temp['url'] = each.url
-            temp['readtime'] = each.read_time
-            temp['viewsnum'] = each.views_num
-            temp['username'] = each.user.username
-            temp['readtime'] = each.read_time
-            likes_count = models.Likes.objects.filter(blog = each).count()
-            comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
-            temp['likes_count'] = likes_count
-            temp['comments_count'] = comment_count
-            temp['img_src']  = findimg(request, new_data)
-            date_time = each.created_at
-            temp['date_time']  = date_time.strftime("%b %d, %Y")
-            queryset.append(temp)
+        print(post_list)
+        print("Yo ")
+    post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
+    for each in post_list:
+        temp = {}
+        temp['heading'] = each.heading
+        temp['url'] = each.url
+        new_data = mdtohtml(request, each.data)
+        cleanedhtml = cleanhtml(request, new_data)
+        temp['data'] = cleanedhtml
+        temp['fullname'] = each.user.first_name + " " + each.user.last_name
+        temp['blogid'] = each.id
+        temp['url'] = each.url
+        temp['readtime'] = each.read_time
+        temp['viewsnum'] = each.views_num
+        temp['username'] = each.user.username
+        temp['readtime'] = each.read_time
+        likes_count = models.Likes.objects.filter(blog = each).count()
+        comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
+        temp['likes_count'] = likes_count
+        temp['comments_count'] = comment_count
+        temp['img_src']  = findimg(request, new_data)
+        date_time = each.created_at
+        temp['date_time']  = date_time.strftime("%b %d, %Y")
+        queryset.append(temp)
     context['blogs'] = queryset
+    context['numbers'] = len(queryset)
     return render(request, "search.html", context)
+
+def mailer(request):
+    print("Starting")
+    mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
+    print("Done")
+    return HttpResponse("Done")

@@ -8,47 +8,55 @@
 
 <section class="section-padding grid-news" style="margin-top: 50px;">
     <div class="container">
-        <div class="row" style="font-family: raleway,sans-serif!important; font-size: 14px; line-height: 29px; font-weight: 500; color: #999;">
-        {% for each in blogs %}
-            <div class="col l4 m6 s12">
-                <article class="post-wrapper" style="border: 1px solid #eee;">
-                    <div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px;">
-                        <a href="#"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px;" alt=""></a>
-                    </div>
-                    <div class="blog-content">
-                        <header class="entry-header-wrapper">
-                            <div class="entry-header">
-                                <h2 class="entry-title"><a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a></h2>
-                                <div class="entry-meta">
-                                    <ul class="list-inline">
-                                        <li>
-                                            <i class="fa fa-user"></i> <a href="#">{{ each.fullname }}</a>
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-calendar-o"></i> <a href="#">{{ each.date_time }}</a>
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-clock-o"></i> <a href="#">{{ each.readtime }} min read</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </header>
-                        <div class="entry-content text-justify" style="height: 150px; max-height: 150px;">
-                            <p style="margin: 0 0 30px; line-height: 30px;">{{ each.data|truncatechars:200 }}</p>
+        {% if numbers %}
+            <div class="row" style="font-family: raleway,sans-serif!important; font-size: 14px; line-height: 29px; font-weight: 500; color: #999;">
+            {% for each in blogs %}
+                <div class="col l4 m6 s12">
+                    <article class="post-wrapper" style="border: 1px solid #eee;">
+                        <div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px;">
+                            <a href="#"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px;" alt=""></a>
                         </div>
-                        <footer class="entry-footer">
-                            <ul class="list-inline pull-left">
-                                <li><a href="#"><i class="fa fa-eye"></i> {{ each.viewsnum }}</a></li>
-                                <li><a href="#"><i class="fa fa-heart-o"></i> {{ each.likes_count }}</a></li>
-                                <li><a href="#"><i class="fa fa-comments"></i> {{ each.comments_count }}</a></li>
-                            </ul>
-                            <a class="readmore pull-right" href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">Read Full Post <i class="fa fa-long-arrow-right"></i></a>
-                        </footer>
-                    </div>
-                </article>
+                        <div class="blog-content">
+                            <header class="entry-header-wrapper">
+                                <div class="entry-header">
+                                    <h2 class="entry-title"><a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a></h2>
+                                    <div class="entry-meta">
+                                        <ul class="list-inline">
+                                            <li>
+                                                <i class="fa fa-user"></i> <a href="#">{{ each.fullname }}</a>
+                                            </li>
+                                            <li>
+                                                <i class="fa fa-calendar-o"></i> <a href="#">{{ each.date_time }}</a>
+                                            </li>
+                                            <li>
+                                                <i class="fa fa-clock-o"></i> <a href="#">{{ each.readtime }} min read</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </header>
+                            <div class="entry-content text-justify" style="height: 150px; max-height: 150px;">
+                                <p style="margin: 0 0 30px; line-height: 30px;">{{ each.data|truncatechars:200 }}</p>
+                            </div>
+                            <footer class="entry-footer">
+                                <ul class="list-inline pull-left">
+                                    <li><a href="#"><i class="fa fa-eye"></i> {{ each.viewsnum }}</a></li>
+                                    <li><a href="#"><i class="fa fa-heart-o"></i> {{ each.likes_count }}</a></li>
+                                    <li><a href="#"><i class="fa fa-comments"></i> {{ each.comments_count }}</a></li>
+                                </ul>
+                                <a class="readmore pull-right" href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">Read Full Post <i class="fa fa-long-arrow-right"></i></a>
+                            </footer>
+                        </div>
+                    </article>
+                </div>
+            {% endfor %}
             </div>
-        {% endfor %}
-        </div>
+        {% else %}
+            <div class="row">
+                <div class="col m8 offset-m2 s12">
+                    <img src="/static/images/uploads/SORRY.jpg" width="100%">
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>
