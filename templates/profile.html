@@ -1,4 +1,4 @@
-
+{% include "navbar.html" %}
 <!DOCTYPE html>
 <!--[if IE 7]><html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
 <!--[if IE 8]><html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
@@ -8,12 +8,13 @@
         <meta charset="utf-8">
         
         <!-- TITLE OF SITE-->
-        <title> {{ fullname }} </title>
+        <title> {{ fullname }} | WritoCraft </title>
         
         <!-- META TAG -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="CV, Portfolio, Resume">
-        <meta name="author" content="Md. Siful Islam, Desiver Web">
+        <meta name="description" content=" Profile of {{ fullname }}">
+        <meta name="author" content="{{ fullname }}">
+        <meta name="keywords" content="{{ keywords }}">
         
         <!-- FAVICON -->
         <link rel="icon" href="assets/images/favicon.ico">
@@ -75,6 +76,14 @@
                 color: #222f3e;
                 margin-right: 2px;
             }
+            .sidebar .info{
+                border-bottom: 1px solid #111;
+            }
+            @media only screen and (min-width: 993px){
+                .container {
+                    width: 80%;
+                }
+            }
         </style>
     </head>
     <body>
@@ -86,7 +95,7 @@
                            SIDEBAR   
             ==========================================-->
                 <!-- Start Sidebar -->
-                <aside class="col l4 m12 s12 sidebar z-depth-1" id="sidebar">
+                <aside class="col l4 m12 s12 sidebar z-depth-1" id="sidebar" style="background-color: #2f3640;">
                     <!--  Sidebar row -->
                     <div class="row">                      
                         <!--  top section   -->
@@ -95,17 +104,18 @@
                                       IMAGE   
                             ==========================-->
                             <div class="feature-img">
-                                <a href="index.html"><img src="{{ image_src }}" class="responsive-img" alt=""></a> 
-                            </div>           
+                                <img src="/media/profile/org/{{ image_src }}" class="responsive-img" alt="">
+                            </div>                            
                          
                             <!-- ========================================
                                        NAME AND TAGLINE
                             ==========================================-->
-                            <div class="title col s12 m12 l9 right  wow fadeIn" data-wow-delay="0.1s">   
-                                <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
-                                <span style="text-shadow: 2px 1px 2px #000 !important;">UI & UX Expert</span>  <!-- tagline -->
-                            </div>                         
+                                               
                         </div>
+                        <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
+                            <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
+                            <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
+                        </div>  
                          <!-- sidebar info -->
                         <div class="col l12 m12 s12 sort-info sidebar-item">
                             <div class="row">                               
@@ -120,49 +130,13 @@
                                 </div>
                             </div>         
                         </div>
-                        <!-- MOBILE NUMBER -->
-                        <div class="col l12 m12 s12  mobile sidebar-item">
-                            <div class="row">                                
-                                <div class="col m12 s12 l3 icon">
-                                    <i class="fa fa-phone"></i> <!-- icon -->
-                                </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a2" data-wow-delay="0.2s" >
-                                    <div class="section-item-details">
-                                        <div class="personal">
-                                            <h4><a href="tel:555-555-5555">(111)-333-4444</a></h4> <!-- Number -->             
-                                            <span>mobile</span> 
-                                        </div>
-                                        <div class="work">
-                                            <h4><a href="tel:555-555-5555">(121)-323-3494</a></h4> <!-- Number -->
-                                            <span>work</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>             
-                        </div>
-                        <!--  EMAIL -->
-                        <div class="col l12 m12 s12  email sidebar-item ">
-                            <div class="row">                                
-                                <div class="col m12 s12 l3 icon">
-                                    <i class="fa fa-envelope"></i> <!-- icon -->
-                                </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a3" data-wow-delay="0.3s">
-                                    <div class="section-item-details">
-                                        <div class="personal">                                    
-                                            <h4><a href="mailto:{{ email }}">{{ email }}</a></h4> <!-- Email -->
-                                            <span>personal</span> 
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>          
-                        </div>
                         <!-- ADDRESS  -->
                         <div class="col l12 m12 s12  address sidebar-item ">
-                            <div class="row">                                
+                            <div class="row" style="margin-bottom: 0px;">                                
                                 <div class="col l3 m12  s12 icon">
                                     <i class="fa fa-home"></i> <!-- icon -->
                                 </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s">
+                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
                                             <h4>24 Golden Tower <span>(2nd floor)</span><br>

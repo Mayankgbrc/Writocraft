@@ -85,6 +85,11 @@
             .sidebar .info{
                 border-bottom: 1px solid #111;
             }
+            @media only screen and (min-width: 993px){
+                .container {
+                    width: 80%;
+                }
+            }
         </style>
         
     </head>
@@ -116,7 +121,7 @@
                         </div>
                         <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
                             <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
-                            <span style="text-shadow: 2px 1px 2px #000 !important;">UI & UX Expert</span>  <!-- tagline -->
+                            <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
                         </div>      
                          <!-- sidebar info -->
                         <div class="col l12 m12 s12 sort-info sidebar-item">
@@ -165,6 +170,10 @@
                                     </div>
                                 </div>
                             </div>            
+                        </div>
+                        <!---->
+                        <div class="center">
+                            <button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button>
                         </div>
                     </div>   <!-- end row -->
                 </aside><!-- end sidebar -->

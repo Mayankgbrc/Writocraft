@@ -44,6 +44,29 @@ def urlshort(request, link):
             generate = 1
             return url
 
+def currentwork(request, username):
+    work_user = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
+    if work_user.count():
+        work_curr = work_user[0]
+        if work_curr.present == True:
+            if work_curr.role:
+                temp = work_curr.role + " - " + work_curr.company
+        else:
+            temp = work_curr.role
+    else:
+        education_user = models.Education.objects.filter(user__username = username).order_by('-to_year')
+        if education_user.count():
+            education_curr = education_user[0]
+            if education_curr.degree and education_curr.school:
+                temp = education_curr.degree + " at " + education_curr.school
+            elif education_curr.degree:
+                temp = education_curr.degree 
+            elif education_curr.school:
+                temp = education_curr.school 
+        else:
+            temp = "Writer"
+    return temp
+
 def index(request):
     Topblogs = models.TopBlogs.objects.filter(is_visible=True)
     print(Topblogs)
@@ -81,32 +104,14 @@ def index(request):
         temp['username'] = each.user.username
         temp['totalblogs'] = models.Blog.objects.filter(user=each.user).count()
         profile = models.Profile.objects.filter(user = each.user)
+        temp['profilepic'] = "default.jpg"
+        temp['description'] = ""
         if profile.count():
-            temp['profilepic'] = profile[0].image_src
+            if profile[0].image_src:
+                temp['profilepic'] = profile[0].image_src
             temp['description'] = profile[0].description
-        else:
-            temp['profilepic'] = "default.jpg"
-            temp['description'] = ""
-        work_user = models.Work.objects.filter(user__username = each.user.username).order_by('-present','-from_year')
-        if work_user.count():
-            work_curr = work_user[0]
-            if work_curr.present == True:
-                if work_curr.role:
-                    temp['currentwork'] = work_curr.role + " - " + work_curr.company
-            else:
-                temp['currentwork'] = work_curr.role
-        else:
-            education_user = models.Education.objects.filter(user__username = each.user.username).order_by('-to_year')
-            if education_user.count():
-                education_curr = education_user[0]
-                if education_curr.degree and education_curr.school:
-                    temp['currentwork'] = education_curr.degree + " at " + education_curr.school
-                elif education_curr.degree:
-                    temp['currentwork'] = education_curr.degree 
-                elif education_curr.school:
-                    temp['currentwork'] = education_curr.school 
-            else:
-                temp['currentwork'] = "Writer"
+        
+        temp['currentwork'] = currentwork(request, each.user.username)
                     
         
         writer_list.append(temp)
@@ -650,6 +655,11 @@ def commentload(request):
                 comment['comment'] = each.comment
                 comment['commentname'] = each.user.first_name + " " + each.user.last_name
                 comment['id'] = each.id
+                profile = models.Profile.objects.filter(user = each.user)
+                comment['image_src'] = 'default.jpg'
+                if profile.count():
+                    if profile[0].image_src:
+                        comment['image_src'] = profile[0].image_src
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 curr_time1 = each.created_at
                 f_str1 = curr_time1.strftime(TIME_FORMAT)
@@ -668,7 +678,11 @@ def commentload(request):
                         commentthread['thread'] = per.commentthread
                         commentthread['threaduserurl'] = urllib.parse.quote_plus(per.user.username) 
                         commentthread['threadname'] = per.user.first_name + " " + per.user.last_name
-                        
+                        profile = models.Profile.objects.filter(user = per.user)
+                        commentthread['image_src'] = 'default.jpg'
+                        if profile.count():
+                            if profile[0].image_src:
+                                commentthread['image_src'] = profile[0].image_src
                         commentthread['id'] = per.id
                         curr_time2 = per.created_at
                         
@@ -813,6 +827,11 @@ def commentpush(request):
                 context['commentid'] = commentid
                 context['comment'] = commenttext
                 context['id'] = comment.id
+                profile = models.Profile.objects.filter(user = request.user)
+                context['image_src'] = 'default.jpg'
+                if profile.count():
+                    if profile[0].image_src:
+                        context['image_src'] = profile[0].image_src
                 curr_time2 = comment.created_at
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 f_str2 = curr_time2.strftime(TIME_FORMAT)
@@ -827,6 +846,11 @@ def commentpush(request):
                         comment = models.Comment.objects.get(blog = blogid, id=commentid)
                         commentthread = models.Commentthread(blog=blogs, user = request.user, comment = comment, commentthread = commenttext)
                         commentthread.save()
+                        profile = models.Profile.objects.filter(user = request.user)
+                        context['image_src'] = 'default.jpg'
+                        if profile.count():
+                            if profile[0].image_src:
+                                context['image_src'] = profile[0].image_src
                         context['name'] = request.user.first_name + " " + request.user.last_name
                         context['user'] = request.user.username
                         context['commentid'] = commentid
@@ -863,7 +887,7 @@ def photo_list(request):
                 except:
                     profile_obj = models.Profile(user = user_obj, image_src = obj)
                 profile_obj.save()
-                return redirect('/myblogs')
+                return redirect('/myprofile')
     else:
         form = PhotoForm()
     return render(request, 'photo_list.html', {'form': form, 'photos': photos})
@@ -1389,12 +1413,11 @@ def profile(request, username):
         if User.objects.filter(username=username).count() == 1:
             userdata = User.objects.get(username=username)
             profile = models.Profile.objects.filter(user = userdata)
-            context['image_src'] = '/static/images/pic/default.jpg'
+            context['image_src'] = 'default.jpg'
             if profile.count():
                 if profile[0].image_src:
-                    location = '/static/images/pic/' + str(profile[0].image_src)
-                    checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
-                    context['image_src'] = location
+                    context['image_src'] = profile[0].image_src
+                
             followers = models.Follower.objects.filter(touser__username=username).count()
             if loggined:
                 followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
@@ -1492,13 +1515,15 @@ def profile(request, username):
                         elif checkstorage2:
                             blog_content['src'] = location2
                         else:
-                            blog_content['src'] = "/static/images/parallax1.jpg"
+                            blog_content['src'] = "/static/images/blogimg/default.jpg"
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
                     else:
                         context['status'] = 120
                 context['blogs'] = blog_list
+            context['keywords'] = userdata.first_name + "," + userdata.last_name + ",writocraft,user"
+            context['currentwork'] = currentwork(request, username)
             context['total_views'] = human_format(request, total_views)
         else:
             context['status'] = 110
@@ -1516,13 +1541,15 @@ def myprofile(request):
             profile = models.Profile.objects.filter(user = userdata)
             context['image_src'] = 'default.jpg'
             if profile.count():
-                context['image_src'] = profile[0].image_src
+                if profile[0].image_src:
+                    context['image_src'] = profile[0].image_src
             followers = models.Follower.objects.filter(touser__username=username).count()
             followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
             context['lname'] = userdata.last_name
+            context['currentwork'] = currentwork(request, request.user.username)
             TIME_FORMAT = "%b %d, %Y"
             curr_time = userdata.date_joined
             f_str = curr_time.strftime(TIME_FORMAT)
@@ -1580,10 +1607,10 @@ def myprofile(request):
             context['interest_list'] = interest_list
 
 
-            blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
+            blog_count = models.Blog.objects.filter(user__username = username, is_draft=False).count()
             context['blog_num'] = blog_count
             if blog_count > 0:
-                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
+                blog_all = models.Blog.objects.filter(user__username = username, is_draft=False).order_by('-views_num','-id')
                 blog_list = []
                 blog_num = len(blog_all)
                 for each in blog_all:
@@ -1604,8 +1631,12 @@ def myprofile(request):
                         blog_content['updated_at'] = each.updated_at
                         location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
                         checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
+                        location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.png"
+                        checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
                         if checkstorage:
                             blog_content['src'] = location
+                        elif checkstorage2:
+                            blog_content['src'] = location2
                         else:
                             blog_content['src'] = "/static/images/blogimg/default.jpg"
                         blog_list.append(blog_content)
