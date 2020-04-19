@@ -286,10 +286,11 @@
                                         <div class="col s12 m6">
                                             <div class="card">
                                                 <div class="card-image">
-                                                    <img src="{{ each.src }}" style="object-position: center; max-width:100%; max-height:300px;" >
+                                                    <img src="{{ each.img_src }}" style="object-position: center; max-width:100%; max-height:300px;" >
                                                 </div>
                                                 <div class="card-content" style="padding: 15px 24px 5px 24px;">
                                                     <span class="card-title">{{ each.heading|truncatechars:40 }}</span>
+                                                    <p>{{ each.cleaned_data|truncatechars:90 }}</p>
                                                 </div>
                                                 <div class="card-action">
                                                     <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">Read Now</a>

@@ -244,16 +244,15 @@
                                         <div class="col s12 m6">
                                             <div class="card">
                                                 <div class="card-image">
-                                                    <img src="{{ each.src }}" style="object-position: center; max-width:100%; max-height:300px;" >
+                                                    <img src="{{ each.img_src }}" style="object-position: center; max-width:100%; max-height:300px;" >
                                                 </div>
                                                 <div class="card-content">
                                                     <span class="card-title">{{ each.heading|truncatechars:40 }}</span>
-                                                    <p>I am a very simple card. I am good at containing small bits of information.
-                                                    I am convenient because I require little markup to use effectively.</p>
+                                                    <p>{{ each.cleaned_data|truncatechars:90 }}</p>
                                                 </div>
                                                 <div class="card-action">
                                                     <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View Now</a>
-                                                    <a href='#'>This is a link</a>
+                                                    
                                                 </div>
                                             </div>
                                         </div>

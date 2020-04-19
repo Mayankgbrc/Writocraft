@@ -569,12 +569,15 @@ def myblogs(request):
                     blog_content['created'] = f_str
                     blog_content['updated'] = update_str
                     blog_content['is_anonymous'] = each.is_anonymous
+                    '''
                     location = '/static/images/blogimg/'+request.user.username+"_"+ str(each.id) + "_1.jpg"
                     checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
                     if checkstorage:
                         blog_content['src'] = location
                     else:
                         blog_content['src'] = "/static/images/parallax1.jpg"
+                    '''
+                    findimg(request, new_data)
                     blog_content['timestamp'] = each.unix_time
                     blog_list.append(blog_content)
                     #context['notification'] = notification(request)
@@ -1506,16 +1509,29 @@ def profile(request, username):
                         f_str = curr_time.strftime(TIME_FORMAT)
                         blog_content['date'] = f_str
                         blog_content['updated_at'] = each.updated_at
+
+                        new_data = mdtohtml(request, each.data)
+                        cleanedhtml = cleanhtml(request, new_data)
+                        blog_content['cleaned_data'] = cleanedhtml
+                        blog_content['img_src']  = findimg(request, new_data)
+                        '''
                         location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
                         checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
-                        location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.png"
-                        checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
                         if checkstorage:
                             blog_content['src'] = location
-                        elif checkstorage2:
-                            blog_content['src'] = location2
                         else:
-                            blog_content['src'] = "/static/images/blogimg/default.jpg"
+                            location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_2.jpg"
+                            checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
+                            if checkstorage2:
+                                blog_content['src'] = location2
+                            else:
+                                location3 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_3.jpg"
+                                checkstorage3 =  django.core.files.storage.default_storage.exists("blog"+location3)
+                                if checkstorage3:
+                                    blog_content['src'] = location3
+                                else:
+                                    blog_content['src'] = "/static/images/blogimg/default.jpg"
+                        '''
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
@@ -1629,16 +1645,13 @@ def myprofile(request):
                         f_str = curr_time.strftime(TIME_FORMAT)
                         blog_content['date'] = f_str
                         blog_content['updated_at'] = each.updated_at
-                        location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
-                        checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
-                        location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.png"
-                        checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
-                        if checkstorage:
-                            blog_content['src'] = location
-                        elif checkstorage2:
-                            blog_content['src'] = location2
-                        else:
-                            blog_content['src'] = "/static/images/blogimg/default.jpg"
+                        
+
+                        new_data = mdtohtml(request, each.data)
+                        cleanedhtml = cleanhtml(request, new_data)
+                        blog_content['cleaned_data'] = cleanedhtml
+                        blog_content['img_src']  = findimg(request, new_data)
+                        
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
@@ -1769,6 +1782,7 @@ def search(request):
         new_data = mdtohtml(request, each.data)
         cleanedhtml = cleanhtml(request, new_data)
         temp['data'] = cleanedhtml
+        temp['img_src']  = findimg(request, new_data)
         temp['fullname'] = each.user.first_name + " " + each.user.last_name
         temp['blogid'] = each.id
         temp['url'] = each.url
