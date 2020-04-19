@@ -131,7 +131,7 @@
 				<div class="center">
 					{% for each in tag_list %}
 						<a href="/search/?q={{each.tag}}">
-							<span class="tag" style="background-color: {{each.color}};">#{{each.tag}}</span>
+							<span class="tag" style="background-color: {{each.color}}; white-space:nowrap;">#{{each.tag}}</span>
 						</a>
 					{% endfor %}
 				</div>
@@ -190,8 +190,8 @@
 					<div>
 					<div class="">
 						<article class="post-wrapper">
-							<div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px;">
-								<a href="#"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px;" alt=""></a>
+							<div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px; background-color: #eee; display: table-cell;">
+								<a href="#"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px; vertical-align: middle;" alt=""></a>
 							</div>
 							<div class="blog-content">
 								<header class="entry-header-wrapper">

@@ -1645,13 +1645,10 @@ def myprofile(request):
                         f_str = curr_time.strftime(TIME_FORMAT)
                         blog_content['date'] = f_str
                         blog_content['updated_at'] = each.updated_at
-                        
-
                         new_data = mdtohtml(request, each.data)
                         cleanedhtml = cleanhtml(request, new_data)
                         blog_content['cleaned_data'] = cleanedhtml
                         blog_content['img_src']  = findimg(request, new_data)
-                        
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
