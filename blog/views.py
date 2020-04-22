@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 import django.core
 from io import BytesIO
 from . import models
@@ -26,7 +29,7 @@ import requests
 from django.db.models import Count
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -1389,17 +1392,17 @@ def fetchchart(request):
 def team(requests):
     return render(requests, 'team.html')
 
-def sendmail(request):
-    message = Mail(
-    from_email='from_email@example.com',
-    to_emails='mayankgbrc@gmail.com',
-    subject='Sending with Twilio SendGrid is Fun',
-    html_content='<strong>and easy to do anywhere, even with Python</strong>')
+def mailsend(request):
+    
+    from_email='hello@writocraft.com'
+    to_emails=['abhishekpaul338@gmail.com']
+    subject='Welcome to WritoCraft'
+    html_content='Hi Paul, wishing you a warm welcome to Writocraft Family.'
     try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-    except Exception as e:
-        print(e.message)
+        send_mail(subject, html_content, from_email, to_emails, fail_silently =True)
+    except BadHeaderError:
+        return HttpResponse("Error")
+    return HttpResponse("Working")
 
 def getmonth(request,digit):
     month_dict = {"1":"Jan","2":"Feb","3":"Mar","4":"Apr","5":"May","6":"June","7":"July","8":"Aug","9":"Sept","10":"Oct","11":"Nov","12":"Dec"}
@@ -1804,3 +1807,19 @@ def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
     print("Done")
     return HttpResponse("Done")
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'accounts/change_password.html', {
+        'form': form
+    })
