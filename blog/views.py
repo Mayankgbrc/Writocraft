@@ -27,7 +27,6 @@ import re
 import base64
 import requests
 from django.db.models import Count
-from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.core.mail import send_mail, BadHeaderError
 
@@ -251,6 +250,7 @@ def writeblog(request):
             if token == "save":
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
+                print(data)
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
                 tags = json.loads(request.POST.get('tags',''))
