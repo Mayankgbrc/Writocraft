@@ -19,9 +19,6 @@
         </style>
     </head>
     <body>
-        <div class="progress">
-            <div class="determinate" id="progressbar" style="width: 0%"></div>
-        </div>
         <div class="row">
             <div class="">
                 <div class="col m8 offset-m2 s12" >
@@ -44,6 +41,11 @@
                         <input class="custom-class" name="tags">
                     </div>
                     <br>
+
+                    <div class="progress">
+                        <div class="determinate" id="progressbar" style="width: 0%"></div>
+                    </div>
+
                     <label>
                         <input type="checkbox"  id="post_type" {{anoaccept}} />
                         <span>Post Anonymously</span>
@@ -138,6 +140,7 @@ $(document).ready(function(){
 		{
 			anoaccept = "True";
 		}
+        heading = $("#heading").val();
         $.ajax({
             xhr : function() {
                 var xhr = new window.XMLHttpRequest();
@@ -152,7 +155,7 @@ $(document).ready(function(){
             type: 'POST',
             url: '/writeblog/',
             data: {
-                heading: $("#heading").val(),
+                heading: heading,
                 id: "{{id}}",
                 data: quillHtml,
                 token: token,
@@ -164,7 +167,8 @@ $(document).ready(function(){
                 var output = result['status'];
                 if (output == 200){
                     $("#success").text(result['success']);
-                    $("#success").show().delay(5000).fadeOut(3000);;
+                    $("#success").show().delay(5000).fadeOut(3000);
+                    window.location.href = '/@{{username}}/'+replaceAll(heading," ", "-");;
                 }
                 else{
                     console.log(result['error']);
@@ -175,6 +179,15 @@ $(document).ready(function(){
         })
     });
 });
+
+function escapeRegExp(string){
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+ 
+/* Define functin to find and replace specified term with replacement string */
+function replaceAll(str, term, replacement) {
+  return str.replace(new RegExp(escapeRegExp(term), 'g'), replacement);
+}
     
 </script>
 </html>

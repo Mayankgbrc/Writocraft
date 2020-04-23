@@ -29,6 +29,7 @@ import requests
 from django.db.models import Count
 from sendgrid.helpers.mail import Mail
 from django.core.mail import send_mail, BadHeaderError
+import string
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -188,6 +189,7 @@ def createblog(request):
         blog = models.Blog(user = request.user, unix_time=int(time.time()))
         blog.save()
         context['id'] = blog.id
+        context['username'] = request.user.username
         context['status'] = 200
         context['tag_list'] = []
         return render(request, "writeblog.html", context)
@@ -195,7 +197,6 @@ def createblog(request):
 def convertimage(request, data, id, unix_time, is_anonymous):
     x = re.compile("<img[^>]+src=[\"'](.*?)[\"']>")
     links = x.finditer(data)
-    count = 1
     for i in links:
         imgdata = i.group(1)
         formats_dicts = {'data:image/jpeg;base64,':".jpg", 'data:image/png;base64,':".png", 'data:image/webp;base64,':".webp", "data:image/gif;base64,":".gif"}
@@ -203,11 +204,11 @@ def convertimage(request, data, id, unix_time, is_anonymous):
         for k in formats_dicts.keys():
             if imgdata.startswith(k):
                 formatedimgdata = re.sub(k, '', imgdata)
+                count = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(10))
                 if is_anonymous:
                     name = str(unix_time) + "_" + str(id) + "_" + str(count) + formats_dicts[k]
                 else:
                     name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
-                count += 1
 
                 location = "/static/images/blogimg/"
                 image = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
@@ -472,13 +473,19 @@ def followers(request):
 
 def blogs(request, username, title):
     context = {}
+    profile = models.Profile.objects.filter(user__username = username)
+    context['image_src'] = 'default.jpg'
+    if profile.count():
+        if profile[0].image_src:
+            context['image_src'] = profile[0].image_src
     if models.Blog.objects.filter(user__username = username, url=title, is_anonymous = False).exists():
         if models.Blog.objects.filter(user__username = username, url=title, is_anonymous = False).count() == 1:
             blog = models.Blog.objects.get(user__username = username, url=title, is_anonymous = False)
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img style='max-width:100%; max-height: 900px;'")
+            new_data = new_data.replace("<img", "<img style='max-width:100%; max-height: 900px;'")
+            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img")
             context['data'] = new_data
             context['title'] = blog.heading + " | " + username
             context['author'] = username
@@ -521,7 +528,8 @@ def anoblog(request, timestamp, url):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img style='max-width:100%; max-height: 900px;'")
+            new_data = new_data.replace("<img", "<img style='max-width:100%; max-height: 900px;'")
+            new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img")
             context['data'] = new_data
             context['title'] = blog.heading + " | Anonymous"
             context['blogid'] = blog.id
@@ -600,6 +608,7 @@ def edit(request, url):
             new_data = mdtohtml(request, blog.data)
             context['data'] = new_data
             context['id'] = blog.id
+            context['username'] = request.user.username
             tags = models.Tags.objects.filter(user = request.user, blog = blog)
             tag_list = [i.tag for i in tags]
             context['tag_list'] = tag_list
