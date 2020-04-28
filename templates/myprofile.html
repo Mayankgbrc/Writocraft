@@ -124,6 +124,7 @@
                             <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
                         </div>      
                          <!-- sidebar info -->
+                        {% if description != '' or description != None %}
                         <div class="col l12 m12 s12 sort-info sidebar-item">
                             
                             <div class="row">                               
@@ -132,29 +133,14 @@
                                 </div>                                
                                 <div class="col m12 s12 l9 info wow fadeIn a1" data-wow-delay="0.1s" > <!-- text -->
                                     <div class="section-item-details">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                                        dolore magna aliqua . Ld do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+                                        <p>{{description}}</p>
                                     </div>             
                                 </div>
-                            </div>         
+                            </div>       
                         </div>
-                        <!--  EMAIL -->
-                        <div class="col l12 m12 s12  email sidebar-item ">
-                            <div class="row">                                
-                                <div class="col m12 s12 l3 icon">
-                                    <i class="fa fa-envelope"></i> <!-- icon -->
-                                </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a3" data-wow-delay="0.3s">
-                                    <div class="section-item-details">
-                                        <div class="personal">                                    
-                                            <h4><a href="mailto:{{ email }}">{{ email }}</a></h4> <!-- Email -->
-                                            <span>personal</span> 
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>          
-                        </div>
+                        {% endif %}  
                         <!-- ADDRESS  -->
+                        {% if country != '' or country != None %}
                         <div class="col l12 m12 s12  address sidebar-item ">
                             <div class="row" style="margin-bottom: 0px;">                                
                                 <div class="col l3 m12  s12 icon">
@@ -163,17 +149,16 @@
                                 <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
-                                            <h4>24 Golden Tower <span>(2nd floor)</span><br>
-                                            Amborkhana, Sylhet.<br>
-                                            <span>SYL-3RF87W</span></h4> 
+                                            <h4 style="line-height: 28pt;">Country: {{country}}</h4> 
                                         </div>                         
                                     </div>
                                 </div>
                             </div>            
                         </div>
+                        {% endif %}
                         <!---->
                         <div class="center">
-                            <button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button>
+                            <a href="/editprofile"><button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button></a>
                         </div>
                     </div>   <!-- end row -->
                 </aside><!-- end sidebar -->
@@ -278,7 +263,8 @@
                                 <i class="fa fa-th-large"></i>
                             </div>
                             <div class="interests col s12 m12 l10">
-                                <h2>BLOGS </h2>
+                                <h2>BLOGS <a href="/createblog" style="color: blue;"><button class="waves-effect btn">+ Add Blogs</button></a></h2>
+                                
                             </div>
                             <div class="interests col s12 m12 l12 wow fadeIn" data-wow-delay="0.1s"> 
                                 <div class="row">
@@ -335,39 +321,6 @@
         <!-- Style switter js -->
         <script src="/static/js/styleswitcher.js"></script>
         {% csrf_token %}
-        <div class="cv-style-switch" id="switch-style">
-            <a id="toggle-switcher" class="switch-button icon_tools"> <i class="fa fa-cogs"></i></a>
-            <div class="switched-options">                
-                <div class="config-title">
-                    Colors :
-                </div>
-                <ul class="styles">
-                    <li><a href="index.html#" onclick="setActiveStyleSheet('red'); return false;" title="Red">
-                    <div class="red"></div>
-                    </a></li>                    
-                    
-                    <li><a href="index.html#" onclick="setActiveStyleSheet('purple'); return false;" title="purple">
-                    <div class="purple"></div>
-                    </a></li>
-
-                    <li><a href="index.html#" onclick="setActiveStyleSheet('orange'); return false;" title="orange">
-                    <div class="orange"></div>
-                    </a></li>
-                    
-                    <li><a href="index.html#" onclick="setActiveStyleSheet('green'); return false;" title="green">
-                    <div class="green"></div>
-                    </a></li>
-                    
-                    <li><a href="index.html#" onclick="setActiveStyleSheet('lime'); return false;" title="lime">
-                    <div class="lime"></div>
-                    </a></li>
-
-                    <li class="p">
-                        ( NOTE: Pre Defined Colors. You can change colors very easily )
-                    </li>
-                </ul>
-            </div>
-        </div>
 
     </body>
     <script>

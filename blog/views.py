@@ -185,10 +185,7 @@ def createblog(request):
         context['error'] = "Please Login"
         return render(request, "login.html", context)
     else:
-
-        blog = models.Blog(user = request.user, unix_time=int(time.time()))
-        blog.save()
-        context['id'] = blog.id
+        context['id'] = ""
         context['username'] = request.user.username
         context['status'] = 200
         context['tag_list'] = []
@@ -262,7 +259,7 @@ def writeblog(request):
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 heading = heading.strip()
                 context['anoaccept'] = ""
-                
+                print("1")
                 if anoaccept == "True":
                     is_anonymous = True
                     context['anoaccept'] = "checked"
@@ -272,16 +269,58 @@ def writeblog(request):
                     context['error'] = "Some Errors"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
+                print("2")
                 if len(heading) < 10:
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
+                print("3")
+                blog_check_existing =  models.Blog.objects.filter(user = request.user, heading = heading)
+                if blog_check_existing.count():
+                    if id != str(blog_check_existing[0].id):
+                        context['error'] = "Blog with same account already exist in your account"
+                        context['status'] = 110
+                        return HttpResponse(json.dumps(context), content_type="application/json")
+                print("4")
                 total_word = data.count(" ")
                 if total_word < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if models.Blog.objects.filter(user = request.user, id = id).exists():
+                print("5")
+                if id == "":
+                    print("7")
+                    blog = models.Blog(user = request.user, unix_time=int(time.time()))
+                    blog.save()
+                    id = blog.id
+                    data = convertimage(request, data, id, blog.unix_time, is_anonymous)
+                    data = data.strip()
+                    blog.read_time = int(total_word/150) + 1
+                    blog.heading = heading
+                    blog.url = heading.replace(' ', '-')
+                    new_data = htmltomd(request,data)
+                    blog.data = new_data
+                    blog.is_anonymous = is_anonymous
+                    blog.is_draft = False
+                    blog.save()
+                    print("8")
+                    tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
+                    if tagdb.exists():
+                        tagdb.delete()
+                    if len(taglist):
+                        objs = [
+                            models.Tags(
+                                tag = each,
+                                user = request.user,
+                                blog = blog
+                            )
+                            for each in taglist
+                        ]
+                        models.Tags.objects.bulk_create(objs)
+                    context['success'] = "Changes Saved Successfully"
+                    context['status'] = 200
+                elif models.Blog.objects.filter(user = request.user, id = id).exists():
+                    print("6")
                     blog = models.Blog.objects.get(user = request.user, id =id)
                     data = convertimage(request, data, id, blog.unix_time, is_anonymous)
                     data = data.strip()
@@ -309,8 +348,8 @@ def writeblog(request):
                     context['success'] = "Changes Saved Successfully"
                     context['status'] = 200
                 else: 
-                    context['status'] = 110
-                    context['error'] = "Some Error Occured"
+                    context['error'] = "Changes Saved Successfully"
+                    context['status'] = 200
                     
                 return HttpResponse(json.dumps(context), content_type="application/json")
             
@@ -1404,9 +1443,9 @@ def team(requests):
 def mailsend(request):
     
     from_email='hello@writocraft.com'
-    to_emails=['abhishekpaul338@gmail.com']
+    to_emails=['mayankgbrc@gmail.com']
     subject='Welcome to WritoCraft'
-    html_content='Hi Paul, wishing you a warm welcome to Writocraft Family.'
+    html_content='Hi Mayank, wishing you a warm welcome to Writocraft Family.'
     try:
         send_mail(subject, html_content, from_email, to_emails, fail_silently =True)
     except BadHeaderError:
@@ -1553,6 +1592,12 @@ def profile(request, username):
             context['keywords'] = userdata.first_name + "," + userdata.last_name + ",writocraft,user"
             context['currentwork'] = currentwork(request, username)
             context['total_views'] = human_format(request, total_views)
+
+            profile = models.Profile.objects.filter(user = userdata)
+            if profile.count():
+                context['country'] = profile[0].country
+                context['description'] = profile[0].description
+            print(request.user)
         else:
             context['status'] = 110
     else:
@@ -1667,6 +1712,10 @@ def myprofile(request):
                     else:
                         context['status'] = 120
                 context['blogs'] = blog_list
+            profile = models.Profile.objects.filter(user = userdata)
+            if profile.count():
+                context['country'] = profile[0].country
+                context['description'] = profile[0].description
             context['total_views'] = human_format(request, total_views)
         else:
             context['status'] = 110
@@ -1816,6 +1865,66 @@ def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
     print("Done")
     return HttpResponse("Done")
+
+def editprofile(request):
+    if not request.user.is_anonymous:
+        context = {}
+        user_obj = User.objects.get(username = request.user)
+        if request.method == "POST":
+            firstname = request.POST.get('firstname')
+            lastname = request.POST.get('lastname')
+            country = request.POST.get('country')
+            bdate = request.POST.get('bdate')
+            description = request.POST.get('description')
+
+            user_obj.first_name = firstname
+            user_obj.last_name = lastname
+            user_obj.save()
+
+            obj, created = models.Profile.objects.get_or_create(user  = user_obj)
+            obj.country = country
+            if len(bdate):
+                try:
+                    date_obj = datetime.datetime.strptime(bdate, "%d %b %Y")
+                    print(date_obj)
+                    obj.dob = date_obj
+                except:
+                    pass
+            obj.description = description
+            obj.save()
+            context['status'] = 200
+            print(context)
+            return HttpResponse(json.dumps(context), content_type="application/json")
+        else:
+            obj, created = models.Profile.objects.get_or_create(user  = user_obj)
+            context['first_name'] = user_obj.first_name
+            if user_obj.last_name == None:
+                context['last_name'] = ""
+            else:
+                context['last_name'] = user_obj.last_name
+            if obj.description == None:
+                context['description'] = ""
+            else:
+                context['description'] = obj.description
+
+            if obj.country == None:
+                context['country'] = ""
+            else:
+                context['country'] = obj.country
+    
+            if obj.country == None:
+                context['phone'] = ""
+            else:
+                context['phone'] = obj.phone       
+            
+            if obj.dob:
+                dob = obj.dob
+                context['dob']  = dob.strftime("%d %b %Y")
+            else:
+                context['dob']  = ""
+            print(context)
+            return render(request, 'editprofile.html', context)
+    return HttpResponse("Error")
 
 def change_password(request):
     if request.method == 'POST':

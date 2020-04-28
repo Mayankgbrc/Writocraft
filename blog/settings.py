@@ -165,6 +165,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
+LOGIN_URL = '/login/'
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_API_KEY = "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"
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False

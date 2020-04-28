@@ -168,11 +168,13 @@ $(document).ready(function(){
                 if (output == 200){
                     $("#success").text(result['success']);
                     $("#success").show().delay(5000).fadeOut(3000);
-                    window.location.href = '/@{{username}}/'+replaceAll(heading," ", "-");;
+                    heading_ = replaceAll(heading," ", "-");
+                    heading_url = encodeURI(heading_);
+                    window.location.href = '/edit/'+heading_url;
                 }
                 else{
                     console.log(result['error']);
-                    $("#error").text(result['error']);
+                    $("#error").text("Error "+result['error']);
                     $("#error").show().delay(5000).fadeOut(3000);;
                 }
             }
