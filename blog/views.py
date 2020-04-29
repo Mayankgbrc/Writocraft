@@ -72,7 +72,6 @@ def currentwork(request, username):
 
 def index(request):
     Topblogs = models.TopBlogs.objects.filter(is_visible=True)
-    print(Topblogs)
     context = {}
     blog_list = []
     for each in Topblogs:
@@ -206,21 +205,19 @@ def convertimage(request, data, id, unix_time, is_anonymous):
                     name = str(unix_time) + "_" + str(id) + "_" + str(count) + formats_dicts[k]
                 else:
                     name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
-
-                location = "/static/images/blogimg/"
+                location = "media/images/blogimg/"
                 image = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
                 image.thumbnail((800, 800))
                 full_name = location + name
                 if formats_dicts[k] == '.png':
                     rgb_image = image.convert('RGB')
                     full_name = full_name.replace("png", "jpg")
-                    rgb_image.save("blog" + full_name, quality=95)
+                    rgb_image.save(full_name, quality=95)
                 else:
-                    image.save("blog" + full_name)
+                    image.save(full_name)
 
-                full_link = "<img src=\'"+full_name+"\'>"
+                full_link = "<img src=\'/"+full_name+"\'>"
                 data = data.replace(i.group(0), full_link)
-
     return data
 
 
@@ -248,7 +245,6 @@ def writeblog(request):
             if token == "save":
                 heading = request.POST.get('heading','')
                 data = request.POST.get('data','')
-                print(data)
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
                 tags = json.loads(request.POST.get('tags',''))
@@ -259,7 +255,6 @@ def writeblog(request):
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 heading = heading.strip()
                 context['anoaccept'] = ""
-                print("1")
                 if anoaccept == "True":
                     is_anonymous = True
                     context['anoaccept'] = "checked"
@@ -269,27 +264,23 @@ def writeblog(request):
                     context['error'] = "Some Errors"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                print("2")
                 if len(heading) < 10:
                     context['error'] = "Number of characters in heading should must be greater than 10"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                print("3")
                 blog_check_existing =  models.Blog.objects.filter(user = request.user, heading = heading)
                 if blog_check_existing.count():
                     if id != str(blog_check_existing[0].id):
                         context['error'] = "Blog with same account already exist in your account"
                         context['status'] = 110
                         return HttpResponse(json.dumps(context), content_type="application/json")
-                print("4")
                 total_word = data.count(" ")
                 if total_word < 10:
                     context['error'] = "Minimum number of words in blog must be greater than 100"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                print("5")
+                
                 if id == "":
-                    print("7")
                     blog = models.Blog(user = request.user, unix_time=int(time.time()))
                     blog.save()
                     id = blog.id
@@ -303,7 +294,6 @@ def writeblog(request):
                     blog.is_anonymous = is_anonymous
                     blog.is_draft = False
                     blog.save()
-                    print("8")
                     tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
                     if tagdb.exists():
                         tagdb.delete()
@@ -320,7 +310,6 @@ def writeblog(request):
                     context['success'] = "Changes Saved Successfully"
                     context['status'] = 200
                 elif models.Blog.objects.filter(user = request.user, id = id).exists():
-                    print("6")
                     blog = models.Blog.objects.get(user = request.user, id =id)
                     data = convertimage(request, data, id, blog.unix_time, is_anonymous)
                     data = data.strip()
@@ -348,8 +337,8 @@ def writeblog(request):
                     context['success'] = "Changes Saved Successfully"
                     context['status'] = 200
                 else: 
-                    context['error'] = "Changes Saved Successfully"
-                    context['status'] = 200
+                    context['error'] = "Error"
+                    context['status'] = 110
                     
                 return HttpResponse(json.dumps(context), content_type="application/json")
             
@@ -1597,7 +1586,6 @@ def profile(request, username):
             if profile.count():
                 context['country'] = profile[0].country
                 context['description'] = profile[0].description
-            print(request.user)
         else:
             context['status'] = 110
     else:
@@ -1814,7 +1802,7 @@ def findimg(request, raw_html):
     matches = re.findall(r'\ssrc="([^"]+)"', raw_html)
     if len(matches):
         return matches[0]
-    return '/static/images/blogimg/default.jpg'
+    return '/media/images/blogimg/default.jpg'
 
 def search(request):
     queryset = []
@@ -1828,10 +1816,7 @@ def search(request):
         ).distinct().order_by('-views_num')[:10]
         [post_list.append(each) for each in posts if each not in post_list]
         post_tag = models.Tags.objects.filter(tag__icontains=q).distinct().order_by('-blog__views_num')[:10]
-        print(post_list)
         [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]
-        print(post_list)
-        print("Yo ")
     post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
     for each in post_list:
         temp = {}
@@ -1861,9 +1846,7 @@ def search(request):
     return render(request, "search.html", context)
 
 def mailer(request):
-    print("Starting")
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
-    print("Done")
     return HttpResponse("Done")
 
 def editprofile(request):
@@ -1886,14 +1869,12 @@ def editprofile(request):
             if len(bdate):
                 try:
                     date_obj = datetime.datetime.strptime(bdate, "%d %b %Y")
-                    print(date_obj)
                     obj.dob = date_obj
                 except:
                     pass
             obj.description = description
             obj.save()
             context['status'] = 200
-            print(context)
             return HttpResponse(json.dumps(context), content_type="application/json")
         else:
             obj, created = models.Profile.objects.get_or_create(user  = user_obj)
@@ -1922,7 +1903,6 @@ def editprofile(request):
                 context['dob']  = dob.strftime("%d %b %Y")
             else:
                 context['dob']  = ""
-            print(context)
             return render(request, 'editprofile.html', context)
     return HttpResponse("Error")
 

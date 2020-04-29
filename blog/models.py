@@ -123,7 +123,7 @@ class Views(models.Model):
 
 class Photo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    file = models.ImageField(upload_to = 'blog/static/images/uploadsfile/')
+    file = models.ImageField(upload_to = 'media/images/uploadsfile/')
     description = models.CharField(max_length=255, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     class Meta:

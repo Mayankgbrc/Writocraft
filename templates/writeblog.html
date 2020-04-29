@@ -165,6 +165,7 @@ $(document).ready(function(){
             },
             success: function(result){
                 var output = result['status'];
+                console.log(output)
                 if (output == 200){
                     $("#success").text(result['success']);
                     $("#success").show().delay(5000).fadeOut(3000);
