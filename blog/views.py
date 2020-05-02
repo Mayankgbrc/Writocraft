@@ -790,7 +790,7 @@ def deleteask(request, title):
 
 def logout_view(requests):
     logout(requests)
-    return HttpResponse("Logged Out")
+    return redirect('/')
 
 
 def deleteblog(request, title):
@@ -1849,6 +1849,7 @@ def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
     return HttpResponse("Done")
 
+@login_required
 def editprofile(request):
     if not request.user.is_anonymous:
         context = {}
@@ -1859,7 +1860,6 @@ def editprofile(request):
             country = request.POST.get('country')
             bdate = request.POST.get('bdate')
             description = request.POST.get('description')
-
             user_obj.first_name = firstname
             user_obj.last_name = lastname
             user_obj.save()
@@ -1921,3 +1921,35 @@ def change_password(request):
     return render(request, 'accounts/change_password.html', {
         'form': form
     })
+
+
+def contactus(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        number = request.POST.get('number')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        context = {'name': name, 'number': number, 'email':email, 'message': message}
+
+        if len(name)==0 or  len(number)==0 or  len(email)==0 or  len(message)==0:
+            status = 110
+            context['error'] = "Please fill all fields"
+            return render(request, 'contactus.html', context)
+
+        regex_mail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+        if not re.search(regex_mail, email) :
+            status = 110
+            context['error'] = "Wrong E-mail"
+            return render(request, 'contactus.html', context)
+
+        if len(number) != 10 or not number.isnumeric():
+            status = 110
+            context['error'] = "Wrong Phone Number"
+            return render(request, 'contactus.html', context)
+        
+        model_obj = models.ContactUs(name = name, email = email, number = number, message = message)
+        model_obj.save()
+        context = {'success':"Your Response is recorded"}
+        return render(request, 'contactus.html', context)
+        
+    return render(request, 'contactus.html')

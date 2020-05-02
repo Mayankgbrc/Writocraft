@@ -164,3 +164,14 @@ class TopWriters(models.Model):
     is_visible = models.BooleanField(default = False)
     thought = models.CharField(max_length=128, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add = True)
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=128, blank=True, null=True)
+    email = models.CharField(max_length=128, blank=True, null=True)
+    number = models.CharField(max_length=128, blank=True, null=True)
+    message = models.TextField(blank=True, null=True)
+    viewed = models.BooleanField(default = False)
+    solved = models.BooleanField(default = False)
+    AnyUpdate = models.CharField(max_length=512, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+

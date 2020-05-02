@@ -84,15 +84,67 @@
 			line-height: 6rem;
 			margin: 3px;
 		}
+
+
+
+
+		#lab_social_icon_footer {
+  padding: 40px 0;
+  background-color: #dedede;
+}
+
+a {
+  color: #fff;
+}
+
+.social:hover {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}
+
+.social {
+  -webkit-transform: scale(0.8);
+  /* Browser Variations: */
+  
+  -moz-transform: scale(0.8);
+  -o-transform: scale(0.8);
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+}
+/*
+    Multicoloured Hover Variations
+*/
+
+#social-fb:hover {
+  color: #3B5998;
+}
+
+#social-insta:hover {
+  color: #f39c12;
+}
+
 	</style>
     <body>
 
+<!-- The Modal -->
+
 		<ul id="slide-out" class="sidenav">
-			<li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-			<li><a href="#!">Second Link</a></li>
-			<li><div class="divider"></div></li>
-			<li><a class="subheader">Subheader</a></li>
-			<li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+                <div class=" center" >
+                    <img src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
+                </div>  
+                <li class=""><a href="/">Home</a></li>
+                <li class=""> <a href="/#aboutus">About Us</a></li>
+                {% if user.is_authenticated %}
+                  <li class=""><a href="/myprofile" class="btn btn-large">My Profile</a></li>
+                  <li class="" style="position: absolute; bottom: 80px; margin-bottom: 40px; width: 100%; text-align: center;"><a href="/logout" class="">Sign Out</a></li>
+                {% else %}
+                  <li class=""><a href="/signup" class="btn btn-large">Sign Up</a></li>
+                  <li class=""><a href="/login" class="btn btn-large">Log In</a></li>
+                {% endif %}
+                <li class="" style="position: absolute; bottom: 0px; margin-bottom: 60px; width: 100%; "><a href="/contactus" class="btn" style="background-color: darkgray;">Contact Us</a></li>
+
 		  </ul>
 		  <div class="menu-button-outer">
 			<a href="#" data-target="slide-out" class="sidenav-trigger menu-button"><i class="material-icons" style="padding: 10px; font-size: 2.1rem;">menu</i></a>  
@@ -112,16 +164,47 @@
 						<h3 class="headtop" style="font-size: 2.92rem;">Spend your leisure time with Writocraft.</h3>
 					</div>
 				</div>
-				<a href="/signup">
-					<button id="top-button" class="btn-large">
-						<span style="border-radius: 50%;">
-							<i class="fa fa-pencil circle" aria-hidden="true"></i>  
-						</span>Sign Up 
-					</button>
-				</a>
+				{% if user.is_authenticated %}
+					<a href="/myprofile">
+						<button id="top-button" class="btn-large">
+							<span style="border-radius: 50%;">
+								<i class="fa fa-pencil circle" aria-hidden="true"></i>  
+							</span>My Profile
+						</button>
+					</a>
+				{% else %}
+					<a href="/signup">
+						<button id="top-button" class="btn-large">
+							<span style="border-radius: 50%;">
+								<i class="fa fa-pencil circle" aria-hidden="true"></i>  
+							</span>Sign Up 
+						</button>
+					</a>
+					<br>
+					<a href="/login">
+						<button id="top-button" class="btn-large">
+							<span style="border-radius: 50%;">
+								<i class="fa fa-pencil circle" aria-hidden="true"></i>  
+							</span>Login 
+						</button>
+					</a>
+				{% endif %}
 				<br><br>
 			</div>
 		</div>
+
+		<section class="section-padding grid-news" id="aboutus">
+			<div class="container">
+				<div class="text-center">
+					<h2 class="section-title">About Us</h2>
+					<p class="section-sub" style="font-size: 2rem;">Our mission is to let your words bring out the best version of your feelings, whether you are sad, happy, excited, anxious or blank, share your stories with us and let the world know your story. We appreciate your struggles, your hustles, and your successes. So why not give a glimpse of your personality for people wanting to know more about you.
+						<br>
+						<span class="tag" style="background-color: #000; color: #fff; white-space:nowrap;">#Happy_Crafting</span>
+						
+					</p>
+				</div>
+			</div>
+		</section>
 		
 		<section class="section-padding grid-news">
 			<div class="container">
@@ -182,7 +265,6 @@
 			<div class="container">
 				<div class="text-center mb-80">
 					<h2 class="section-title">Our Weekly Tops</h2>
-					<p class="section-sub">Quisque non erat mi. Etiam congue et augue sed tempus. Aenean sed ipsum luctus, scelerisque ipsum nec, iaculis justo. Sed at vestibulum purus, sit amet viverra diam nulla ac nisi rhoncus.</p>
 				</div>
 				<div class="">
 					<div id="owl-demo2" class="owl-carousel owl-theme">
@@ -209,7 +291,7 @@
 										</div>
 									</div>
 								</header>
-								<div class="entry-content text-justify" style="height: 150px; max-height: 150px;">
+								<div class="entry-content text-justify" style="height: 150px; max-height: 150px; overflow: hidden;;">
 									<p>{{ each.data|truncatechars:200 }}</p>
 								</div>
 								<footer class="entry-footer">
@@ -231,62 +313,52 @@
 			</div>
 		</section>
 
-		<div class="owl-carousel owl-theme">
-          
-			<div><h1>1</h1></div>
-			<div class="item"><h1>2</h1></div>
-			<div class="item"><h1>3</h1></div>
-			<div class="item"><h1>4</h1></div>
-			<div class="item"><h1>5</h1></div>
-			<div class="item"><h1>6</h1></div>
-			<div class="item"><h1>7</h1></div>
-			<div class="item"><h1>8</h1></div>
-			<div class="item"><h1>9</h1></div>
-			<div class="item"><h1>10</h1></div>
-			<div class="item"><h1>11</h1></div>
-			<div><h1>12</h1></div>
-		   
-		</div>
 
-<div id="carousel1" class="owl-carousel owl-theme">
-	<div class="wow"><img src="https://i.picsum.photos/id/237/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/238/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/239/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/240/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/241/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/242/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/243/400/300.jpg"></div>
-	<div><img src="https://i.picsum.photos/id/244/400/300.jpg"></div>
-</div>
-	
-        <footer class="page-footer" style="background-color: #444;">
+        
+	<footer class="footer footer-four" style="background-color: #222f3e">
+		<div class="primary-footer text-center">
+		  <div class="container">
+			<div class="text-center center-block" style="text-align: right;">
+				<a href="#top" class="page-scroll btn-floating btn-large pink back-top waves-effect waves-light tt-animate btt" data-section="#top">
+				<i class="fa fa-arrow-up" aria-hidden="true"></i>
+				</a>
+			</div>
+			<br>
+			<div class="container" style="text-align: center;"> 
+				<div class="">
+					<a href="https://www.facebook.com/writocraft"><i id="social-fb" class="fa fa-facebook-square fa-3x social" style="font-size: 60px;"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="https://www.instagram.com/writocraft/"><i id="social-insta" class="fa fa-instagram fa-3x social" style="font-size: 60px;"></i></a>
+				</div>
+			</div>
+			<hr class="mt-15">
 			<div class="container">
-			  <div class="row">
-				<div class="col l6 s12">
-				  <h5 class="white-text">Footer Content</h5>
-				  <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+				<div class="row">
+					<div class="col m4 s12">
+						<img src="/static/images/uploadsfile/logo-main-small.jpg" style="max-height: 100px; margin: 30px;">
+					</div>
+					<div class="col m4 s12">
+						<h5 class="color-of-footer">Petzee</h5>
+						<ul>
+							<li><a class="grey-text text-lighten-3" href="#aboutus">About Us</a></li>
+							<li><a class="grey-text text-lighten-3" href="/team">Our Team</a></li>
+							<li><a class="grey-text text-lighten-3" href="/contactus" >Contact Us</a></li>
+						</ul>
+					</div>
 				</div>
-				<div class="col l4 offset-l2 s12">
-				  <h5 class="white-text">Links</h5>
-				  <ul>
-					<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-					<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-					<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-					<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
-				  </ul>
-				</div>
-			  </div>
 			</div>
-			<div class="footer-copyright" style="background-color: #333;">
-			  <div class="container">
-			  © 2014 Copyright Text
-			  <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
-			  </div>
-			</div>
-		  </footer>
-		<script src="/static/js/jquery-3.4.1.min.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script src="/static/js/materialize-1.0.0.min.js"></script>
+		  </div>
+		</div>
+		<br>
+		<div class="footer-copyright" style="background-color: #333;">
+		  <div class="container">
+			© 2020 Copyright Text
+		  </div>
+		</div>
+	  
+	  </footer>
+
+<script src="/static/js/jquery-3.4.1.min.js"></script>
+<script src="/static/js/materialize-1.0.0.min.js"></script>
 <script type="text/javascript" src="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/owl.carousel.js"></script>
 
 <script type="text/javascript">
@@ -295,10 +367,10 @@ $('#owl-demo1').owlCarousel({
    margin:10,
    responsive:{
      0:{
-       items:2
+       items:1
      },
      600:{
-       items:3
+       items:2
      },
      1000:{
        items:4
@@ -362,6 +434,7 @@ $('#owl-demo2').owlCarousel({
 					$("#blockhide").slideToggle("slow");
 				});
 			});
+			
 		</script>
     </body>
 </html>

@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^profile/$',views.profile),
     url(r'^search/$',views.search),
     url(r'^logsign/$',views.logsign),
+    url(r'^contactus/$',views.contactus),
     url(r'^mailer/$',views.mailer),
     url(r'^mailsend/$',views.mailsend),
     url(r'^accounts/', include('django.contrib.auth.urls')),

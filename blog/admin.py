@@ -62,6 +62,10 @@ class TopWriters(admin.ModelAdmin):
 class Tags(admin.ModelAdmin):
     list_display = ('tag', 'blog','user','created_at')
 
+class ContactUs(admin.ModelAdmin):
+    list_display = ('name', 'email','number','message','viewed','solved','AnyUpdate','created_at')
+
+admin.site.register(models.ContactUs, ContactUs)
 admin.site.register(models.Tags, Tags)
 admin.site.register(models.TopWriters, TopWriters)
 admin.site.register(models.TopBlogs, TopBlogs)

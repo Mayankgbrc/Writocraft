@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<title>CONTACT FORM</title>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+	<h1 style="font-size: 40px;" class="center"> Contact Us </h1>
+	<div class="col s12">
+	  <div class="card-panel">
+          <div class="center">
+            <span style="color: red; font-size: 25px;">{{error}}</span>
+            <span style="color: green; font-size: 25px;">{{success}}</span>
+          </div>
+        <form method="POST" action="/contactus/">
+            {% csrf_token %}
+		    <div class="input-field">
+			   <i class="material-icons prefix">person</i>
+			   <input type="text" name="name" id="user" placeholder="Enter your name here" value="{{name}}">
+			   <label for="user">Your Name</label>
+			</div>
+			
+			
+			<div class="input-field">
+			   <i class="material-icons prefix">phone</i>
+               <input type="number" name="number" placeholder="Enter your phone no" value="{{number}}">
+			   <label for="Phone number">Phone number</label>
+			</div>
+			
+			
+			<div class="input-field">
+			   <i class="material-icons prefix">email</i>
+			   <input type="email" name="email" id="email" class="validate" placeholder="user@gmail.com" value="{{email}}">
+			   <label for="email">E-mail</label>
+			</div>
+			
+			
+			<div class="input-field">
+			   <i class="material-icons prefix">sms</i>
+			   <textarea id="message" name="message" placeholder="Write something here" class="materialize-textarea">{{message}}</textarea>
+			   <label for="message">Enter message</label>
+			</div>
+			<input type="submit" name="submit" value="send" class="btn right">
+			<div class="clearfix"></div>
+			
+		</form>
+		
+	</div>	
+  </div>
+</div>
+	   
+<script src="/static/js/jquery-3.4.1.min.js"></script>
+<script src="/static/js/materialize-1.0.0.min.js"></script>
+ </body>
+ </html>
+ 
+
+ 
