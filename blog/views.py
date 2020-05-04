@@ -264,8 +264,8 @@ def writeblog(request):
                     context['error'] = "Some Errors"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if len(heading) < 10:
-                    context['error'] = "Number of characters in heading should must be greater than 10"
+                if len(heading) < 5:
+                    context['error'] = "Number of characters in heading should must be greater than 5"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 blog_check_existing =  models.Blog.objects.filter(user = request.user, heading = heading)
@@ -275,8 +275,8 @@ def writeblog(request):
                         context['status'] = 110
                         return HttpResponse(json.dumps(context), content_type="application/json")
                 total_word = data.count(" ")
-                if total_word < 10:
-                    context['error'] = "Minimum number of words in blog must be greater than 100"
+                if total_word < 5:
+                    context['error'] = "Minimum number of words in blog must be greater than 5"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 
@@ -358,13 +358,13 @@ def writeblog(request):
                     context['error'] = "Some Errors"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
-                if len(heading) < 10:
-                    context['error'] = "Number of characters in heading should must be greater than 10"
+                if len(heading) < 5:
+                    context['error'] = "Number of characters in heading should must be greater than 5"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 total_word = data.count(" ")
-                if total_word < 10:
-                    context['error'] = "Minimum number of words in blog must be greater than 100"
+                if total_word < 5:
+                    context['error'] = "Minimum number of words in blog must be greater than 5"
                     context['status'] = 110
                     return HttpResponse(json.dumps(context), content_type="application/json")
                 if models.Blog.objects.filter(user = request.user, id = id).exists():
@@ -1427,6 +1427,8 @@ def fetchchart(request):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 def team(requests):
+    context = {}
+    
     return render(requests, 'team.html')
 
 def mailsend(request):
