@@ -1955,3 +1955,6 @@ def contactus(request):
         return render(request, 'contactus.html', context)
         
     return render(request, 'contactus.html')
+
+def privacypolicy(request):
+    return render(request, 'privacy_policy.html')
