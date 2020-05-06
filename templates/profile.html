@@ -88,6 +88,7 @@
                 text-align: left;
             }
         </style>
+        
     </head>
     <body>
 
@@ -156,7 +157,6 @@
                         </div>  
                         <div style="text-align: center;">
                             <button class="btn waves-effect waves-light white black-text" type="submit" name="action" value='{{ followcheck }}' style="text-transform: none;" id="followbutton">
-
                                 <span id="follow" >
                                     <i class="fa fa-user-plus" style="font-size: 1.1rem;"></i>ollow | <span class="follownum">{{followers}}</span>
                                 </span>
@@ -350,7 +350,19 @@
         <!-- Style switter js -->
         <script src="/static/js/styleswitcher.js"></script>
         <script>
+            
             $(document).ready(function(){
+                    
+                var value = $('#followbutton').val();
+                if (value == 0){
+                    $("#followed").hide();
+                    $("#follow").show();
+                }
+                else{
+                    $("#followed").show();
+                    $("#follow").hide();
+                }
+
                 
                 $("#followbutton").click(function(){
                     var loginned = {{ loginned }};
