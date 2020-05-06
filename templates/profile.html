@@ -1,4 +1,5 @@
 {% include "navbar.html" %}
+{% if status == 200 %}
 <!DOCTYPE html>
 <!--[if IE 7]><html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
 <!--[if IE 8]><html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
@@ -399,3 +400,22 @@
 </script>        
     </body>
 </html>
+{% elif status == 404 %}
+    <div class="row">
+        <div class="col m8 offset-m2 s12">
+            <img src="/static/images/uploads/SORRY-no-user.jpg" width="100%">
+            <div class="center">
+                For Contact Form  - <a href="/contactus">Click Here</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="row">
+        <div class="col m8 offset-m2 s12">
+            <img src="/static/images/uploads/SORRY-error.jpg" width="100%">
+            <div class="center">
+                For Contact Form  - <a href="/contactus">Click Here</a>
+            </div>
+        </div>
+    </div>
+{% endif %}

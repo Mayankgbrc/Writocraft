@@ -474,6 +474,10 @@ def userprofile(request, username):
     return render(request, "profile.html", context)
 '''
 def followers(request):
+    if request.user.is_anonymous:
+        context = {'status': 110}
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
     if request.method == 'POST':
         context = {}
         context['status'] = 110
@@ -1607,7 +1611,6 @@ def myprofile(request):
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
             followers = models.Follower.objects.filter(touser__username=username).count()
-            followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
@@ -1620,7 +1623,6 @@ def myprofile(request):
             context['fullname'] = userdata.first_name + " " + userdata.last_name
             context['title'] = username
             context['followers'] = followers
-            context['followcheck'] = followcheck
             user_views = models.Views.objects.filter(user__username = username).count()
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200

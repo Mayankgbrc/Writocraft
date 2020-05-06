@@ -191,7 +191,8 @@ p {
      border-bottom: none;
      box-shadow: 0 1px 0 0 #000;
    }
-            
+
+ 
             </style> 
     </head>
     <body to="0">
@@ -247,6 +248,13 @@ p {
                         </li>
                         <li><a href="/myprofile">My Profile</a></li>
                         <li><a href="/">Home</a></li>
+                        <li>
+                          <a class='dropdown-trigger' href='#' data-target='dropdown1' style="outline: none;"><i class="fa fa-angle-down" style="line-height: 58px;" ></i></a>
+                          <ul id='dropdown1' class='dropdown-content'>
+                            <li><a href="/logout" style="color: #222;">LogOut</a></li>
+                          </ul>
+                        </li>
+                              
                     </ul>
                 </div>
             </nav>
@@ -381,4 +389,6 @@ $(document).ready(function(){
       window.location.href = "/search/?q="+query;
     });
 });
+
+$('.dropdown-trigger').dropdown({coverTrigger:false, hover: true});
         </script>
