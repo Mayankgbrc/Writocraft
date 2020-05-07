@@ -50,7 +50,7 @@
             success: function(result){
                 status = result['status']
                 if (status == 200){
-                    window.location.href = '/myblogs'
+                    window.location.href = '/myprofile'
                 }
                 else{
                     $('#errorbox').text(result['login_error']);
