@@ -109,16 +109,16 @@
                                     {% csrf_token %}
                                     <p>
                                         <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Email:</label></strong>
-                                        <input type="email" id="useremail" name="email" maxlength="254" required autocomplete="off">
+                                        <input type="email" id="useremail" name="email" placeholder="Enter your E-mail" maxlength="254" required autocomplete="off">
                                     </p>
                                     <p>
                                         <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Password:</label></strong>
-                                        <input type="password" id="userpassword" placeholder="Create password" name="password" required autocomplete="off">
+                                        <input type="password" id="userpassword" placeholder="Enter your Password" name="password" required autocomplete="off">
                                     </p>                            
                                     <div class="center">
                                         <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
                                     </div>    
-                                    <p class="center"> New User? <a href="/signup"> Sign Up </a> </p>                                                                 
+                                    <p class="center"> New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> </p>                                                                 
                                 </div>
                             </div>
                         </div>
@@ -351,6 +351,30 @@
         <!-- Style switter js -->
         <script src="/static/js/styleswitcher.js"></script>
         <script>
+
+        $(document).on('click', '#loginbutton', function(){
+            var email = $("#useremail").val();
+            var password = $("#userpassword").val();
+            $.ajax({
+                type: 'POST',
+                url: '/login/',
+                data: {
+                    email: email,
+                    password: password,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    status = result['status']
+                    if (status == 200){
+                        $('#modal1').modal('close');
+                        location.reload(true);
+                    }
+                    else{
+                        $('#errorbox').text(result['login_error']);
+                    }
+                }
+            });
+        });
             
             $(document).ready(function(){
                     

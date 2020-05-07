@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^contactus/$',views.contactus),
     url(r'^mailer/$',views.mailer),
     url(r'^mailsend/$',views.mailsend),
+    url(r'^coronaGo/$',views.coronaGo),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^photo_upload/$',views.photo_list, name='photo_list'),
     url(r'^edit/(?P<url>[a-zA-Z0-9_\.!,\"\'\-\?\:\@\w\+]+)/$', views.edit, name='edit'),

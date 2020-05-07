@@ -98,7 +98,7 @@ def index(request):
     context['blogs'] = blog_list
 
 
-    Topwriters = models.TopWriters.objects.filter(is_visible=True)
+    Topwriters = models.TopWriters.objects.filter(is_visible=True).order_by('rank')
     writer_list = []
     for each in Topwriters:
         temp = {}
@@ -114,9 +114,8 @@ def index(request):
             temp['description'] = profile[0].description
         
         temp['currentwork'] = currentwork(request, each.user.username)
-                    
-        
         writer_list.append(temp)
+        print(writer_list)
     context['writers'] = writer_list
 
     tags = models.Tags.objects.all().values('tag').annotate(total=Count('tag')).order_by('-total')
@@ -1960,3 +1959,27 @@ def contactus(request):
 
 def privacypolicy(request):
     return render(request, 'privacy_policy.html')
+
+def coronaGo(request):
+    if request.method=="POST":
+        city_name=request.POST.get("city")
+        import requests
+
+        url = "https://corona-virus-world-and-india-data.p.rapidapi.com/api_india"
+
+        headers = {
+            'x-rapidapi-host': "corona-virus-world-and-india-data.p.rapidapi.com",
+            'x-rapidapi-key': "21cf14a192msh204f296e47aa397p15bd5djsn552202dd0a7d"
+            }
+
+        response = requests.request("GET", url, headers=headers).json()
+        count=0
+        for each in response['state_wise']:
+            if int(response['state_wise'][each]['active']) :
+                for city in response['state_wise'][each]['district']:
+                    if city.lower() == city_name.lower():
+                        count = response['state_wise'][each]['district'][city]['confirmed']
+        context={"city_name":city_name,"count":count}
+        return render(request,"covid_results.html",context)
+    else:
+        return render(request,"covid.html")
