@@ -1,0 +1,371 @@
+{% include "navbar.html" %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        
+        <!-- TITLE OF SITE-->
+        <title> {{ fullname }} </title>
+        
+        <!-- META TAG -->
+        <script src="/static/js/jquery.min.js"></script>
+                
+        <!-- materialize js-->
+        <script src="/static/js/materialize.min.js"></script>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!-- MATERIALIZE CORE CSS -->
+        <link href="/static/css/materialize.min.css" rel="stylesheet">
+        <!-- ADDITIONAL CSS -->
+        <link rel="stylesheet" href="/static/css/animate.css">
+        <!-- FONTS -->
+        <link href='//fonts.googleapis.com/css?family=Roboto:400,100,300,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <!--FONTAWESOME CSS-->
+        <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css"> 
+
+        <!-- CUSTOM STYLE -->
+        <link href="/static/css/style-user.css" rel="stylesheet">
+        
+        <style>
+            .token{
+                letter-spacing: 1.1px;
+                background-color: #b2f1ff;
+                padding: 6px 12px;
+                border-radius: 15px;
+                color: #222f3e;
+                margin-right: 2px;
+            }
+            .sidebar .info{
+                border-bottom: 1px solid #111;
+            }
+            @media only screen and (min-width: 993px){
+                .container {
+                    width: 80%;
+                }
+            }
+            .overlay {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height:100%;
+                width: 100%;
+                opacity: 0;
+                transition: .5s ease;
+                background-color: black;
+            }
+
+            .feature-img:hover .overlay {
+                opacity: 0.5;
+            }
+
+            .text {
+                color: white;
+                font-size: 20px;
+                position: absolute;
+                top: 80%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+                text-align: center;
+            }
+            body{
+                text-align: left;
+                color: #555;
+            }
+        </style>
+        
+    </head>
+    <body>
+
+
+        <!-- Start Container-->
+        <div class="container">
+            <!-- row -->
+            <div class="row" style=" margin-left: 0.75rem !important; margin-right: 0.75rem !important;">
+            <!-- =========================================
+                           SIDEBAR   
+            ==========================================-->
+                <!-- Start Sidebar -->
+                <aside class="col l4 m12 s12 sidebar z-depth-1" id="sidebar" style="background-color: #2f3640;">
+                    <!--  Sidebar row -->
+                    <div class="row">                      
+                        <!--  top section   -->
+                        <div class="heading">                            
+                            <!-- ====================
+                                      IMAGE   
+                            ==========================-->
+                            <div class="feature-img">
+                                <img src="/media/profile/org/{{ image_src }}" class="responsive-img image" alt="">
+                                <div class="overlay">
+                                    <div class="text">
+                                        <a href="/photo_upload"><i class="fa fa-camera"></i> Update Image </a>
+                                    </div>
+                                </div>
+                            </div>                            
+                         
+                            <!-- ========================================
+                                       NAME AND TAGLINE
+                            ==========================================-->
+                                               
+                        </div>
+                        <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
+                            <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
+                            <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
+                        </div>      
+                         <!-- sidebar info -->
+                        {% if description != '' and description != None %}
+                        <div class="col l12 m12 s12 sort-info sidebar-item">
+                            
+                            <div class="row">                               
+                                <div class="col m12 s12 l3 icon"> <!-- icon -->
+                                   <i class="fa fa-user"></i>
+                                </div>                                
+                                <div class="col m12 s12 l9 info wow fadeIn a1" data-wow-delay="0.1s" > <!-- text -->
+                                    <div class="section-item-details" style="margin-top: 9px;">
+                                        <p style="font-size: 17px;">{{description}}</p>
+                                    </div>             
+                                </div>
+                            </div>       
+                        </div>
+                        {% endif %}  
+                        <!-- ADDRESS  -->
+                        {% if country != '' and country != None %}
+                        <div class="col l12 m12 s12  address sidebar-item ">
+                            <div class="row" style="margin-bottom: 0px;">                                
+                                <div class="col l3 m12  s12 icon">
+                                    <i class="fa fa-home"></i> <!-- icon -->
+                                </div>                                
+                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
+                                    <div class="section-item-details">
+                                        <div class="address-details"> <!-- address  -->
+                                            <h4 style="line-height: 28pt;">Country: {{country}}</h4> 
+                                        </div>                         
+                                    </div>
+                                </div>
+                            </div>            
+                        </div>
+                        {% endif %}
+
+                        <div class="col l12 m12 s12  address sidebar-item ">
+                            <div class="row" style="margin-bottom: 0px;">                                
+                                <div class="col l3 m12  s12 icon">
+                                    <i class="fa fa-users"></i><!-- icon -->
+                                </div>                                
+                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
+                                    <div class="section-item-details">
+                                        <div class="address-details"> <!-- address  -->
+                                            <h4 style="line-height: 28pt;">Followers: {{followers}}</h4> 
+                                        </div>                         
+                                    </div>
+                                </div>
+                            </div>            
+                        </div>
+                        <!---->
+                        <div class="center">
+                            <a href="/editprofile"><button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button></a>
+                        </div>
+                    </div>   <!-- end row -->
+                </aside><!-- end sidebar -->
+
+                <!-- =========================================
+                   Work experiences
+                ==========================================-->
+
+                <section class="col s12 m12 l8 section">
+                    <div class="row">
+                        
+                        <div class="section-wrapper z-depth-1">                            
+                            <div class="section-icon col s12 m12 l2">
+                                <i class="fa fa-suitcase"></i>
+                            </div>
+                            <div class="custom-content col s12 m12 l10 wow fadeIn a1" data-wow-delay="0.1s">
+                                <h2>Work Experience</h2>
+                                {% if work_num %}
+                                    {% for each in work %}
+                                        <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
+                                            <h3>{{ each.role }}
+                                                <span> @{{ each.company }}</span>
+                                                <a href="/editwork/{{ each.id }}"> 
+                                                    <span class="right"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                                                </a>
+                                            </h3>
+                                            <span>
+                                                {{ each.from_month|upper }} {{ each.from_year }} - 
+                                                {% if each.present %}
+                                                    PRESENT
+                                                {% else %}
+                                                    {{ each.to_month|upper }} {{ each.to_year }}
+                                                {% endif %}
+                                            </span>
+                                            <p>{{ each.description }}</p>
+                                        </div>
+                                    {% endfor %}
+                                    Add More Details <a href="/work" style="color: blue;">Add</a>
+                                {% else %}
+                                    Add Details <a href="/work" style="color: blue;">Add</a>
+                                {% endif %}
+                            </div>                            
+                        </div>
+
+                        <!-- ========================================
+                         Education 
+                        ==========================================-->
+
+                        <div class="section-wrapper z-depth-1">
+                            <div class="section-icon col s12 m12 l2">
+                                <i class="fa fa-graduation-cap"></i>
+                            </div>
+                            <div class="custom-content col s12 m12 l10 wow fadeIn a1" data-wow-delay="0.1s" >
+                                <h2>Education</h2>
+                                {% if education_num %}
+                                    {% for each in education %}
+                                        <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
+                                            <h3>{{ each.degree }} <span>in</span> {{ each.fieldofstudy }}
+                                                <br>
+                                                <span>{{ each.school }}</span>
+                                                <a href="/editeducation/{{ each.id }}"> 
+                                                    <span class="right"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                                                </a>
+                                            </h3>
+                                            <span>
+                                                {{ each.from_month|upper }} {{ each.from_year }} -  {{ each.to_month|upper }} {{ each.to_year }}
+                                            </span>
+                                            <p>{{ each.description }}</p>
+                                        </div>
+                                    {% endfor %}
+                                    Add More Details <a href="/education" style="color: blue;">Add</a>
+                                {% else %}
+                                    Add Details <a href="/education" style="color: blue;">Add</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <!-- ========================================
+                              Intertests 
+                        ==========================================-->
+
+                        <div class="section-wrapper z-depth-1">                           
+                            <div class="section-icon col s12 m12 l2">
+                                <i class="fa fa-plane"></i>
+                            </div>
+                            <div class="interests col s12 m12 l10 wow fadeIn" data-wow-delay="0.1s"> 
+                                <h2>Interests </h2>
+                                <div class="chips">
+                                    <input class="custom-class" name="interests" id="interest">
+                                </div>
+                                <button id="interestsave" class="waves-effect btn">Save</button>
+                            </div>                 
+                        </div>
+
+                        <!-- ========================================
+                              Intertests 
+                        ==========================================-->
+
+                        <div class="section-wrapper z-depth-1">                           
+                            <div class="section-icon col s12 m12 l2">
+                                <i class="fa fa-th-large"></i>
+                            </div>
+                            <div class="interests col s12 m12 l10">
+                                <h2>BLOGS <a href="/createblog" style="color: blue;"><button class="waves-effect btn">+ Add Blogs</button></a></h2>
+                                
+                            </div>
+                            <div class="interests col s12 m12 l12 wow fadeIn" data-wow-delay="0.1s"> 
+                                <div class="row">
+                                    {% for each in blogs %}
+                                        <div class="col s12 m6">
+                                            <div class="card">
+                                                <div class="card-image" style="text-align: center; height: 240px; background-color: fff; border-bottom: 1px solid #ccc;">
+                                                    <img src="{{ each.img_src }}" style="max-height: 240px; max-width: 100%; vertical-align: middle; height: auto; width: auto; margin: auto;" >
+                                                </div>
+                                                <div class="card-content" style="padding: 15px 24px 5px 24px;">
+                                                    <span class="card-title" style="overflow: hidden; height: 60px;">{{ each.heading|truncatechars:40 }}</span>
+                                                    <p style="overflow: hidden; height: 45px;">{{ each.cleaned_data|truncatechars:90 }}</p>
+                                                </div>
+                                                <div class="card-action">
+                                                    <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">Read Now</a>
+                                                    <a href="/edit/{{ each.url|urlencode }}/">Edit</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>                          
+                        </div>
+
+                        <!-- =======================================
+                          portfolio Website
+                        ==========================================-->
+                    </div><!-- end row -->
+                </section><!-- end section -->
+            </div> <!-- end row -->
+        </div>  <!-- end container -->
+        
+ <!--=====================
+                JavaScript
+        ===================== -->
+        
+        <!-- =========================================================
+            STYLE SWITCHER | ONLY FOR DEMO NOT INCLUDED IN MAIN FILES
+        ===========================================================-->
+        
+        <!-- Style switter js -->
+        <script src="/static/js/styleswitcher.js"></script>
+        {% csrf_token %}
+
+    </body>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var interest_list = {{ interest_list|safe }};
+            interests = [];
+            for (i = 0; i < interest_list.length; i++) {
+                interests.push({tag: interest_list[i]});
+            }
+            options = {
+                placeholder: 'Enter a interest',
+                secondaryPlaceholder: '+Interest',
+                limit: 20,
+                data: interests,
+            }
+            var elems = document.querySelectorAll('.chips');
+            var instances = M.Chips.init(elems, options);
+        });
+    
+            $(document).on('click', '#interestsave', function(){
+        
+                var interest = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
+                console.log(interest)
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/interestsave/',
+                    data: {
+                        interest: interest,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(result){
+                        status = result['status']
+                        if (status == 200){
+                            $('#successinterestbox').text(result['message']);
+                            $("#successinterestbox").show();
+                        }
+                        else{
+                            $('#errorinterestbox').text(result['message']);
+                            $("#errorinterestbox").show();
+                        }
+                    }
+                });
+                
+            });
+            
+                  </script>
+
+</html>
