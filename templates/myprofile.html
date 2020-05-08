@@ -1,76 +1,9 @@
 {% include "navbar.html" %}
-<!DOCTYPE html>
-<!--[if IE 7]><html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
-<!--[if IE 8]><html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        
-        <!-- TITLE OF SITE-->
-        <title> {{ fullname }} </title>
-        
-        <!-- META TAG -->
-        <script src="/static/js/jquery.min.js"></script>
-        
-<!-- materialize js-->
-<script src="/static/js/materialize.min.js"></script>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="CV, Portfolio, Resume">
-        <meta name="author" content="Md. Siful Islam, Desiver Web">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-        
-        <!-- FAVICON -->
-        <link rel="icon" href="assets/images/favicon.ico">
-        <link rel="apple-touch-icon" sizes="72x72" href="assets/images/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="assets/images/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="assets/images/apple-icon-114x114.png">
-
-        <!-- ========================================
-                Stylesheets
-        ==========================================--> 
-        
-        <!-- MATERIALIZE CORE CSS -->
-        <link href="/static/css/materialize.min.css" rel="stylesheet">
-        
-
-        <!-- ADDITIONAL CSS -->
-        <link rel="stylesheet" href="/static/css/animate.css">
-        
-
-        <!-- FONTS -->
         <link href='//fonts.googleapis.com/css?family=Roboto:400,100,300,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href="/static/css/style-user.css" rel="stylesheet" type='text/css'>
         
-
-        <!--FONTAWESOME CSS-->
-        <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css"> 
-        
-
-        <!-- CUSTOM STYLE -->
-        <link href="/static/css/style-user.css" rel="stylesheet">
-        
-
-        <!-- RESPONSIVE CSS-->
-        <link href="/static/css/responsive.css" rel="stylesheet">
-
-        <!-- COLORS -->        
-        <link rel="alternate stylesheet" href="/static/css/colors/red.css" title="red">
-        <link rel="alternate stylesheet" href="/static/css/colors/purple.css" title="purple">
-        <link rel="alternate stylesheet" href="/static/css/colors/orange.css" title="orange">
-        <link rel="alternate stylesheet" href="/static/css/colors/green.css" title="green">
-        <link rel="stylesheet" href="/static/css/colors/lime.css" title="lime">
-
-
-        <!--[if lt IE 9]><script src="assets/js/ie8-responsive-file-warning.js"></script><![endif] -->
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-        <style>
+        <style type='text/css'>
             .token{
                 letter-spacing: 1.1px;
                 background-color: #b2f1ff;
@@ -117,6 +50,49 @@
             }
             body{
                 text-align: left;
+                color: #555;
+            }
+            .row1{
+                margin-left: 0.75rem !important; 
+                margin-right: 0.75rem !important;
+            }
+            .m-name{
+                text-shadow: 2px 2px 4px #000 !important;
+            }
+            .w-name{
+                text-shadow: 2px 1px 2px #000 !important;
+            }
+            .mg-b{
+                margin-bottom: 0px;
+            }
+            .card-image-div{
+                text-align: center; 
+                height: 240px; 
+                border-bottom: 1px solid #ccc;
+            }
+            .card-image-main{
+                max-height: 240px; 
+                max-width: 100%; 
+                vertical-align: middle; 
+                height: auto; 
+                width: auto !important; 
+                margin: auto !important;
+            }
+            .border-bottom-n{
+                border-bottom: none;
+            }
+            .lh-28{
+                line-height: 28pt;
+            }
+            .card-pd{
+                padding: 15px 24px 5px 24px !important;
+            }
+            .card-t-box{
+                overflow: hidden; 
+                height: 60px;
+            }
+            .card-p-box{
+                overflow: hidden; height: 45px;
             }
         </style>
         
@@ -127,7 +103,7 @@
         <!-- Start Container-->
         <div class="container">
             <!-- row -->
-            <div class="row" style=" margin-left: 0.75rem !important; margin-right: 0.75rem !important;">
+            <div class="row row1" >
             <!-- =========================================
                            SIDEBAR   
             ==========================================-->
@@ -155,8 +131,8 @@
                                                
                         </div>
                         <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
-                            <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
-                            <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
+                            <h2 class="m-name">{{ fullname }}</h2> <!-- title name -->
+                            <span class="w-name">{{currentwork}}</span>  <!-- tagline -->
                         </div>      
                          <!-- sidebar info -->
                         {% if description != '' and description != None %}
@@ -177,14 +153,14 @@
                         <!-- ADDRESS  -->
                         {% if country != '' and country != None %}
                         <div class="col l12 m12 s12  address sidebar-item ">
-                            <div class="row" style="margin-bottom: 0px;">                                
+                            <div class="row mg-b">                                
                                 <div class="col l3 m12  s12 icon">
                                     <i class="fa fa-home"></i> <!-- icon -->
                                 </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
+                                <div class="col m12 s12 l9 info wow fadeIn a4 border-bottom-n" data-wow-delay="0.4s">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
-                                            <h4 style="line-height: 28pt;">Country: {{country}}</h4> 
+                                            <h4 class="lh-28">Country: {{country}}</h4> 
                                         </div>                         
                                     </div>
                                 </div>
@@ -193,14 +169,14 @@
                         {% endif %}
 
                         <div class="col l12 m12 s12  address sidebar-item ">
-                            <div class="row" style="margin-bottom: 0px;">                                
+                            <div class="row mg-b">                                
                                 <div class="col l3 m12  s12 icon">
                                     <i class="fa fa-users"></i><!-- icon -->
                                 </div>                                
-                                <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
+                                <div class="col m12 s12 l9 info wow fadeIn a4 border-bottom-n" data-wow-delay="0.4s">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
-                                            <h4 style="line-height: 28pt;">Followers: {{followers}}</h4> 
+                                            <h4 class="lh-28">Followers: {{followers}}</h4> 
                                         </div>                         
                                     </div>
                                 </div>
@@ -246,9 +222,9 @@
                                             <p>{{ each.description }}</p>
                                         </div>
                                     {% endfor %}
-                                    Add More Details <a href="/work" style="color: blue;">Add</a>
+                                    Add More Details <a href="/work" class="blue-text" >Add</a>
                                 {% else %}
-                                    Add Details <a href="/work" style="color: blue;">Add</a>
+                                    Add Details <a href="/work" class="blue-text" >Add</a>
                                 {% endif %}
                             </div>                            
                         </div>
@@ -279,9 +255,9 @@
                                             <p>{{ each.description }}</p>
                                         </div>
                                     {% endfor %}
-                                    Add More Details <a href="/education" style="color: blue;">Add</a>
+                                    Add More Details <a href="/education" class="blue-text" >Add</a>
                                 {% else %}
-                                    Add Details <a href="/education" style="color: blue;">Add</a>
+                                    Add Details <a href="/education" class="blue-text" >Add</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -313,7 +289,7 @@
                                 <i class="fa fa-th-large"></i>
                             </div>
                             <div class="interests col s12 m12 l10">
-                                <h2>BLOGS <a href="/createblog" style="color: blue;"><button class="waves-effect btn">+ Add Blogs</button></a></h2>
+                                <h2>BLOGS <a href="/createblog" class="blue-text" ><button class="waves-effect btn">+ Add Blogs</button></a></h2>
                                 
                             </div>
                             <div class="interests col s12 m12 l12 wow fadeIn" data-wow-delay="0.1s"> 
@@ -321,12 +297,12 @@
                                     {% for each in blogs %}
                                         <div class="col s12 m6">
                                             <div class="card">
-                                                <div class="card-image" style="text-align: center; height: 240px; background-color: fff; border-bottom: 1px solid #ccc;">
-                                                    <img src="{{ each.img_src }}" style="max-height: 240px; max-width: 100%; vertical-align: middle; height: auto; width: auto; margin: auto;" >
+                                                <div class="card-image white card-image-div">
+                                                    <img src="{{ each.img_src }}" class="card-image-main" >
                                                 </div>
-                                                <div class="card-content" style="padding: 15px 24px 5px 24px;">
-                                                    <span class="card-title" style="overflow: hidden; height: 60px;">{{ each.heading|truncatechars:40 }}</span>
-                                                    <p style="overflow: hidden; height: 45px;">{{ each.cleaned_data|truncatechars:90 }}</p>
+                                                <div class="card-content card-pd">
+                                                    <span class="card-title card-t-box">{{ each.heading|truncatechars:40 }}</span>
+                                                    <p class="card-p-box">{{ each.cleaned_data|truncatechars:90 }}</p>
                                                 </div>
                                                 <div class="card-action">
                                                     <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">Read Now</a>
@@ -347,16 +323,6 @@
             </div> <!-- end row -->
         </div>  <!-- end container -->
         
- <!--=====================
-                JavaScript
-        ===================== -->
-        
-        <!-- =========================================================
-            STYLE SWITCHER | ONLY FOR DEMO NOT INCLUDED IN MAIN FILES
-        ===========================================================-->
-        
-        <!-- Style switter js -->
-        <script src="/static/js/styleswitcher.js"></script>
         {% csrf_token %}
 
     </body>
@@ -406,20 +372,5 @@
             });
             
                   </script>
-<!-- Jquery core js-->
-
-<!-- wow js-->
-<script src="/static/js/wow.min.js"></script>
-
-<!-- Map api -->
-<script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
-
-<!-- Masonry js-->
-<script src="/static/js/masonry.js"></script>
-
-<script src="/static/js/validator.min.js"></script>
-
-<!-- Customized js -->
-<script src="/static/js/init.js"></script>
 
 </html>

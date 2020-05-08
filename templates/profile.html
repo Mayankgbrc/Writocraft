@@ -1,74 +1,10 @@
 {% include "navbar.html" %}
 {% if status == 200 %}
-<!DOCTYPE html>
-<!--[if IE 7]><html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
-<!--[if IE 8]><html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        
-        <!-- TITLE OF SITE-->
-        <title> {{ fullname }} | WritoCraft </title>
-        
-        <!-- META TAG -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content=" Profile of {{ fullname }}">
-        <meta name="author" content="{{ fullname }}">
-        <meta name="keywords" content="{{ keywords }}">
-        
-        <!-- FAVICON -->
-        <link rel="icon" href="assets/images/favicon.ico">
-        <link rel="apple-touch-icon" sizes="72x72" href="assets/images/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="assets/images/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="assets/images/apple-icon-114x114.png">
 
-        <!-- ========================================
-                Stylesheets
-        ==========================================--> 
-        
-        <!-- MATERIALIZE CORE CSS -->
-        <link href="/static/css/materialize.min.css" rel="stylesheet">
-        
+<link href='//fonts.googleapis.com/css?family=Roboto:400,100,300,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link href="/static/css/style-user.css" rel="stylesheet" type='text/css'>
 
-        <!-- ADDITIONAL CSS -->
-        <link rel="stylesheet" href="/static/css/animate.css">
-        
-
-        <!-- FONTS -->
-        <link href='//fonts.googleapis.com/css?family=Roboto:400,100,300,700,400italic,700italic' rel='stylesheet' type='text/css'>
-        
-
-        <!--FONTAWESOME CSS-->
-        <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css"> 
-        
-
-        <!-- CUSTOM STYLE -->
-        <link href="/static/css/style-user.css" rel="stylesheet">
-        
-
-        <!-- RESPONSIVE CSS-->
-        <link href="/static/css/responsive.css" rel="stylesheet">
-
-        <!-- COLORS -->        
-        <link rel="alternate stylesheet" href="/static/css/colors/red.css" title="red">
-        <link rel="alternate stylesheet" href="/static/css/colors/purple.css" title="purple">
-        <link rel="alternate stylesheet" href="/static/css/colors/orange.css" title="orange">
-        <link rel="alternate stylesheet" href="/static/css/colors/green.css" title="green">
-        <link rel="stylesheet" href="/static/css/colors/lime.css" title="lime">
-
-        
-        <!-- STYLE SWITCH STYLESHEET ONLY FOR DEMO -->
-        <link rel="stylesheet" href="/static/css/demo.css">
-        
-        <!--[if lt IE 9]><script src="assets/js/ie8-responsive-file-warning.js"></script><![endif] -->
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-        
-        <style>
+        <style type='text/css'>
             .token{
                 letter-spacing: 1.1px;
                 background-color: #b2f1ff;
@@ -87,6 +23,49 @@
             }
             body{
                 text-align: left;
+                color: #555;
+            }
+            .row1{
+                margin-left: 0.75rem !important; 
+                margin-right: 0.75rem !important;
+            }
+            .m-name{
+                text-shadow: 2px 2px 4px #000 !important;
+            }
+            .w-name{
+                text-shadow: 2px 1px 2px #000 !important;
+            }
+            .mg-b{
+                margin-bottom: 0px;
+            }
+            .card-image-div{
+                text-align: center; 
+                height: 240px; 
+                border-bottom: 1px solid #ccc;
+            }
+            .card-image-main{
+                max-height: 240px; 
+                max-width: 100%; 
+                vertical-align: middle; 
+                height: auto; 
+                width: auto !important; 
+                margin: auto !important;
+            }
+            .border-bottom-n{
+                border-bottom: none;
+            }
+            .lh-28{
+                line-height: 28pt;
+            }
+            .card-pd{
+                padding: 15px 24px 5px 24px !important;
+            }
+            .card-t-box{
+                overflow: hidden; 
+                height: 60px;
+            }
+            .card-p-box{
+                overflow: hidden; height: 45px;
             }
         </style>
         
@@ -130,7 +109,7 @@
         <!-- Start Container-->
         <div class="container">
             <!-- row -->
-            <div class="row" style=" margin-left: 0.75rem !important; margin-right: 0.75rem !important;">
+            <div class="row row1" >
             <!-- =========================================
                            SIDEBAR   
             ==========================================-->
@@ -153,8 +132,8 @@
                                                
                         </div>
                         <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
-                            <h2 style="text-shadow: 2px 2px 4px #000 !important;">{{ fullname }}</h2> <!-- title name -->
-                            <span style="text-shadow: 2px 1px 2px #000 !important;">{{currentwork}}</span>  <!-- tagline -->
+                            <h2 class="m-name">{{ fullname }}</h2> <!-- title name -->
+                            <span class="w-name">{{currentwork}}</span>  <!-- tagline -->
                         </div>  
                         <div style="text-align: center;">
                             <button class="btn waves-effect waves-light white black-text" type="submit" name="action" value='{{ followcheck }}' style="text-transform: none;" id="followbutton">
@@ -191,7 +170,7 @@
                                 <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
                                     <div class="section-item-details">
                                         <div class="address-details"> <!-- address  -->
-                                            <h4 style="line-height: 28pt;">Country: {{country}}</h4> 
+                                            <h4 class="lh-28">Country: {{country}}</h4> 
                                         </div>                         
                                     </div>
                                 </div>
@@ -294,12 +273,12 @@
                                     {% for each in blogs %}
                                         <div class="col s12 m6">
                                             <div class="card">
-                                                <div class="card-image" style="text-align: center; height: 240px; background-color: fff; border-bottom: 1px solid #ccc;">
-                                                    <img src="{{ each.img_src }}" style="max-height: 240px; max-width: 100%; vertical-align: middle; height: auto; width: auto; margin: auto;" >
+                                                <div class="card-image card-image-div">
+                                                    <img src="{{ each.img_src }}" class="card-image-main" >
                                                 </div>
-                                                <div class="card-content">
-                                                    <span class="card-title" style="overflow: hidden; height: 60px;">{{ each.heading|truncatechars:40 }}</span>
-                                                    <p style="overflow: hidden; height: 45px;">{{ each.cleaned_data|truncatechars:90 }}</p>
+                                                <div class="card-content card-pd">
+                                                    <span class="card-title card-t-box">{{ each.heading|truncatechars:40 }}</span>
+                                                    <p class="card-p-box">{{ each.cleaned_data|truncatechars:90 }}</p>
                                                 </div>
                                                 <div class="card-action">
                                                     <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View Now</a>
