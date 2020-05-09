@@ -11,6 +11,7 @@ from . import models
 from .forms import PhotoForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
+import os
 import json
 from django.contrib.auth import logout
 from django.db.models import Q
@@ -509,6 +510,34 @@ def followers(request):
                 context['follownum'] = follownum - 1
 
         return HttpResponse(json.dumps(context), content_type="application/json")
+
+def followpush(request):
+    if request.user.is_anonymous:
+        context = {'status': 110}
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+    if request.method == 'POST':
+        context = {'status': 110}
+        profile = request.POST.get('profile','')
+        if len(profile):
+            if profile.isnumeric():
+                profile = int(profile)
+                followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__id = profile)
+                touser = User.objects.filter(id = profile)
+                if followcheck.count() == 0:
+                    if request.user != touser[0]:
+                        following = models.Follower(fromuser = request.user, touser = touser[0])
+                        following.save()
+                        context['status'] = 200
+                        context['stat'] = 1
+                elif followcheck.count() == 1:
+                    if request.user != touser[0]:
+                        followcheck.delete()
+                        context['status'] = 200
+                        context['stat'] = 0
+        return HttpResponse(json.dumps(context), content_type="application/json")
+        
+
 
 def blogs(request, username, title):
     context = {}
@@ -1617,7 +1646,32 @@ def myprofile(request):
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
-            followers = models.Follower.objects.filter(touser__username=username).count()
+            
+            follow_filter = models.Follower.objects.filter(touser__username=username)
+            followers = follow_filter.count()
+            followers_list = []
+            if followers:
+                from_follow = models.Follower.objects.filter(fromuser__username=username)
+                from_follow_list = [each.touser.username for each in from_follow]
+                for each in follow_filter:
+                    follow_dict = {}
+                    follow_dict['name'] = (each.fromuser.first_name + " " + each.fromuser.last_name).title()
+                    follow_dict['username'] = each.fromuser.username
+
+                    location3 = 'profile/100/'+each.fromuser.username+'.jpg'
+                    checkstorage3 =  django.core.files.storage.default_storage.exists(location3)
+                    if checkstorage3:
+                        follow_dict['src'] = '/media/profile/100/'+each.fromuser.username+'.jpg'
+                    else:
+                        follow_dict['src'] = "/media/profile/100/default.jpg"
+
+                    follow_dict['userid'] = each.fromuser.id
+                    if each.fromuser.username in from_follow_list:
+                        follow_dict['is_followed'] = 1
+                    else:
+                        follow_dict['is_followed'] = 0
+                    followers_list.append(follow_dict)
+            context['followers_list'] = followers_list
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name

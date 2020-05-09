@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^fetchchart/$',views.fetchchart),
     url(r'^likes/$',views.likes),
     url(r'^likescheck/$',views.likescheck),
+    url(r'^followpush/$',views.followpush),
     url(r'^notification/$',views.notification),
     url(r'^team/$',views.team),
     url(r'^logout/$',views.logout_view),

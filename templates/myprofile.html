@@ -94,12 +94,48 @@
             .card-p-box{
                 overflow: hidden; height: 45px;
             }
+            @media only screen and (max-width: 992px){
+                .modal {
+                    width: 90%;
+                }
+            }
         </style>
         
     </head>
     <body>
 
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal">
 
+                    <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
+                        <h2 class="center">Your Followers</h2>
+                    </div>
+                    <div class="modal-content" style="height: 70vh; overflow:scroll; ">
+                        <br><br>
+                        {% for each in followers_list %}
+                        <div class="row">
+                            <div class="col m1 s3">
+                                <img class="image" src="{{ each.src }}" style="width: 100%; border-radius: 50%;">
+
+                            </div>
+                            <div class="col m6 offset-m1 s5">
+                                <a href="/@{{ each.username|urlencode }}" class="black-text" style="font-size: 1.4rem;">{{ each.name }}</a>
+                            </div>
+                            <div class="col m4 s4 center">
+                                {% if each.is_followed == 0 %}
+                                    <button for="{{ each.userid }}" id="fol_{{ each.userid }}" class="btn white black-text follow_btn" style="font-size: 0.8rem; padding: 0 6px;">Follow</button>
+                                {% else %}
+                                    <button for="{{ each.userid }}" id="fol_{{ each.userid }}" class="btn grey lighten-2 black-text follow_btn" style="font-size: 0.8rem; padding: 0 6px;">Followed</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div style="border-top: 1px solid rgba(0,0,0,0.1); position: absolute; bottom: 0;" class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                    </div>
+                  </div>
+                <!-- /Modal Structure -->
         <!-- Start Container-->
         <div class="container">
             <!-- row -->
@@ -183,8 +219,15 @@
                             </div>            
                         </div>
                         <!---->
-                        <div class="center">
-                            <a href="/editprofile"><button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button></a>
+                        <div class="col l12 m12 s12  address sidebar-item ">
+                            <div class="row mg-b"> 
+                                <div class="center">
+                                    <a href="/editprofile"><button class="btn"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button></a>
+                                    {% if followers %}
+                                    <button data-target="modal1" class="btn modal-trigger white black-text">See Followers</button>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>   <!-- end row -->
                 </aside><!-- end sidebar -->
@@ -327,6 +370,9 @@
 
     </body>
     <script>
+        $(document).ready(function(){
+            $('#modal1').modal({'endingTop':'8%'});
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             var interest_list = {{ interest_list|safe }};
@@ -369,6 +415,37 @@
                     }
                 });
                 
+            });
+
+
+            $(document).ready(function(){
+                $(".follow_btn").click(function(){
+                    forval = $(this).attr("for");
+                    $.ajax({
+                        type: 'POST',
+                        url: '/followpush/',
+                        data: {
+                            profile: forval,
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                        },
+                        success: function(result){
+                            if (result['status']==200){
+                                btn_name = "#fol_"+forval;
+                                console.log($(btn_name))
+                                if (result['stat']==0){
+                                    $(btn_name).text("Follow");
+                                    $(btn_name).removeClass("grey lighten-2 black-text");
+                                    $(btn_name).addClass("white black-text");
+                                }
+                                else{
+                                    $(btn_name).text("Followed");
+                                    $(btn_name).removeClass("white black-text");
+                                    $(btn_name).addClass("grey lighten-2 black-text");
+                                }
+                            }
+                        }
+                    });
+                });
             });
             
                   </script>
