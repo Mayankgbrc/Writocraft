@@ -19,6 +19,34 @@
         </style>
     </head>
     <body>
+            {% if val == '1' %}
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal">
+
+                    <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
+                        <h2 class="center" style="font-size: 30px;">Blog Saved</h2>
+                    </div>
+                    <div class="modal-content" style="height: 50vh; overflow:scroll; ">
+                        <br><br>
+                        Congrats, your blog is published.<br>
+                        To view the blog you can click here: 
+                        <a target="_blank" href="/@{{username}}/{{url}}/">
+                            <button class="btn">Go to Blog</button>
+                        </a>
+                    </div>
+                    <div style="border-top: 1px solid rgba(0,0,0,0.1); position: absolute; bottom: 0;" class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                    </div>
+                  </div>
+                <!-- /Modal Structure -->
+                <script>
+                    $(document).ready(function(){
+                        $('#modal1').modal();
+                        $('#modal1').modal('open');
+                    });
+                </script>
+            {% endif %}
+
         <div class="row">
             <div class="">
                 <div class="col m8 offset-m2 s12" >
@@ -133,7 +161,6 @@ $(document).ready(function(){
         var token = $(this).val(); 
         var delta = editor.getContents();
         var quillHtml = editor.root.innerHTML.trim();
-        console.log(quillHtml)
         var id = "{{id}}";
         var anoaccept = "False";
         $('#progressbar').css("width","0%");
@@ -162,6 +189,7 @@ $(document).ready(function(){
                 token: token,
                 tags: tags,
                 anoaccept: anoaccept,
+                val: 1,
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function(result){
@@ -172,10 +200,9 @@ $(document).ready(function(){
                     $("#success").show().delay(5000).fadeOut(3000);
                     heading_ = replaceAll(heading," ", "-");
                     heading_url = encodeURI(heading_);
-                    window.location.href = '/edit/'+heading_url;
+                    window.location.href = '/edit/'+heading_url+"/1";
                 }
                 else{
-                    console.log(result['error']);
                     $("#error").text("Error "+result['error']);
                     $("#error").show().delay(5000).fadeOut(3000);;
                 }

@@ -257,8 +257,11 @@ def writeblog(request):
                 data = request.POST.get('data','')
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
+                val = request.POST.get('val','')
                 tags = json.loads(request.POST.get('tags',''))
                 taglist = [each['tag'] for each in tags]
+                if len(val):
+                    context['val'] = 1
                 if len(taglist)>20:
                     context['error'] = "Tag List is Greater than 20"
                     context['status'] = 110
@@ -668,13 +671,14 @@ def myblogs(request):
         return render(request, "myblogs.html", context)
 
 @login_required(login_url='/login/')
-def edit(request, url):
+def edit(request, url, val = 0):
     context = {}
     if models.Blog.objects.filter(user__username = request.user, url = url).exists():
         if models.Blog.objects.filter(user__username = request.user, url = url).count() == 1:
             blog = models.Blog.objects.get(user__username = request.user, url = url)
             context['heading'] = blog.heading
             context['url'] = blog.url
+            context['val'] = val
             new_data = mdtohtml(request, blog.data)
             context['data'] = new_data
             context['id'] = blog.id
