@@ -116,7 +116,6 @@ def index(request):
         
         temp['currentwork'] = currentwork(request, each.user.username)
         writer_list.append(temp)
-        print(writer_list)
     context['writers'] = writer_list
 
     tags = models.Tags.objects.all().values('tag').annotate(total=Count('tag')).order_by('-total')
@@ -153,6 +152,9 @@ def profile_login(request):
         try:
             email = request.POST['email']
             password = request.POST['password']
+            if len(email)==0 or len(password)==0:
+                context['login_error'] = "Please fill both fields."
+                return HttpResponse(json.dumps(context), content_type="application/json")
             try:
                 user = User.objects.get(email__iexact=email)
                 if (not user) or (not user.check_password(password)) :
@@ -1909,7 +1911,11 @@ def search(request):
         queryset.append(temp)
     context['blogs'] = queryset
     context['numbers'] = len(queryset)
+    context['loginned'] = 1
+    if request.user.is_anonymous:
+        context['loginned'] = 0
     return render(request, "search.html", context)
+
 
 def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')
