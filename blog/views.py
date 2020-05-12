@@ -1427,14 +1427,24 @@ def readreport(request):
         if models.Blog.objects.filter(id = blogid).exists():
             blog = models.Blog.objects.get(id = blogid)
             if work == "reportblog":
-                report = models.Report(blog=blog, user = request.user)
-                report.save()
-                context['message'] = "Reported"
+                obj = models.Report.objects.filter(blog=blog, user = request.user)
+                if obj.count() == 0:
+                    report = models.Report(blog=blog, user = request.user)
+                    report.save()
+                    context['message'] = "Reported"
+                else:
+                    obj.delete()
+                    context['message'] = "Report"
                 context['status'] = 200
             elif work == "readlater":
-                readlater = models.ReadLater(blog=blog, user = request.user)
-                readlater.save()
-                context['message'] = "Added to Read Later"
+                obj = models.ReadLater.objects.filter(blog=blog, user = request.user)
+                if obj.count() == 0:
+                    readlater = models.ReadLater(blog=blog, user = request.user)
+                    readlater.save()
+                    context['message'] = "Added to Read Later"
+                else:
+                    obj.delete()
+                    context['message'] = "Add to Read Later"
                 context['status'] = 200
     return HttpResponse(json.dumps(context), content_type="application/json")
 
@@ -1883,6 +1893,8 @@ def search(request):
     query = request.GET.get('q','')
     queries = query.split()
     post_list = []
+    readlater = models.ReadLater.objects.filter(user = request.user)
+    report = models.Report.objects.filter(user = request.user)
     for q in queries:
         posts = models.Blog.objects.filter(
             Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
@@ -1912,6 +1924,17 @@ def search(request):
         temp['comments_count'] = comment_count
         date_time = each.created_at
         temp['date_time']  = date_time.strftime("%b %d, %Y")
+
+        temp['readlater'] = "Add to Read Later"
+        for obj in readlater:
+            if obj.blog == each:
+                temp['readlater'] = "Added to Read Later"
+        
+        temp['report'] = "Report Content"
+        for obj in report:
+            if obj.blog == each:
+                temp['report'] = "Reported"
+        
         queryset.append(temp)
     context['blogs'] = queryset
     context['numbers'] = len(queryset)

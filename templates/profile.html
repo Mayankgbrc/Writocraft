@@ -97,7 +97,12 @@
                                     <div class="center">
                                         <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
                                     </div>    
-                                    <p class="center"> New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> </p>                                                                 
+                                    <p class="center"> 
+                                        New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> 
+                                        <br>
+                                        <a href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
+                                    </p>  
+
                                 </div>
                             </div>
                         </div>

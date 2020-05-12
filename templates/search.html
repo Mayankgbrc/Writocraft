@@ -61,7 +61,11 @@
                                     <div class="center">
                                         <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
                                     </div>    
-                                    <p class="center"> New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> </p>                                                                 
+                                    <p class="center"> 
+                                        New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> 
+                                        <br>
+                                        <a href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
+                                    </p>                                                                 
                                 </div>
                             </div>
                         </div>
@@ -82,13 +86,13 @@
                                 <div class="entry-header">
                                     <h2 class="entry-title" style="font-size: 18px;">
                                         <a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a>
-                                        <a class='dropdown-trigger' href='#' data-target='dropdown2' style="float: right; outline: none;"> 
+                                        <a class='dropdown-trigger' href='#' data-target='dropdown{{ each.blogid }}' style="float: right; outline: none;"> 
                                             <i class="fa fa-ellipsis-v" style="padding: 4px 10px;"></i> 
                                         </a>
-                                        <ul id='dropdown2' class='dropdown-content'>
-                                            <li><a href="#" class="dropbutton black-text" id="readlater" for="{{ each.blogid }}">Add to Read Later</a></li>
-                                            <li><a href="#" class="dropbutton black-text" id="reportblog" for="{{ each.blogid }}">Report Content</a></li>
-                                            <li><a href="#" class="dropbutton black-text" id="copylink" for="{{ each.blogid }}">Copy Blog Link</a></li>
+                                        <ul id='dropdown{{ each.blogid }}' class='dropdown-content'>
+                                            <li><a href="#" class="dropbutton black-text" id="readlater" for="{{ each.blogid }}">{{each.readlater}}</a></li>
+                                            <li><a href="#" class="dropbutton black-text" id="reportblog" for="{{ each.blogid }}">{{each.report}}</a></li>
+                                            <li><a href="#" class="dropbutton black-text" id="copylink" onclick="" for="{{ each.blogid }}">Copy Blog Link</a></li>
                                         </ul>
                                     </h2>
                                     <div class="entry-meta">
@@ -143,14 +147,13 @@
                     if (id == "copylink"){
                         var link = $("#link"+forid).attr("href");
                         var urlText = window.location.origin + link;
-                        $("#spanforcopy").show();
-                        $("#forcopy").val(urlText);
-                        var copyText = document.getElementById("forcopy");
-                        copyText.select();
-                        copyText.setSelectionRange(0, 99999);
+                        console.log(urlText)
+                        var $temp = $("<input>");
+                        $("body").append($temp);
+                        $temp.val(urlText).select();
                         document.execCommand("copy");
-                        $("#spanforcopy").hide();
-                        $(this).html('<b>Copied</b>');
+                        $temp.remove();
+                        $(this).html('Copied');
                         $(this).css({"background-color":"#999"});
                         return 0
                     }
@@ -171,12 +174,8 @@
                                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                             },
                             success: function(result){
-                                console.log(result['status'])
                                 if (result['status']==200){
-                                    console.log("Yo")
-                                    console.log(block)
                                     $(block).html(result['message']);
-                                    $(block).css({"background-color":"#999"});
                                 }
                             }
                         });
