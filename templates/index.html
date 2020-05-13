@@ -254,10 +254,10 @@ a {
 						<div class="thumb-wrapper waves-effect waves-block waves-light" style="padding: 20px;">
 							<a href="#"><img src="/media/profile/org/{{each.profilepic}}" class="img-responsive" style="border-radius: 50%;" alt=""></a>
 						</div>
-						<div class="blog-content" style="border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+						<div class="blog-content" style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; color: #444;">
 							<header class="entry-header-wrapper">
 								<div class="entry-header">
-									<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}" style="font-size: 22px; font-weight: 700; text-transform: uppercase;">{{ each.fullname|truncatechars:20 }}</a></h2>
+									<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}" style="font-size: 22px; font-weight: 700; text-transform: uppercase;">{{ each.fullname|truncatechars:30 }}</a></h2>
 									<div class="entry-meta" style="font-size: 14px;">
 										{{ each.currentwork }}
 									</div>
@@ -265,7 +265,7 @@ a {
 							</header>
 							<div class="entry-content text-justify" style="height: 100px; max-height: 150px;">
 								<p>
-									{{ each.description|truncatechars:100 }}<br>
+									{{ each.description|truncatechars:60 }}<br>
 									<b>Total Blogs: </b> {{each.totalblogs}}
 								</p>
 
