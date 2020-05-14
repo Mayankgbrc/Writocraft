@@ -580,8 +580,10 @@ def blogs(request, username, title):
             blog.views_num = blog.views_num + 1
             blog.save()
             blog_views = models.Views.objects.filter(blog = blog).count()
+            blog_likes = models.Likes.objects.filter(blog = blog).count()
             user_views = models.Views.objects.filter(blog__user__username = username).count()
             context['blog_views'] = human_format(request, blog_views)
+            context['blog_likes'] = human_format(request, blog_likes)
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
         
