@@ -58,13 +58,13 @@
                     var output = result['status'];
                     if (output == 200){
                         if (result['value'] == 1){
-                            $("#heart").attr('class', 'fa fa-heart');
-                            $("#heart").attr('style', 'color: #f00');
+                            $("#heart").attr('class', 'fa fa-thumbs-up');
+                            $("#heart2").text('Liked');
                             $("#likes").attr('to',1);
                         }
                         else{
-                            $("#heart").attr('class', 'fa fa-heart-o');
-                            $("#heart").attr('style', 'color: #000');
+                            $("#heart").attr('class', 'fa fa-thumbs-o-up');
+                            $("#heart2").text('Like');
                             $("#likes").attr('to',0);
                         }
                     }
@@ -311,15 +311,19 @@ ul li{
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col s1">
-                            <span id="likes" style="cursor: pointer;"  to="0">
-                                <i id="heart" class="fa fa-heart-o" style="color: black;" aria-hidden="true"></i>
-                            </span>
+                        <div class="col m2 s4">
+                            <button class="btn" style="text-transform: none; background-color: #eee; width: 100%; font-size: 20px; border-radius: 10%;">
+                                <span id="likes" style="cursor: pointer; color: black;"  to="0">
+                                    <i id="heart" class="fa fa-thumbs-o-up" aria-hidden="true"></i> <span id="heart2">Like</span>
+                                </span>
+                            </button>
                         </div>
-                        <div class="col s1">
-                            <span id="maincomment" style="cursor: pointer; color: black;" to='0'>
-                                <i id="icomment" class="fa fa-comment-o" style="color: black;" aria-hidden="true"></i>
-                            </span>
+                        <div class="col m3 s8">
+                            <button class="btn" style="text-transform: none; background-color: #eee; width: 100%; font-size: 20px; border-radius: 10%;">
+                                <span id="maincomment" style="cursor: pointer; color: black;" to='0'>
+                                    <!--<i id="icomment" class="fa fa-comment-o" style="color: black;" aria-hidden="true"></i>--><span id="icomment"> + Add Comments </span> 
+                                </span>
+                            </button>
                         </div>
                     </div>
                     <br><br>
@@ -346,13 +350,13 @@ ul li{
             }
             var value = $(this).attr('to');
             if (value == 0){
-                $("#heart").attr('class', 'fa fa-heart');
-                $("#heart").attr('style', 'color: #f00');
+                $("#heart").attr('class', 'fa fa-thumbs-up');
+                $("#heart2").text('Liked');
                 $(this).attr('to',1);
             }
             else{
-                $("#heart").attr('class', 'fa fa-heart-o');
-                $("#heart").attr('style', 'color: #000');
+                $("#heart").attr('class', 'fa fa-thumbs-o-up');
+                $("#heart2").text('Like');
                 $(this).attr('to',0);
             }
             $.ajax({
@@ -393,14 +397,14 @@ ul li{
                 return 0
             }
             if (value == 0){
-                $("#icomment").attr('class', 'fa fa-comment');
-                $("#icomment").attr('style', 'color: #D68910; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: #000;');
+                //$("#icomment").attr('class', 'fa fa-comment');
+                //$("#icomment").attr('style', 'color: #D68910; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: #000;');
                 $("#cmtmainbox").slideDown(100);
                 $("#maincomment").attr('to',"1");
             }
             else{
-                $("#icomment").attr('class', 'fa fa-comment-o');
-                $("#icomment").attr('style', 'color: #000;');
+                //$("#icomment").attr('class', 'fa fa-comment-o');
+                //$("#icomment").attr('style', 'color: #000;');
                 $("#cmtmainbox").slideUp(100);
                 $("#maincomment").attr('to','0');
             }
