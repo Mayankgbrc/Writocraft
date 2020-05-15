@@ -1485,9 +1485,8 @@ def fetchchart(request):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 def team(requests):
-    context = {}
-    
-    return render(requests, 'team.html')
+    context = {'title': "WritoCraft Team"}
+    return render(requests, 'team.html', context)
 
 def mailsend(request):
     
