@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.views.static import serve
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('pq-12-zy-34/', admin.site.urls),
     path('home/', views.home),
     path('', views.index),
     url(r'^signup/$', views.signup),
