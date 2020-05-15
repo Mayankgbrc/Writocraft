@@ -290,13 +290,14 @@ a {
 				<div class="">
 					<div id="owl-demo2" class="owl-carousel owl-theme">
 					{% for each in blogs %}
+					
 					<div>
 					<div class="">
 						<article class="post-wrapper">
 							<div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px; background-color: #eee; display: table-cell;">
-								<a href="#"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px; vertical-align: middle;" alt=""></a>
+								<a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px; vertical-align: middle;" alt=""></a>
 							</div>
-							<div class="blog-content">
+							<div class="blog-content" style="color: #555;">
 								<header class="entry-header-wrapper">
 									<div class="entry-header">
 										<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a></h2>
