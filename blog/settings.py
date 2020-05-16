@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -169,3 +169,8 @@ LOGIN_URL = '/login/'
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_API_KEY = "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"
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+DEFAULT_FROM_EMAIL = "admin@writocraft.com"
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '673111798009-4ennbn16pshr0dqqadvsjribf40jdrs8.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'Kg5z6ZdsggYzpunCxgNB7li5'
