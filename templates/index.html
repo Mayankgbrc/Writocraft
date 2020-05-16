@@ -28,18 +28,24 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/materialize-1.0.0.min.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/material-icons.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
-        <link rel="stylesheet" href="http://trendytheme.net/demo/matrox/assets/css/shortcodes/blog.css">
-        <link rel="stylesheet" href="http://trendytheme.net/demo/matrox/assets/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="http://trendytheme.net/demo/matrox/style.css?v=5">
-		<link rel="stylesheet" href="http://trendytheme.net/demo/matrox/assets/owl.carousel/assets/owl.carousel.css">
-		<link rel="stylesheet" href="http://trendytheme.net/demo/matrox/assets/owl.carousel/assets/owl.theme.default.min.css">
 		<link rel="stylesheet" href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.carousel.min.css">
 		<link rel="stylesheet" href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.theme.default.min.css">
-
-		
 		<link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,700,900' rel='stylesheet' type='text/css'>
 	</head>
 	<style>
+		body{
+			font-family: raleway,sans-serif!important;
+    font-size: 14px;
+    line-height: 29px;
+    font-weight: 500;
+    color: #999;
+    background-color: #fff;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-font-smoothing: antialiased!important;
+}
+		}
 		.menu-button{
 			font-size: 20px;
 			color: #000;
@@ -101,8 +107,8 @@
 			padding: 10px 20px;
 			background-color: #f00;
 			color: #fff;
-			font-size: 2rem;
-			line-height: 6rem;
+			font-size: 1.3rem;
+			line-height: 4rem;
 			margin: 3px;
 		}
 
@@ -145,32 +151,72 @@ a {
 #social-insta:hover {
   color: #f39c12;
 }
+#social-fb{
+  color: #fff;
+}
 
+#social-insta{
+  color: #fff;
+}
+a{
+            color: #222;
+        }
+        a:hover{
+            color: #039be5;
+        }
+        .list-icon{
+            display: inline-block; 
+            padding-right: 5px; 
+            padding-left: 5px; 
+            font-size: 12px;
+        }
+        .a-link{
+            color: #999;
+        }
+        .a-link:hover{
+            color: #039be5;
+        }
+        .post-wrapper:hover{
+            box-shadow: 2px 2px 10px;
+        }
+		@media (min-width: 992px){
+			.section-sub {
+				width: 60%;
+			}
+		}
+		.section-title{
+			font-size: 40px; 
+			margin-bottom: 20px; 
+			font-family: 'raleway', sans-serif!important; 
+			font-weight: 400; 
+			color: #202020; 
+			margin: 0 0 70px;
+		}
 	</style>
     <body>
 
 <!-- The Modal -->
 
 		<ul id="slide-out" class="sidenav">
-                <div class=" center" >
-                    <img src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
-                </div>  
-                <li class=""><a href="/">Home</a></li>
-                <li class=""> <a href="/#aboutus">About Us</a></li>
-                {% if user.is_authenticated %}
-                  <li class=""><a href="/myprofile" class="btn btn-large">My Profile</a></li>
-                  <li class="" style="position: absolute; bottom: 80px; margin-bottom: 40px; width: 100%; text-align: center;"><a href="/logout" class="">Sign Out</a></li>
-                {% else %}
-                  <li class=""><a href="/signup" class="btn btn-large">Sign Up</a></li>
-                  <li class=""><a href="/login" class="btn btn-large">Log In</a></li>
-                {% endif %}
-                <li class="" style="position: absolute; bottom: 0px; margin-bottom: 60px; width: 100%; "><a href="/contactus" class="btn" style="background-color: darkgray;">Contact Us</a></li>
+			<div class=" center" >
+				<img src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
+			</div>  
+			<li class=""><a href="/">Home</a></li>
+			<li class=""> <a href="/#aboutus">About Us</a></li>
+			{% if user.is_authenticated %}
+				<li class=""><a href="/myprofile" class="btn btn-large">My Profile</a></li>
+				<li class="" style="position: absolute; bottom: 80px; margin-bottom: 40px; width: 100%; text-align: center;"><a href="/logout" class="">Sign Out</a></li>
+			{% else %}
+				<li class=""><a href="/signup" class="btn btn-large">Sign Up</a></li>
+				<li class=""><a href="/login" class="btn btn-large">Log In</a></li>
+			{% endif %}
+			<li class="" style="position: absolute; bottom: 0px; margin-bottom: 60px; width: 100%; "><a href="/contactus" class="btn" style="background-color: darkgray;">Contact Us</a></li>
 
-		  </ul>
-		  <div class="menu-button-outer">
+		</ul>
+		<div class="menu-button-outer">
 			<a href="#" data-target="slide-out" class="sidenav-trigger menu-button"><i class="material-icons" style="padding: 10px; font-size: 2.1rem;">menu</i></a>  
-		  </div>
-	
+		</div>
+
 
 		<div class="row" style="background-color: #000; margin-bottom: 0px; min-height: 100vh;">
 			<div class="col m6 s12">
@@ -179,10 +225,10 @@ a {
 			<div class="col m6 s12" style="color: #fff; text-align: center; ">
 				<div style="text-align: center; padding: 20px;">
 					<div style="margin-top: 25%;">
-						<h2 class="headtop">Unleash your creativity with Us.</h2>
+						<h2 class="headtop" style="font-size: 2.3rem;">Unleash your creativity with Us.</h2>
 					</div>
 					<div>
-						<h3 class="headtop" style="font-size: 2.92rem;">Spend your leisure time with Writocraft.</h3>
+						<h3 class="headtop" style="font-size: 1.92rem; margin-top: 1.37rem;">Spend your leisure time with Writocraft.</h3>
 					</div>
 				</div>
 				{% if user.is_authenticated %}
@@ -214,24 +260,21 @@ a {
 			</div>
 		</div>
 
-		<section class="section-padding grid-news" id="aboutus">
+		<section class="grid-news" id="aboutus" style="padding: 110px 0;">
 			<div class="container">
-				<div class="text-center">
-					<h2 class="section-title">About Us</h2>
-					<p class="section-sub" style="font-size: 2rem;">Our mission is to let your words bring out the best version of your feelings, whether you are sad, happy, excited, anxious or blank, share your stories with us and let the world know your story. We appreciate your struggles, your hustles, and your successes. So why not give a glimpse of your personality for people wanting to know more about you.
+				<div class="center">
+					<h2 class="section-title" style="margin-bottom: 15px;">About Us</h2>
+					<p class="section-sub" style="font-size: 1.3rem; margin: 0 auto;">Our mission is to let your words bring out the best version of your feelings, whether you are sad, happy, excited, anxious or blank, share your stories with us and let the world know your story. We appreciate your struggles, your hustles, and your successes. So why not give a glimpse of your personality for people wanting to know more about you.
 						<br>
 						<span class="tag" style="background-color: #000; color: #fff; white-space:nowrap;">#Happy_Crafting</span>
-						
 					</p>
 				</div>
 			</div>
 		</section>
 		
-		<section class="section-padding grid-news">
+		<section class="grid-news" style="padding: 110px 0;">
 			<div class="container">
-				<div class="text-center mb-50">
-					<h2 class="section-title center">Top Tags</h2>
-				</div>
+				<h2 class="section-title center">Top Tags</h2>
 				<div class="center">
 					{% for each in tag_list %}
 						<a href="/search/?q={{each.tag}}">
@@ -242,11 +285,9 @@ a {
 			</div>
 		</section>
 
-		<section class="section-padding grid-news">
-			<div class="container">
-				<div class="text-center mb-50">
-					<h2 class="section-title center">Top Writers</h2>
-				</div>
+		<section class="grid-news" style="padding: 110px 0;">
+			<div class="container" style="width: 80%;">
+				<h2 class="section-title center">Top Writers</h2>
 				<div id="owl-demo1" class="owl-carousel owl-theme">
 				{% for each in writers %}
 				<div>
@@ -254,24 +295,28 @@ a {
 						<div class="thumb-wrapper waves-effect waves-block waves-light" style="padding: 20px;">
 							<a href="#"><img src="/media/profile/org/{{each.profilepic}}" class="img-responsive" style="border-radius: 10%;" alt=""></a>
 						</div>
-						<div class="blog-content" style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; color: #444;">
+						<div class="blog-content" style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding:0px 25px; color: #555;">
 							<header class="entry-header-wrapper">
 								<div class="entry-header">
-									<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}" style="font-size: 22px; font-weight: 700; text-transform: uppercase;">{{ each.fullname|truncatechars:30 }}</a></h2>
+									<h2 class="entry-title" style="margin: 0px;"><a href="/@{{ each.username|urlencode }}" style="font-size: 22px; font-weight: 700; text-transform: uppercase;">{{ each.fullname|truncatechars:30 }}</a></h2>
 									<div class="entry-meta" style="font-size: 14px;">
 										{{ each.currentwork }}
 									</div>
 								</div>
 							</header>
-							<div class="entry-content text-justify" style="height: 100px; max-height: 150px;">
+							<div class="entry-content text-justify" style="height: 80px; overflow: hidden;">
 								<p>
-									{{ each.description|truncatechars:60 }}<br>
-									<b>Total Blogs: </b> {{each.totalblogs}}
+									{{ each.description|truncatechars:60 }}
 								</p>
 
 							</div>
-							<footer class="entry-footer">
-								<a class="readmore pull-right" href="/@{{ each.username|urlencode }}"> View Profile <i class="fa fa-long-arrow-right"></i></a>
+							<footer class="entry-footer" style="border-top: 1px solid #eee;">
+								<ul>
+									<li class="list-icon"><a href="#"><i class="fa fa-file-text-o"> </i> {{each.totalblogs}}</a></li>
+									<li class="list-icon" style="float: right;">
+										<a class="readmore pull-right" href="/@{{ each.username|urlencode }}"> View Profile <i class="fa fa-long-arrow-right"></i></a>
+									</li>
+								</ul>
 							</footer>
 						</div>
 					</article>
@@ -283,30 +328,30 @@ a {
 
 
 		<section class="section-padding grid-news">
-			<div class="container">
-				<div class="text-center mb-80">
-					<h2 class="section-title">Our Weekly Tops</h2>
-				</div>
+			<div class="container" style="width: 80%;">
+				<h2 class="section-title center">Our Weekly Tops</h2>
 				<div class="">
 					<div id="owl-demo2" class="owl-carousel owl-theme">
 					{% for each in blogs %}
 					
-					<div>
+					<div style="font-family: raleway,sans-serif!important; font-size: 14px; line-height: 29px; font-weight: 500; color: #999; padding-right: 10px;">
 					<div class="">
-						<article class="post-wrapper">
+						<article class="post-wrapper" style="border: 1px solid #eee;">
 							<div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px; background-color: #eee; display: table-cell;">
 								<a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px; vertical-align: middle;" alt=""></a>
 							</div>
-							<div class="blog-content" style="color: #555;">
+							<div class="blog-content" style ="padding:0px 25px; color: #555;">
 								<header class="entry-header-wrapper">
 									<div class="entry-header">
-										<h2 class="entry-title"><a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a></h2>
+										<h2 class="entry-title" style="font-size: 18px;">
+											<a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">{{ each.heading|truncatechars:35 }}</a>
+										</h2>
 										<div class="entry-meta">
-											<ul class="list-inline">
-												<li>
+											<ul style="list-style: none; list-style-type: none;">
+												<li class="list-icon">
 													<i class="fa fa-user"></i> <a href="#">{{ each.fullname }}</a>
 												</li>
-												<li>
+												<li class="list-icon">
 													<i class="fa fa-clock-o"></i> <a href="#">{{ each.date_time }}</a>
 												</li>
 											</ul>
@@ -314,15 +359,17 @@ a {
 									</div>
 								</header>
 								<div class="entry-content text-justify" style="height: 150px; max-height: 150px; overflow: hidden;;">
-									<p>{{ each.data|truncatechars:200 }}</p>
+									<p style="margin: 0 0 30px; line-height: 30px; font-size: 0.8rem; overflow: hidden;">{{ each.data|truncatechars:200 }}</p>
 								</div>
-								<footer class="entry-footer">
-									<ul class="list-inline pull-left">
-										<li><a href="#"><i class="fa fa-eye"></i> {{ each.viewsnum }}</a></li>
-										<li><a href="#"><i class="fa fa-heart-o"></i> {{ each.likes_count }}</a></li>
-										<li><a href="#"><i class="fa fa-comments"></i> {{ each.comments_count }}</a></li>
+								<footer class="entry-footer" style="border-top: 1px solid #eee;">
+									<ul>
+										<li class="list-icon"><a href="#"><i class="fa fa-eye"></i> {{ each.viewsnum }}</a></li>
+										<li class="list-icon"><a href="#"><i class="fa fa-heart-o"></i> {{ each.likes_count }}</a></li>
+										<li class="list-icon"><a href="#"><i class="fa fa-comments"></i> {{ each.comments_count }}</a></li>
+										<li class="list-icon" style="float: right;">
+											<a class="readmore pull-right" href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">Read Full Post <i class="fa fa-long-arrow-right"></i></a>
+										</li>
 									</ul>
-									<a class="readmore pull-right" href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/">Read Full Post <i class="fa fa-long-arrow-right"></i></a>
 								</footer>
 							</div>
 						</article>
@@ -355,11 +402,11 @@ a {
 			<hr class="mt-15">
 			<div class="container">
 				<div class="row">
-					<div class="col m4 s12">
+					<div class="col m4 s12 center">
 						<img src="/static/images/uploadsfile/logo-main-small.jpg" style="max-height: 100px; margin: 30px;">
 					</div>
 					<div class="col m4 s12">
-						<ul>
+						<ul class="center">
 							<li><a class="grey-text text-lighten-3" href="#aboutus">About Us</a></li>
 							<li><a class="grey-text text-lighten-3" href="/team">Our Team</a></li>
 							<li><a class="grey-text text-lighten-3" href="/contactus" >Contact Us</a></li>
@@ -372,7 +419,7 @@ a {
 		<br>
 		<div class="footer-copyright" style="background-color: #333;">
 		  <div class="container">
-			© 2020 Copyright Text
+			© 2020 Copyright Writocraft
 		  </div>
 		</div>
 	  

@@ -1894,8 +1894,9 @@ def search(request):
     query = request.GET.get('q','')
     queries = query.split()
     post_list = []
-    readlater = models.ReadLater.objects.filter(user = request.user)
-    report = models.Report.objects.filter(user = request.user)
+    if not request.user.is_anonymous:
+        readlater = models.ReadLater.objects.filter(user = request.user)
+        report = models.Report.objects.filter(user = request.user)
     for q in queries:
         posts = models.Blog.objects.filter(
             Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
@@ -1927,14 +1928,15 @@ def search(request):
         temp['date_time']  = date_time.strftime("%b %d, %Y")
 
         temp['readlater'] = "Add to Read Later"
-        for obj in readlater:
-            if obj.blog == each:
-                temp['readlater'] = "Added to Read Later"
-        
         temp['report'] = "Report Content"
-        for obj in report:
-            if obj.blog == each:
-                temp['report'] = "Reported"
+        if not request.user.is_anonymous:
+            for obj in readlater:
+                if obj.blog == each:
+                    temp['readlater'] = "Added to Read Later"
+            
+            for obj in report:
+                if obj.blog == each:
+                    temp['report'] = "Reported"
         
         queryset.append(temp)
     context['blogs'] = queryset
