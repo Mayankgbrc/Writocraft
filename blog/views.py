@@ -576,7 +576,7 @@ def blogs(request, username, title):
                 view = models.Views(blog=blog, user = user_obj, ip = loc['ip'], city = loc['city'])
             else:
                 context['loginned'] = 0
-                view = models.Views(blog=blog)
+                view = models.Views(blog=blog, ip = loc['ip'], city = loc['city'])
             view.save()
             blog.views_num = blog.views_num + 1
             blog.save()
