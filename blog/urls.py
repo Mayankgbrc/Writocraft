@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^dashboard/$',views.dashboard),
     url(r'^interestsave/$',views.interestsave),
     url(r'^profile/$',views.profile),
-    url(r'^search/$',views.search),
+    url(r'^search/$',views.search2),
     url(r'^logsign/$',views.logsign),
     url(r'^contactus/$',views.contactus),
     url(r'^mailer/$',views.mailer),

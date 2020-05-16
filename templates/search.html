@@ -78,7 +78,7 @@
             {% for each in blogs %}
                 <div class="col l4 m6 s12" style="margin-top: 10px;">
                     <article class="post-wrapper" style="border: 1px solid #eee;">
-                        <div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px; background-color: #eee; display: table-cell;">
+                        <div class="thumb-wrapper waves-effect waves-block waves-light" style="height: 240px; background-color: #eee; text-align: center;">
                             <a href="/@{{ each.username|urlencode }}/{{ each.url|urlencode }}/"><img src="{{ each.img_src }}" class="img-responsive" style="max-height: 240px; vertical-align: middle; max-width: 100%;" alt=""></a>
                         </div>
                         <div class="blog-content" style ="padding:0px 25px; color: #555;">
@@ -98,7 +98,7 @@
                                     <div class="entry-meta">
                                         <ul style="list-style: none; list-style-type: none;">
                                             <li class="list-icon">
-                                                <i class="fa fa-user"></i> <a href="/@{{ each.username|urlencode }}" class="a-link">{{ each.fullname }}</a>
+                                                <i class="fa fa-user"></i> <a href="/@{{ each.username|urlencode }}" class="a-link">{{ each.fullname|truncatechars:14  }}</a>
                                             </li>
                                             <li class="list-icon">
                                                 <i class="fa fa-calendar-o"></i> {{ each.date_time }}

@@ -31,6 +31,7 @@ from django.db.models import Count
 from sendgrid.helpers.mail import Mail
 from django.core.mail import send_mail, BadHeaderError
 import string
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -1946,6 +1947,100 @@ def search(request):
         context['loginned'] = 0
     return render(request, "search.html", context)
 
+def normalize_query(query_string,
+                    findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
+                    normspace=re.compile(r'\s{2,}').sub):
+    ''' Splits the query string in invidual keywords, getting rid of unecessary spaces
+        and grouping quoted words together.
+        Example:
+
+        >>> normalize_query('  some random  words "with   quotes  " and   spaces')
+        ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
+
+    '''
+    return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
+
+def get_query(query_string, search_fields):
+    ''' Returns a query, that is a combination of Q objects. That combination
+        aims to search keywords within a model by testing the given search fields.
+
+    '''
+    query = None # Query to search for every search term        
+    terms = normalize_query(query_string)
+    for term in terms:
+        or_query = None # Query to search for a given term in each field
+        for field_name in search_fields:
+            q = Q(**{"%s__icontains" % field_name: term})
+            if or_query is None:
+                or_query = q
+            else:
+                or_query = or_query | q
+        if query is None:
+            query = or_query
+        else:
+            query = query & or_query
+    return query
+
+def search2(request):
+    queryset = []
+    context = {}
+    query = request.GET.get('q','')
+    if len(query):
+        query_string = ''
+        post_list = []
+        if not request.user.is_anonymous:
+            readlater = models.ReadLater.objects.filter(user = request.user)
+            report = models.Report.objects.filter(user = request.user)
+        if query:
+            query_string = query
+            entry_query = get_query(query_string, ['heading','data','user__username','user__first_name','user__last_name'])
+            posts = models.Blog.objects.filter(entry_query)[:10]
+        [post_list.append(each) for each in posts if each not in post_list]
+        post_tag = models.Tags.objects.filter(tag__icontains=query).distinct().order_by('-blog__views_num')[:10]
+        [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]
+        post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
+        for each in post_list:
+            temp = {}
+            temp['heading'] = each.heading
+            temp['url'] = each.url
+            new_data = mdtohtml(request, each.data)
+            cleanedhtml = cleanhtml(request, new_data)
+            temp['data'] = cleanedhtml
+            temp['img_src']  = findimg(request, new_data)
+            temp['fullname'] = each.user.first_name + " " + each.user.last_name
+            temp['blogid'] = each.id
+            temp['url'] = each.url
+            temp['readtime'] = each.read_time
+            temp['viewsnum'] = each.views_num
+            temp['username'] = each.user.username
+            temp['readtime'] = each.read_time
+            likes_count = models.Likes.objects.filter(blog = each).count()
+            comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
+            temp['likes_count'] = likes_count
+            temp['comments_count'] = comment_count
+            date_time = each.created_at
+            temp['date_time']  = date_time.strftime("%b %d, %Y")
+
+            temp['readlater'] = "Add to Read Later"
+            temp['report'] = "Report Content"
+            if not request.user.is_anonymous:
+                for obj in readlater:
+                    if obj.blog == each:
+                        temp['readlater'] = "Added to Read Later"
+                
+                for obj in report:
+                    if obj.blog == each:
+                        temp['report'] = "Reported"
+            
+            queryset.append(temp)
+        context['blogs'] = queryset
+        context['numbers'] = len(queryset)
+        context['loginned'] = 1
+        if request.user.is_anonymous:
+            context['loginned'] = 0
+        return render(request, "search.html", context)
+    else:
+        return render(request, "search.html", context)
 
 def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')

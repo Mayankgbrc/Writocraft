@@ -258,13 +258,15 @@ ul li{
         <nav>
             <div class="nav-wrapper black flow-text">
                 <div class="col s12">
-                    <a href="/" class="breadcrumb" style="padding-left: 1%;"><b>Home</b></a>
-                    {% if fullname %}
-                        <a href="/@{{ username|urlencode }}/" class="breadcrumb"><b>{{ fullname }}</b></a>
-                    {% else %}
-                        <a href="#" class="breadcrumb"><b>Anonymous</b></a>
-                    {% endif %}
-                    <a href="/@{{ username|urlencode }}/{{ url|urlencode }}/" class="breadcrumb"><b>{{ heading }}</b></a>
+                    <div class="container">
+                        <a href="/" class="breadcrumb" style="padding-left: 1%;"><b>Home</b></a>
+                        {% if fullname %}
+                            <a href="/@{{ username|urlencode }}/" class="breadcrumb"><b>{{ fullname }}</b></a>
+                        {% else %}
+                            <a href="#" class="breadcrumb"><b>Anonymous</b></a>
+                        {% endif %}
+                        <a href="/@{{ username|urlencode }}/{{ url|urlencode }}/" class="breadcrumb"><b>{{ heading }}</b></a>
+                    </div>
                 </div>
             </div>
         </nav>
