@@ -569,11 +569,11 @@ def blogs(request, username, title):
             context['fullname'] = user.first_name + " " + user.last_name
             context['numberblog'] = num_blogs
             context['username'] = username
-            
+            loc = getlocation(request)
             if not request.user.is_anonymous:
                 context['loginned'] = 1
                 user_obj = User.objects.get(username = request.user)
-                view = models.Views(blog=blog, user = user_obj)
+                view = models.Views(blog=blog, user = user_obj, ip = loc['ip'], city = loc['city'])
             else:
                 context['loginned'] = 0
                 view = models.Views(blog=blog)
@@ -2041,6 +2041,28 @@ def search2(request):
         return render(request, "search.html", context)
     else:
         return render(request, "search.html", context)
+
+from django.contrib.gis.geoip2 import GeoIP2
+def getlocation(request):
+    context={'city':None, 'ip': None}
+    try:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        try:
+            g = GeoIP2()
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+                city = g.city(str(ip))['city']
+                context['city'] = city
+                context['ip'] = ip
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+                city = "NULL"
+        except:
+            ip = "NULL"
+            city = "NULL"
+    except:
+        pass
+    return context
 
 def mailer(request):
     mail = Mail('hello@writocraft.com', ['mayankgbrc@gmail.com'],'Test Message',  'Welcome to writocraft.')

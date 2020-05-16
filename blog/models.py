@@ -119,6 +119,8 @@ class CommentsLikes(models.Model):
 class Views(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    ip = models.CharField(max_length=50, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Photo(models.Model):

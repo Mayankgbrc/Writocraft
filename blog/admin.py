@@ -27,7 +27,7 @@ class Likes(admin.ModelAdmin):
     list_display = ('user','blog','created_at',)
 
 class Views(admin.ModelAdmin):
-    list_display = ('user','blog','created_at',)
+    list_display = ('user','blog','ip','city','created_at',)
 
 class Photo(admin.ModelAdmin):
     list_display = ('user','file','description','uploaded_at',)
