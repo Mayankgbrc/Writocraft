@@ -273,10 +273,10 @@ ul li{
 
         <div id="doc">
             <div class="row">
-                <div class="col s12 m8 offset-m2" style=" text-align: justify; text-justify: inter-word;">
+                <div class="col s12 m8 offset-m2" >
                     <div>
                         <h1 style="text-align: left;">{{heading}}</h1>
-                        <div style="font-size: 1.5rem; letter-spacing: 0.0625em; ">{{data|safe}}</div>
+                        <div style="font-size: 1.5rem; letter-spacing: 0.0625em; text-align: justify; text-justify: inter-word;">{{data|safe}}</div>
                         Total Views - {{ blog_views }}<br>
                         Total Likes - {{ blog_likes }}
                         {% if fullname %}
@@ -298,7 +298,7 @@ ul li{
                                                         <a href="/@{{ username|urlencode }}/">
                                                             <button class='btn waves-effect waves-light' style="background-color: black; margin-top: 5px;" > View Profile <i class="fa fa-address-book" style="font-size: 1.1rem;"></i></button><br>
                                                         </a>
-                                                        <span style="font-size: 16px;">Total post views: {{ user_views }}</span>
+                                                        <!--<span style="font-size: 16px;">Total post views: {{ user_views }}</span>-->
                                                     </div>
                                                 </div>
                                             </div>

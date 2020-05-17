@@ -87,7 +87,7 @@ def index(request):
         temp['blogid'] = each.blog.id
         temp['url'] = each.blog.url
         temp['readtime'] = each.blog.read_time
-        temp['viewsnum'] = each.blog.views_num
+        temp['viewsnum'] = models.Views.objects.filter(blog = each.blog).distinct('user','ip').count()
         temp['username'] = each.blog.user.username
         likes_count = models.Likes.objects.filter(blog = each.blog).count()
         comment_count = models.Comment.objects.filter(blog = each.blog).count() + models.Commentthread.objects.filter(blog = each.blog).count()
@@ -119,7 +119,7 @@ def index(request):
         writer_list.append(temp)
     context['writers'] = writer_list
 
-    tags = models.Tags.objects.all().values('tag').annotate(total=Count('tag')).order_by('-total')
+    tags = models.Tags.objects.all().values('tag').annotate(total=Count('tag')).order_by('-total')[:20]
     tag_list = []
     for each in tags:
         r = lambda: random.randint(0,255)
@@ -580,9 +580,9 @@ def blogs(request, username, title):
             view.save()
             blog.views_num = blog.views_num + 1
             blog.save()
-            blog_views = models.Views.objects.filter(blog = blog).count()
+            blog_views = models.Views.objects.filter(blog = blog).distinct('user','ip').count()
             blog_likes = models.Likes.objects.filter(blog = blog).count()
-            user_views = models.Views.objects.filter(blog__user__username = username).count()
+            user_views = models.Views.objects.filter(blog__user = user).count()
             context['blog_views'] = human_format(request, blog_views)
             context['blog_likes'] = human_format(request, blog_likes)
             context['user_views'] = human_format(request, user_views)
@@ -611,7 +611,7 @@ def anoblog(request, timestamp, url):
             context['blogid'] = blog.id
             view = models.Views(blog=blog, user = request.user)
             view.save()
-            blog_views = models.Views.objects.filter(blog = blog).count()
+            blog_views = models.Views.objects.filter(blog = blog).distinct('user','ip').count()
             context['blog_views'] = human_format(request, blog_views)
             context['status'] = 200
         else:
@@ -1858,7 +1858,7 @@ def topblogs(request):
         blog_dict['user'] = each.user.username
         blog_dict['blog'] = each.blog.heading
         blog_dict['read_time'] = each.blog.read_time
-        blog_dict['views_num'] = each.blog.views_num
+        blog_dict['views_num'] = models.Views.objects.filter(blog = each.blog).distinct('user','ip').count()
         blog_dict['created_at'] = each.blog.created_at
         blog_list.append(blog_dict)
     context['blog_list'] = blog_list
@@ -1998,7 +1998,7 @@ def search2(request):
         [post_list.append(each) for each in posts if each not in post_list]
         post_tag = models.Tags.objects.filter(tag__icontains=query).distinct().order_by('-blog__views_num')[:10]
         [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]
-        post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
+        #post_list = sorted(post_list, key = lambda i: i.views_num,reverse=True) 
         for each in post_list:
             temp = {}
             temp['heading'] = each.heading
@@ -2011,7 +2011,7 @@ def search2(request):
             temp['blogid'] = each.id
             temp['url'] = each.url
             temp['readtime'] = each.read_time
-            temp['viewsnum'] = each.views_num
+            temp['viewsnum'] = models.Views.objects.filter(blog = each).distinct('user','ip').count()
             temp['username'] = each.user.username
             temp['readtime'] = each.read_time
             likes_count = models.Likes.objects.filter(blog = each).count()
