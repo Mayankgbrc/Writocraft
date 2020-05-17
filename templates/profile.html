@@ -79,7 +79,7 @@
                             <h4 class="center">Please Login</h4>
                             <div class="col m6">
                                 <div>
-                                    <img class="responsive-img" src="/static/images/uploadsfile/mirage.png">
+                                    <img alt="Login modal image"  class="responsive-img" src="/static/images/uploadsfile/mirage.png">
                                 </div>
                             </div>
                             <div class="col m6">
@@ -98,9 +98,9 @@
                                         <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
                                     </div>    
                                     <p class="center"> 
-                                        New User? <a href="/signup" style="color: #000;"> Sign Up Here </a> 
+                                        New User? <a title="Sign Up" href="/signup" style="color: #000;"> Sign Up Here </a> 
                                         <br>
-                                        <a href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
+                                        <a title="Password-reset" href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
                                     </p>  
 
                                 </div>
@@ -128,7 +128,7 @@
                                       IMAGE   
                             ==========================-->
                             <div class="feature-img">
-                                <img src="/media/profile/org/{{ image_src }}" class="responsive-img" alt="">
+                                <img alt="profile image" src="/media/profile/org/{{ image_src }}" class="responsive-img" alt="">
                             </div>                            
                          
                             <!-- ========================================
@@ -137,7 +137,7 @@
                                                
                         </div>
                         <div class="title col s12 m12 l12 center" style="padding: 15px 5px;">   
-                            <h2 class="m-name">{{ fullname }}</h2> <!-- title name -->
+                            <h1 class="m-name" style="font-size: 22pt;">{{ fullname }}</h1> <!-- title name -->
                             <span class="w-name">{{currentwork}}</span>  <!-- tagline -->
                         </div>  
                         <div style="text-align: center;">
@@ -279,14 +279,14 @@
                                         <div class="col s12 m6">
                                             <div class="card">
                                                 <div class="card-image card-image-div">
-                                                    <img src="{{ each.img_src }}" class="card-image-main" >
+                                                    <img src="{{ each.img_src }}" alt="{{ each.img_src }}" class="card-image-main" >
                                                 </div>
                                                 <div class="card-content card-pd">
                                                     <span class="card-title card-t-box">{{ each.heading|truncatechars:40 }}</span>
                                                     <p class="card-p-box">{{ each.cleaned_data|truncatechars:90 }}</p>
                                                 </div>
                                                 <div class="card-action">
-                                                    <a href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View Now</a>
+                                                    <a title="Blog View" href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View Now</a>
                                                     
                                                 </div>
                                             </div>
@@ -382,18 +382,18 @@
 {% elif status == 404 %}
     <div class="row">
         <div class="col m8 offset-m2 s12">
-            <img src="/static/images/uploads/SORRY-no-user.jpg" width="100%">
+            <img alt="sorry-no-user" src="/static/images/uploads/SORRY-no-user.jpg" width="100%">
             <div class="center">
-                For Contact Form  - <a href="/contactus">Click Here</a>
+                For Contact Form  - <a title="Contact Us" href="/contactus">Click Here</a>
             </div>
         </div>
     </div>
 {% else %}
     <div class="row">
         <div class="col m8 offset-m2 s12">
-            <img src="/static/images/uploads/SORRY-error.jpg" width="100%">
+            <img alt="sorry-error" src="/static/images/uploads/SORRY-error.jpg" width="100%">
             <div class="center">
-                For Contact Form  - <a href="/contactus">Click Here</a>
+                For Contact Form  - <a title="Contact Us" href="/contactus">Click Here</a>
             </div>
         </div>
     </div>

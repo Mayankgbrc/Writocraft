@@ -6,11 +6,11 @@
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"/>
         <meta name="theme-color" content="#ffffff">
         <meta name="title" content="{{ title_pg }}"/>
-        <meta name="description" content="{{ description_pg|truncatechars:190 }}"/>
+        <meta name="description" content="{{ description_pg|truncatechars:140 }}"/>
         <meta property="fb:app_id" content="105554951032711"/>
         <meta property="og:site_name" content="Writocraft"/>
         <meta property="og:title" content="{{ title_pg }}"/>
-        <meta property="og:description" content="{{ description_pg|truncatechars:130 }}"/>
+        <meta property="og:description" content="{{ description_pg|truncatechars:120 }}"/>
         <meta property="og:url" content="{{ curr_url_pg }}"/>
         <meta property="al:web:url" content="{{ curr_url_pg }}"/>
         <meta name="robots" content="{{ robots_pg }}"/>
@@ -22,7 +22,7 @@
         <link rel="author" href="{{ author_url_pg }}"/>
         <meta name="author" content="{{ full_name_pg }}"/>
         {% elif ptype == "profile" %}
-        <meta property="og:image" content="/media/profile/org/{{ img_url_pg }}"/>
+        <meta property="og:image" content="{{ img_url_pg }}"/>
         <meta property="og:type" content="profile"/>
         <meta property="profile:username" content="{{ username_pg }}"/>
         <meta property="profile:first_name" content="{{ first_name_pg }}"/>
@@ -67,13 +67,13 @@
         <div class="navbar-fixed">
             <nav>
                 <div class="nav-wrapper" style="line-height: 57px; background-color: #2f3640">
-                    <a href="#" class="sidenav-trigger" data-target="mobile-links">
+                    <a href="#" title="Menu" class="sidenav-trigger" data-target="mobile-links">
                         <i class="material-icons left">menu</i>
                     </a>
-                    <a style="margin-left: 50px;" href="/" class="hide-on-small-only brand-logo black-text text-darken-2">
+                    <a title="logo-home" style="margin-left: 50px;" href="/" class="hide-on-small-only brand-logo black-text text-darken-2">
                       <img src="/static/images/uploadsfile/logo-main-small.jpg" style="max-height: 100px;">
                     </a>
-                    <a href="#!" class="hide-on-med-and-up">
+                    <a href="#!" title="search-bar-anchor" class="hide-on-med-and-up">
                       <div class="input-field" style="float: left; width: 66%;">
                         <input id="search2" type="search" required style="background-color: #fff; color: #666;">
                         <label id="search_button" class="label-icon" for="search2"><i class="material-icons" style="color: #999;">search</i></label>
@@ -100,7 +100,7 @@
                             </div>
                         </li>
                         <li style="margin: 12px 20px">
-                          <a href="/createblog">
+                          <a href="/createblog" title="Create A Blog">
                             <button class="waves-effect waves-light btn" style="color: #000; letter-spacing: 1.5px; font-weight: 400; background-color:white; border: 1px solid #111; border-radius: 4px;">
                               Craft Your Words
                             </button>
@@ -113,23 +113,23 @@
                             </span>
                         </li>
                         {% if user.is_authenticated %}
-                          <li><a href="/myprofile">My Profile</a></li>
+                          <li><a href="/myprofile" title="My Profile">My Profile</a></li>
                         {% else %}
-                          <li><a href="/signup">Sign Up</a></li>
-                          <li><a href="/login">Login</a></li>
+                          <li><a href="/signup" title="Sign Up">Sign Up</a></li>
+                          <li><a href="/login" title="Login">Login</a></li>
                         {% endif %}
                         <li><a href="/">Home</a></li>
                         <li>
-                          <a class='dropdown-trigger' href='#' data-target='dropdown1' style="outline: none;"><i class="fa fa-angle-down" style="line-height: 58px; padding: 0px 5px;" ></i></a>
+                          <a title="drop-trig" class='dropdown-trigger' href='#' data-target='dropdown1' style="outline: none;"><i class="fa fa-angle-down" style="line-height: 58px; padding: 0px 5px;" ></i></a>
                           <ul id='dropdown1' class='dropdown-content'>
                             {% if user.is_authenticated %}
-                              <li><a href="{% url 'password_change' %}" style="color: #222;">Change Password</a></li>
-                              <li><a href="/logout" style="color: #222;">LogOut</a></li>
+                              <li><a title="password-change" href="{% url 'password_change' %}" style="color: #222;">Change Password</a></li>
+                              <li><a title="Logout" href="/logout" style="color: #222;">LogOut</a></li>
                             {% else %}
-                              <li><a href="/signup" style="color: #222;">Sign Up</a></li>
-                              <li><a href="/login" style="color: #222;">Login</a></li>
+                              <li><a title="Sign Up" href="/signup" style="color: #222;">Sign Up</a></li>
+                              <li><a title="Login" href="/login" style="color: #222;">Login</a></li>
                             {% endif %}
-                            <li><a href="/team" style="color: #222;">Our Team</a></li>
+                            <li><a title="team" href="/team" style="color: #222;">Our Team</a></li>
                           </ul>
                         </li>
                               
@@ -143,16 +143,16 @@
                 <div class=" center" >
                     <img src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
                 </div>  
-                <li class=""><a href="/">Home</a></li>
-                <li class=""> <a href="/#aboutus">About Us</a></li>
+                <li class=""><a title="home" href="/">Home</a></li>
+                <li class=""> <a title="About Us" href="/#aboutus">About Us</a></li>
                 {% if user.is_authenticated %}
-                  <li class=""><a href="/myprofile" class="btn btn-large">My Profile</a></li>
+                  <li class=""><a title="My Profile" href="/myprofile" class="btn btn-large">My Profile</a></li>
                   <li class="" style="position: absolute; bottom: 50px; margin-bottom: 25px; width: 100%; text-align: center;"><a href="/logout" class="">Sign Out</a></li>
                 {% else %}
-                  <li class=""><a href="/signup" class="btn btn-large">Sign Up</a></li>
-                  <li class=""><a href="/login" class="btn btn-large">Log In</a></li>
+                  <li class=""><a title="Sign Up" href="/signup" class="btn btn-large">Sign Up</a></li>
+                  <li class=""><a title="Login" href="/login" class="btn btn-large">Log In</a></li>
                 {% endif %}
-                <li class="" style="position: absolute; bottom: 0px; margin-bottom: 15px; width: 100%; "><a href="/contactus" class="btn" style="background-color: darkgray; font-weight: 600;">Contact Us</a></li>
+                <li class="" style="position: absolute; bottom: 0px; margin-bottom: 15px; width: 100%; "><a href="/contactus" title="Contact Us" class="btn" style="background-color: darkgray; font-weight: 600;">Contact Us</a></li>
                 </ul>
             </div>
         </ul>
@@ -242,11 +242,11 @@ function boldString(str, find){
                         var output = result['status'];
                         if (output == 200){
                             for (var i = 0; i < result['notification'].length ; i++){
-                                $("#content").append("<div class='collection' style='margin: 0px !important;'><a href='#' class='collection-item'><div class='badge' style='font-size: 24px; margin-bottom: 5px;'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></a></div>");
+                                $("#content").append("<div class='collection' style='margin: 0px !important;'><a title='notification-div' href='#' class='collection-item'><div class='badge' style='font-size: 24px; margin-bottom: 5px;'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></a></div>");
                             }
                         }
                         else{
-                            $("#content").append("<div class='collection' style='margin: 0px !important;'><a href='#' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
+                            $("#content").append("<div class='collection' style='margin: 0px !important;'><a href='#' titile='no-notification' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
                         }
                     }
                 })

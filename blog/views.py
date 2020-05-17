@@ -557,7 +557,7 @@ def blogs(request, username, title):
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
-            new_data = new_data.replace("<img", "<img style='max-width:100%; max-height: 900px;'")
+            new_data = new_data.replace("<img", "<img alt='img xt' style='max-width:100%; max-height: 900px;'")
             new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img")
             context['data'] = new_data
             context['author'] = username
@@ -590,9 +590,9 @@ def blogs(request, username, title):
             new_data = mdtohtml(request, blog.data)
             cleanedhtml = cleanhtml(request, new_data)
             context['description_pg'] = cleanedhtml
-            context['img_url_pg'] = findimg(request, new_data)
+            context['img_url_pg'] = request.build_absolute_uri(findimg(request, new_data))
             context['curr_url_pg'] = request.build_absolute_uri() 
-            context['author_url_pg'] = "/@"+username
+            context['author_url_pg'] = request.build_absolute_uri("/@"+username)
             context['full_name_pg'] = user.first_name + " " + user.last_name
             context['time_pg'] = blog.created_at
             context['robots_pg'] = "index, follow"
@@ -1667,7 +1667,7 @@ def profile(request, username):
 
             context['title_pg'] = fullname + " | @" + username + " | Writocraft"
             context['description_pg'] = "Desire to read more? Get in touch with " + fullname + " on Writocraft. " + profile[0].description
-            context['img_url_pg'] = context['image_src']
+            context['img_url_pg'] = request.build_absolute_uri("/media/profile/org/"+context['image_src']) 
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['username_pg'] = username
             context['first_name_pg'] = userdata.first_name
