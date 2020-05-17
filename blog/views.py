@@ -1666,7 +1666,7 @@ def profile(request, username):
             
 
             context['title_pg'] = fullname + " | @" + username + " | Writocraft"
-            context['description_pg'] = "Blogs by " + fullname + ". " + profile[0].description
+            context['description_pg'] = "Desire to read more? Get in touch with " + fullname + " on Writocraft. " + profile[0].description
             context['img_url_pg'] = context['image_src']
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['username_pg'] = username
