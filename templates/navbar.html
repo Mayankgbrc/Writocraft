@@ -13,19 +13,22 @@
         <meta property="og:description" content="{{ description_pg|truncatechars:130 }}"/>
         <meta property="og:url" content="{{ curr_url_pg }}"/>
         <meta property="al:web:url" content="{{ curr_url_pg }}"/>
-        <meta property="og:image" content="{{ img_url_pg }}"/>
         <meta name="robots" content="{{ robots_pg }}"/>
         {% if ptype == "article" %}
+        <meta property="og:image" content="{{ img_url_pg }}"/>
         <meta property="og:type" content="article"/>
         <meta property="article:published_time" content="{{ time_pg }}"/>
         <meta property="article:author" content="{{ author_url_pg }}"/>
         <link rel="author" href="{{ author_url_pg }}"/>
         <meta name="author" content="{{ full_name_pg }}"/>
         {% elif ptype == "profile" %}
+        <meta property="og:image" content="/media/profile/org/{{ img_url_pg }}"/>
         <meta property="og:type" content="profile"/>
         <meta property="profile:username" content="{{ username_pg }}"/>
         <meta property="profile:first_name" content="{{ first_name_pg }}"/>
         <meta property="profile:last_name" content="{{ last_name_pg }}"/>
+        {% else %}
+        <meta property="og:image" content="{{ img_url_pg }}"/>
         {% endif %}
         <link rel="apple-touch-icon" sizes="57x57" href="/static/images/favicons.ico/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/static/images/favicons.ico/apple-icon-60x60.png">
