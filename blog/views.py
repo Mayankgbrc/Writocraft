@@ -544,7 +544,6 @@ def followpush(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
         
 
-
 def blogs(request, username, title):
     context = {}
     profile = models.Profile.objects.filter(user__username = username)
@@ -561,7 +560,6 @@ def blogs(request, username, title):
             new_data = new_data.replace("<img", "<img style='max-width:100%; max-height: 900px;'")
             new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img")
             context['data'] = new_data
-            context['title'] = blog.heading + " | " + username
             context['author'] = username
             context['blogid'] = blog.id
             user = User.objects.get(username = username)
@@ -587,11 +585,30 @@ def blogs(request, username, title):
             context['blog_likes'] = human_format(request, blog_likes)
             context['user_views'] = human_format(request, user_views)
             context['status'] = 200
+
+            context['title_pg'] = blog.heading + " | " + username + " | Writocraft"
+            new_data = mdtohtml(request, blog.data)
+            cleanedhtml = cleanhtml(request, new_data)
+            context['description_pg'] = cleanedhtml
+            context['img_url_pg'] = findimg(request, new_data)
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['author_url_pg'] = "/@"+username
+            context['full_name_pg'] = user.first_name + " " + user.last_name
+            context['time_pg'] = blog.created_at
+            context['robots_pg'] = "index, follow"
+            context['ptype'] = "article"
         
         else:
+            context['title_pg'] = " Something Happened Wrong  | Writocraft"
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "article"
+
             context['heading'] = "110"
             context['status'] = 110
     else:
+        context['title_pg'] = "Page Not Found | Writocraft"
+        context['robots_pg'] = "noindex, nofollow"
+        context['ptype'] = "article"
         context['heading'] = "404"
         context['status'] = 404
     return render(request, "blogshow.html", context)
@@ -1533,7 +1550,8 @@ def profile(request, username):
             curr_time = userdata.date_joined
             f_str = curr_time.strftime(TIME_FORMAT)
             context['datejoined'] = f_str
-            context['fullname'] = userdata.first_name + " " + userdata.last_name
+            fullname = userdata.first_name + " " + userdata.last_name
+            context['fullname'] = fullname 
             context['title'] = username
             context['followers'] = followers
             user_views = models.Views.objects.filter(user__username = username).count()
@@ -1642,14 +1660,34 @@ def profile(request, username):
             context['currentwork'] = currentwork(request, username)
             context['total_views'] = human_format(request, total_views)
 
-            profile = models.Profile.objects.filter(user = userdata)
             if profile.count():
                 context['country'] = profile[0].country
                 context['description'] = profile[0].description
+            
+
+            context['title_pg'] = fullname + " | @" + username + " | Writocraft"
+            context['description_pg'] = "Blogs by " + fullname + ". " + profile[0].description
+            context['img_url_pg'] = context['image_src']
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['username_pg'] = username
+            context['first_name_pg'] = userdata.first_name
+            context['last_name_pg'] = userdata.last_name
+            context['robots_pg'] = "index, follow"
+            context['ptype'] = "profile"
         else:
             context['status'] = 110
+            context['title_pg'] = "Error Profile | Writocraft"
+            context['description_pg'] = "No Profile Found"
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "profile"
     else:
         context['status'] = 404
+        context['title_pg'] = "Profile Not Found | Writocraft"
+        context['description_pg'] = "No Profile Found"
+        context['curr_url_pg'] = request.build_absolute_uri() 
+        context['robots_pg'] = "noindex, nofollow"
+        context['ptype'] = "profile"
     return render(request, "profile.html", context)
 
 @login_required(login_url='/login/')
@@ -1664,6 +1702,10 @@ def myprofile(request):
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
+            
+            if profile.count():
+                context['country'] = profile[0].country
+                context['description'] = profile[0].description
             
             follow_filter = models.Follower.objects.filter(touser__username=username)
             followers = follow_filter.count()
@@ -1699,7 +1741,8 @@ def myprofile(request):
             curr_time = userdata.date_joined
             f_str = curr_time.strftime(TIME_FORMAT)
             context['datejoined'] = f_str
-            context['fullname'] = userdata.first_name + " " + userdata.last_name
+            fullname = userdata.first_name + " " + userdata.last_name
+            context['fullname'] = fullname
             context['title'] = username
             context['followers'] = followers
             user_views = models.Views.objects.filter(user__username = username).count()
@@ -1783,15 +1826,32 @@ def myprofile(request):
                     else:
                         context['status'] = 120
                 context['blogs'] = blog_list
-            profile = models.Profile.objects.filter(user = userdata)
-            if profile.count():
-                context['country'] = profile[0].country
-                context['description'] = profile[0].description
             context['total_views'] = human_format(request, total_views)
+
+            context['title_pg'] = fullname + " | @" + username + " | Writocraft"
+            context['description_pg'] = "Blogs by " + fullname + ". " + profile[0].description
+            context['img_url_pg'] = context['image_src']
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['username_pg'] = username
+            context['first_name_pg'] = userdata.first_name
+            context['last_name_pg'] = userdata.last_name
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "profile"
+
         else:
+            context['title_pg'] = "My Profile | Writocraft"
+            context['description_pg'] = "Please Login"
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "profile"
             context['status'] = 110
     else:
         context['status'] = 404
+        context['title_pg'] = "My Profile | Writocraft"
+        context['description_pg'] = "Please Login to view your profile"
+        context['curr_url_pg'] = request.build_absolute_uri() 
+        context['robots_pg'] = "noindex, nofollow"
+        context['ptype'] = "profile"
     return render(request, "myprofile.html", context)
 
 def interestsave(request):
@@ -1879,6 +1939,7 @@ def topbwriters(request):
 def cleanhtml(request,raw_html):
     cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
     cleantext = re.sub(cleanr, '', raw_html)
+    cleantext = cleantext.replace("\n","")
     return cleantext
 
 def findimg(request, raw_html):

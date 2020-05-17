@@ -1,7 +1,32 @@
 {% load static from staticfiles %}
 <html>
     <head>
-        <title>{{title}}</title>
+        <title>{{ title_pg }}</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"/>
+        <meta name="theme-color" content="#ffffff">
+        <meta name="title" content="{{ title_pg }}"/>
+        <meta name="description" content="{{ description_pg|truncatechars:190 }}"/>
+        <meta property="fb:app_id" content="105554951032711"/>
+        <meta property="og:site_name" content="Writocraft"/>
+        <meta property="og:title" content="{{ title_pg }}"/>
+        <meta property="og:description" content="{{ description_pg|truncatechars:130 }}"/>
+        <meta property="og:url" content="{{ curr_url_pg }}"/>
+        <meta property="al:web:url" content="{{ curr_url_pg }}"/>
+        <meta property="og:image" content="{{ img_url_pg }}"/>
+        <meta name="robots" content="{{ robots_pg }}"/>
+        {% if ptype == "article" %}
+        <meta property="og:type" content="article"/>
+        <meta property="article:published_time" content="{{ time_pg }}"/>
+        <meta property="article:author" content="{{ author_url_pg }}"/>
+        <link rel="author" href="{{ author_url_pg }}"/>
+        <meta name="author" content="{{ full_name_pg }}"/>
+        {% elif ptype == "profile" %}
+        <meta property="og:type" content="profile"/>
+        <meta property="profile:username" content="{{ username_pg }}"/>
+        <meta property="profile:first_name" content="{{ first_name_pg }}"/>
+        <meta property="profile:last_name" content="{{ last_name_pg }}"/>
+        {% endif %}
         <link rel="apple-touch-icon" sizes="57x57" href="/static/images/favicons.ico/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/static/images/favicons.ico/apple-icon-60x60.png">
         <link rel="apple-touch-icon" sizes="72x72" href="/static/images/favicons.ico/apple-icon-72x72.png">
@@ -18,12 +43,13 @@
         <link rel="manifest" href="/static/images/favicons.ico/manifest.json">
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-        <meta name="theme-color" content="#ffffff">
+        <link rel="mask-icon" href="https://writocraft.com/static/images/uploadsfile/logo-main.svg" color="#171717"/>
+        
+
         <script src="/static/js/jquery.min.js" ></script>
         <link href="/static/css/materialize.min.css" rel="stylesheet">
         <link href="/static/css/navbar.css" rel="stylesheet">
         <script src="/static/js/materialize.min.js"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/static/css/material-icons.css" rel="stylesheet">
 
         <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
@@ -83,7 +109,12 @@
                                 <div class="notify__content" id="content"  style=" max-height: 60vh; overflow: scroll;"> </div>
                             </span>
                         </li>
-                        <li><a href="/myprofile">My Profile</a></li>
+                        {% if user.is_authenticated %}
+                          <li><a href="/myprofile">My Profile</a></li>
+                        {% else %}
+                          <li><a href="/signup">Sign Up</a></li>
+                          <li><a href="/login">Login</a></li>
+                        {% endif %}
                         <li><a href="/">Home</a></li>
                         <li>
                           <a class='dropdown-trigger' href='#' data-target='dropdown1' style="outline: none;"><i class="fa fa-angle-down" style="line-height: 58px; padding: 0px 5px;" ></i></a>
@@ -95,6 +126,7 @@
                               <li><a href="/signup" style="color: #222;">Sign Up</a></li>
                               <li><a href="/login" style="color: #222;">Login</a></li>
                             {% endif %}
+                            <li><a href="/team" style="color: #222;">Our Team</a></li>
                           </ul>
                         </li>
                               
