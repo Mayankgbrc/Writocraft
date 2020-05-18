@@ -71,7 +71,7 @@
                         <i class="material-icons left">menu</i>
                     </a>
                     <a title="logo-home" style="margin-left: 50px;" href="/" class="hide-on-small-only brand-logo black-text text-darken-2">
-                      <img src="/static/images/uploadsfile/logo-main-small.jpg" style="max-height: 100px;">
+                      <img alt="small logo" src="/static/images/uploadsfile/logo-main-small.jpg" style="max-height: 100px;">
                     </a>
                     <a href="#!" title="search-bar-anchor" class="hide-on-med-and-up">
                       <div class="input-field" style="float: left; width: 66%;">
@@ -141,13 +141,13 @@
             <div class="">
                 <ul style="height: 100vh; position: relative;">
                 <div class=" center" >
-                    <img src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
+                    <img alt="small logo for phone" src="/static/images/uploadsfile/logo-main-small.jpg" style="width:95px; margin: 10px">
                 </div>  
                 <li class=""><a title="home" href="/">Home</a></li>
                 <li class=""> <a title="About Us" href="/#aboutus">About Us</a></li>
                 {% if user.is_authenticated %}
                   <li class=""><a title="My Profile" href="/myprofile" class="btn btn-large">My Profile</a></li>
-                  <li class="" style="position: absolute; bottom: 50px; margin-bottom: 25px; width: 100%; text-align: center;"><a href="/logout" class="">Sign Out</a></li>
+                  <li class="" style="position: absolute; bottom: 50px; margin-bottom: 25px; width: 100%; text-align: center;"><a title="logout" href="/logout" class="">Sign Out</a></li>
                 {% else %}
                   <li class=""><a title="Sign Up" href="/signup" class="btn btn-large">Sign Up</a></li>
                   <li class=""><a title="Login" href="/login" class="btn btn-large">Log In</a></li>

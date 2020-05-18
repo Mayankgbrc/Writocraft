@@ -1660,13 +1660,15 @@ def profile(request, username):
             context['currentwork'] = currentwork(request, username)
             context['total_views'] = human_format(request, total_views)
 
+            context['description'] = ""
             if profile.count():
                 context['country'] = profile[0].country
-                context['description'] = profile[0].description
+                if profile[0].description:
+                    context['description'] = profile[0].description
             
 
             context['title_pg'] = fullname + " | @" + username + " | Writocraft"
-            context['description_pg'] = "Desire to read more? Get in touch with " + fullname + " on Writocraft. " + profile[0].description
+            context['description_pg'] = "Desire to read more? Get in touch with " + fullname + " on Writocraft. " + context['description']
             context['img_url_pg'] = request.build_absolute_uri("/media/profile/org/"+context['image_src']) 
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['username_pg'] = username

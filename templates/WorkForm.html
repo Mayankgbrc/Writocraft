@@ -203,7 +203,7 @@
                     success: function(result){
                         status = result['status']
                         if (status == 200){
-                            window.location.href = '/@'+result['user'];
+                            window.location.href = '/myprofile';
                         }
                         else{
                             $('#errorbox').text(result['error']);
