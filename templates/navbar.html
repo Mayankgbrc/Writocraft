@@ -60,6 +60,7 @@
             /* html { margin-left: calc(100vw - 100%); } */
 
             </style> 
+            <script data-ad-client="ca-pub-9217069451562117" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     </head>
     <body to="0">
        
@@ -124,12 +125,14 @@
                           <ul id='dropdown1' class='dropdown-content'>
                             {% if user.is_authenticated %}
                               <li><a title="password-change" href="{% url 'password_change' %}" style="color: #222;">Change Password</a></li>
+                              <li><a title="team" href="/team" style="color: #222;">Our Team</a></li>
                               <li><a title="Logout" href="/logout" style="color: #222;">LogOut</a></li>
                             {% else %}
                               <li><a title="Sign Up" href="/signup" style="color: #222;">Sign Up</a></li>
                               <li><a title="Login" href="/login" style="color: #222;">Login</a></li>
+                              <li><a title="team" href="/team" style="color: #222;">Our Team</a></li>
                             {% endif %}
-                            <li><a title="team" href="/team" style="color: #222;">Our Team</a></li>
+                            
                           </ul>
                         </li>
                               
@@ -146,8 +149,9 @@
                 <li class=""><a title="home" href="/">Home</a></li>
                 <li class=""> <a title="About Us" href="/#aboutus">About Us</a></li>
                 {% if user.is_authenticated %}
-                  <li class=""><a title="My Profile" href="/myprofile" class="btn btn-large">My Profile</a></li>
-                  <li class="" style="position: absolute; bottom: 50px; margin-bottom: 25px; width: 100%; text-align: center;"><a title="logout" href="/logout" class="">Sign Out</a></li>
+                <li class=""><a title="My Profile" href="/myprofile" class="btn btn-large">My Profile</a></li>
+                <li class="" style="position: absolute; bottom: 100px; margin-bottom: 25px; width: 100%; text-align: center;"><a title="Change password" href="{% url 'password_change' %}" class="">Change Password</a></li>
+                <li class="" style="position: absolute; bottom: 50px; margin-bottom: 25px; width: 100%; text-align: center;"><a title="logout" href="/logout" class="">Sign Out</a></li>
                 {% else %}
                   <li class=""><a title="Sign Up" href="/signup" class="btn btn-large">Sign Up</a></li>
                   <li class=""><a title="Login" href="/login" class="btn btn-large">Log In</a></li>

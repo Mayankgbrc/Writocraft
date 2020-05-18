@@ -158,8 +158,13 @@
                                    <i class="fa fa-user"></i>
                                 </div>                                
                                 <div class="col m12 s12 l9 info wow fadeIn a1" data-wow-delay="0.1s" > <!-- text -->
-                                    <div class="section-item-details">
-                                        <p>{{ description }}</p>
+                                    <div class="section-item-details" style="margin-top: 9px; padding: 0px 5px;">
+                                        <div class="hide-on-small-only">
+                                            <p style="font-size: 17px;">{{ description }}</p>
+                                        </div>
+                                        <div class="hide-on-med-and-up">
+                                            <p style="font-size: 17px;" class="center">{{ description }}</p>
+                                        </div>
                                     </div>             
                                 </div>
                             </div>         
@@ -173,9 +178,14 @@
                                     <i class="fa fa-home"></i> <!-- icon -->
                                 </div>                                
                                 <div class="col m12 s12 l9 info wow fadeIn a4" data-wow-delay="0.4s" style="border-bottom: none;">
-                                    <div class="section-item-details">
+                                    <div class="section-item-details" style="padding: 0px 5px;">
                                         <div class="address-details"> <!-- address  -->
-                                            <h4 class="lh-28">Country: {{country}}</h4> 
+                                            <div class="hide-on-small-only">
+                                                <h4 class="lh-28" style="font-size: 17px;">Country: {{country}}</h4> 
+                                            </div>
+                                            <div class="hide-on-med-and-up">
+                                                <h4 class="lh-28 center" style="font-size: 17px;" >Country: {{country}}</h4> 
+                                            </div>
                                         </div>                         
                                     </div>
                                 </div>
@@ -248,6 +258,7 @@
                         <!-- ========================================
                               Intertests 
                         ==========================================-->
+<!--
                         {% if interest_num %}
                         <div class="section-wrapper z-depth-1">                           
                             <div class="section-icon col s12 m12 l2">
@@ -261,7 +272,7 @@
                             </div>                          
                         </div>
                         {% endif %}
-
+-->
                         <!-- ========================================
                               Intertests 
                         ==========================================-->
