@@ -2010,6 +2010,7 @@ def search(request):
     context['loginned'] = 1
     if request.user.is_anonymous:
         context['loginned'] = 0
+    
     return render(request, "search.html", context)
 
 def normalize_query(query_string,
@@ -2103,6 +2104,7 @@ def search2(request):
         context['loginned'] = 1
         if request.user.is_anonymous:
             context['loginned'] = 0
+        context['query'] = query
         return render(request, "search.html", context)
     else:
         return render(request, "search.html", context)
