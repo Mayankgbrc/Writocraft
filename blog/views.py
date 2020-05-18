@@ -1699,13 +1699,15 @@ def myprofile(request):
             userdata = User.objects.get(username=username)
             profile = models.Profile.objects.filter(user = userdata)
             context['image_src'] = 'default.jpg'
+            context['description'] = ""
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
             
             if profile.count():
                 context['country'] = profile[0].country
-                context['description'] = profile[0].description
+                if profile[0].description:
+                    context['description'] = profile[0].description
             
             follow_filter = models.Follower.objects.filter(touser__username=username)
             followers = follow_filter.count()
@@ -1829,7 +1831,7 @@ def myprofile(request):
             context['total_views'] = human_format(request, total_views)
 
             context['title_pg'] = fullname + " | @" + username + " | Writocraft"
-            context['description_pg'] = "Blogs by " + fullname + ". " + profile[0].description
+            context['description_pg'] = "Blogs by " + fullname + ". " + context['description']
             context['img_url_pg'] = context['image_src']
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['username_pg'] = username
