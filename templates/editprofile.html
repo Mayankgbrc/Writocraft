@@ -327,8 +327,8 @@
                 $('select').formSelect({classes:"optiontext"});
 
                 date = new Date("{{dob}}");
-                console.log(date)
                 $('.datepicker').datepicker({
+                    yearRange: [1930,2015],
                     autoClose : true,
                     format : 'dd mmm yyyy',
                     defaultDate:  date,
