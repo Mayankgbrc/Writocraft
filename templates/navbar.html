@@ -272,7 +272,6 @@ $(document).ready(function(){
     });
     $('#search_button,#search_button2').click(function(e){
       forval = $(this).attr("for");
-      console.log(forval)
       query = $("#"+forval).val();
       window.location.href = "/search/?q="+query;
     });

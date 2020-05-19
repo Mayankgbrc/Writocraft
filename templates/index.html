@@ -306,6 +306,27 @@ a{
 			</div>
 		</section>
 
+		<section class="grid-news" style="padding: 60px 0;">
+			<div class="container">
+				<h2 class="section-title center" style="margin-bottom: 5px;">Search Now</h2>
+				<div class="center" style="margin-bottom: 60px; font-size: 18px;">Explore what Fits your mind Search now</div>
+				<div class="">
+					<div style="border: 2px solid #aaa; border-radius: 25px; padding: 5px 20px 0px 20px;">
+						<span class="input-field">
+							<div class="row" style="margin-bottom: 0px;">
+								<div class="col m11 s10">
+									<input id="search" type="search"  placeholder="Search Your Thought" style="border: none;" />
+								</div>
+								<div class="col m1 s2 center" id="search_button" style="cursor: pointer;">
+									<i class="material-icons" style='line-height: 45px;color: #333;'>search</i>
+								</div>
+							</div>
+					</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<section class="grid-news" style="padding: 110px 0;">
 			<div class="container" style="width: 80%;">
 				<h2 class="section-title center">Top Writers</h2>
@@ -523,6 +544,20 @@ $('#owl-demo2').owlCarousel({
 					$("#blockhide").slideToggle("slow");
 				});
 			});
+			$(document).ready(function(){
+				$('#search').keypress(function(e){
+					query = $(this).val();
+					if(e.keyCode==13 && query!=""){
+						window.location.href = "/search/?q="+query;
+						return false;
+					}
+				});
+				$('#search_button').click(function(e){
+					query = $("#search").val();
+					window.location.href = "/search/?q="+query;
+				});
+			});
+
 			
 		</script>
     </body>
