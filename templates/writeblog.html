@@ -103,7 +103,7 @@
 
 <script>
 
-{% request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
+{% if request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
  $(document).ready(function(){
     $('select#post_in').formSelect();
   });
@@ -174,7 +174,7 @@ const imageHandler = () => {
         placeholder: 'Write Content Here...',
     });
     
-{%  request.user.username == "adminmayank" or request.user.username == "Yusra310" %} 
+{% if  request.user.username == "adminmayank" or request.user.username == "Yusra310" %} 
 $(document).ready(function(){
     $("button[name ='datacatch']").click(function(){
         var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
