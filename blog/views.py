@@ -622,6 +622,8 @@ def blogs(request, username, title):
             context['full_name_pg'] = user.first_name + " " + user.last_name
             context['time_pg'] = blog.created_at
             context['robots_pg'] = "index, follow"
+            if blog.is_private:
+                context['robots_pg'] = "noindex, nofollow"
             context['ptype'] = "article"
         
         else:
