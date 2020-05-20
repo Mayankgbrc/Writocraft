@@ -106,7 +106,7 @@ def index(request):
         temp = {}
         temp['fullname'] = each.user.first_name + " " + each.user.last_name
         temp['username'] = each.user.username
-        temp['totalblogs'] = models.Blog.objects.filter(user=each.user).count()
+        temp['totalblogs'] = models.Blog.objects.filter(user=each.user,  is_visible = True).count()
         profile = models.Profile.objects.filter(user = each.user)
         temp['profilepic'] = "default.jpg"
         temp['description'] = ""
@@ -258,6 +258,10 @@ def writeblog(request):
                 data = request.POST.get('data','')
                 id = request.POST.get('id','')
                 anoaccept = request.POST.get('anoaccept','')
+                post_in = request.POST.get('post_in','')
+                post_list = ['public', 'unlisted', 'anonymously']
+                if post_in not in post_list:
+                    post_in = "public"
                 val = request.POST.get('val','')
                 tags = json.loads(request.POST.get('tags',''))
                 taglist = [each['tag'] for each in tags]
@@ -303,9 +307,20 @@ def writeblog(request):
                     blog.read_time = int(total_word/150) + 1
                     blog.heading = heading
                     blog.url = heading.replace(' ', '-')
+                    if post_in == "public":
+                        blog.is_visible = True
+                        blog.is_anonymous = False
+                        blog.is_private = False
+                    elif post_in == "unlisted":
+                        blog.is_visible = False
+                        blog.is_anonymous = False
+                        blog.is_private = True
+                    else:
+                        blog.is_visible = False
+                        blog.is_anonymous = True
+                        blog.is_private = False
                     new_data = htmltomd(request,data)
                     blog.data = new_data
-                    blog.is_anonymous = is_anonymous
                     blog.is_draft = False
                     blog.save()
                     tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
@@ -332,7 +347,18 @@ def writeblog(request):
                     blog.url = heading.replace(' ', '-')
                     new_data = htmltomd(request,data)
                     blog.data = new_data
-                    blog.is_anonymous = is_anonymous
+                    if post_in == "public":
+                        blog.is_visible = True
+                        blog.is_anonymous = False
+                        blog.is_private = False
+                    elif post_in == "unlisted":
+                        blog.is_visible = False
+                        blog.is_anonymous = False
+                        blog.is_private = True
+                    else:
+                        blog.is_visible = False
+                        blog.is_anonymous = True
+                        blog.is_private = False
                     blog.is_draft = False
                     blog.save()
                     tagdb = models.Tags.objects.filter(user = request.user, blog=blog)
@@ -551,9 +577,9 @@ def blogs(request, username, title):
     if profile.count():
         if profile[0].image_src:
             context['image_src'] = profile[0].image_src
-    if models.Blog.objects.filter(user__username = username, url=title, is_anonymous = False).exists():
-        if models.Blog.objects.filter(user__username = username, url=title, is_anonymous = False).count() == 1:
-            blog = models.Blog.objects.get(user__username = username, url=title, is_anonymous = False)
+    if models.Blog.objects.filter(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True))).exists():
+        if models.Blog.objects.filter(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True))).count() == 1:
+            blog = models.Blog.objects.get(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True)))
             context['heading'] = blog.heading
             context['url'] = blog.url
             new_data = mdtohtml(request, blog.data)
@@ -563,7 +589,7 @@ def blogs(request, username, title):
             context['author'] = username
             context['blogid'] = blog.id
             user = User.objects.get(username = username)
-            num_blogs = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft = False, is_visible = True).count()
+            num_blogs = models.Blog.objects.filter(user__username = username, is_draft = False, is_visible = True).count()
             context['fullname'] = user.first_name + " " + user.last_name
             context['numberblog'] = num_blogs
             context['username'] = username
@@ -703,6 +729,15 @@ def edit(request, url, val = 0):
             context['data'] = new_data
             context['id'] = blog.id
             context['username'] = request.user.username
+            context['is_visible'] = ""
+            context['is_anonymous'] = ""
+            context['is_private'] = ""
+            if blog.is_visible:
+                context['is_visible'] = "selected"
+            if blog.is_anonymous:
+                context['is_anonymous'] = "selected"
+            if blog.is_private:
+                context['is_private'] = "selected"
             tags = models.Tags.objects.filter(user = request.user, blog = blog)
             tag_list = [i.tag for i in tags]
             context['tag_list'] = tag_list
@@ -1605,10 +1640,10 @@ def profile(request, username):
             context['interest_list'] = interest_list
             context['interest_num'] = len(interest_list)
 
-            blog_count = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).count()
+            blog_count = models.Blog.objects.filter(user__username = username, is_visible = True, is_draft=False).count()
             context['blog_num'] = blog_count
             if blog_count > 0:
-                blog_all = models.Blog.objects.filter(user__username = username, is_anonymous = False, is_draft=False).order_by('-views_num','-id')
+                blog_all = models.Blog.objects.filter(user__username = username,  is_visible = True, is_draft=False).order_by('-views_num','-id')
                 blog_list = []
                 blog_num = len(blog_all)
                 for each in blog_all:
@@ -1965,7 +2000,8 @@ def search(request):
         report = models.Report.objects.filter(user = request.user)
     for q in queries:
         posts = models.Blog.objects.filter(
-            Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
+            Q(heading__icontains=q) | Q(data__icontains=q) | Q(user__username__icontains=q) | Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q),
+            is_visible = True,
         ).distinct().order_by('-views_num')[:10]
         [post_list.append(each) for each in posts if each not in post_list]
         post_tag = models.Tags.objects.filter(tag__icontains=q).distinct().order_by('-blog__views_num')[:10]
@@ -2060,7 +2096,7 @@ def search2(request):
         if query:
             query_string = query
             entry_query = get_query(query_string, ['heading','data','user__username','user__first_name','user__last_name'])
-            posts = models.Blog.objects.filter(entry_query)[:10]
+            posts = models.Blog.objects.filter(entry_query,  is_visible = True)[:10]
         [post_list.append(each) for each in posts if each not in post_list]
         post_tag = models.Tags.objects.filter(tag__icontains=query).distinct().order_by('-blog__views_num')[:10]
         [post_list.append(each.blog) for each in post_tag if each.blog not in post_list]

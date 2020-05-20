@@ -16,6 +16,9 @@
             .ql-editor{
                 margin-top: 5px;
             }
+            .dropdown-content li>span {
+                color: black;
+            }
         </style>
     </head>
     <body>
@@ -80,6 +83,16 @@
                         <span>Post Anonymously</span>
                     </label>
                     -->
+                    {% if request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
+                    <div class="input-field col s12">
+                        <select id="post_in">
+                          <option value="public" {{is_visible}}>Public</option>
+                          <option value="unlisted" {{is_private}}>Unlisted</option>
+                          <option value="anonymously" {{is_anonymous}}>Anonymously</option>
+                        </select>
+                        <label>Choose Publish Type</label>
+                    </div>
+                    {% endif %}
                     <button class="waves-effect waves-light btn " name="datacatch" value="save">Submit For Review</button> &nbsp;
                     <!-- <button name="datacatch" value="submit">Submit for Review</button> -->
                 </div>
@@ -90,6 +103,11 @@
 
 <script>
 
+{% request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
+ $(document).ready(function(){
+    $('select#post_in').formSelect();
+  });
+{% endif %} 
 document.addEventListener('DOMContentLoaded', function() {
     var tag_list = {{ tag_list|safe }};
     tags = [];
@@ -156,6 +174,66 @@ const imageHandler = () => {
         placeholder: 'Write Content Here...',
     });
     
+{%  request.user.username == "adminmayank" or request.user.username == "Yusra310" %} 
+$(document).ready(function(){
+    $("button[name ='datacatch']").click(function(){
+        var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
+        var token = $(this).val(); 
+        var delta = editor.getContents();
+        var quillHtml = editor.root.innerHTML.trim();
+        var id = "{{id}}";
+        var anoaccept = "False";
+        var post_in = $("#post_in").val();
+        $('#progressbar').css("width","0%");
+		if ($('#post_type').is(":checked"))
+		{
+			anoaccept = "True";
+		}
+        heading = $("#heading").val();
+        $.ajax({
+            xhr : function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        var percent = Math.round((e.loaded / e.total) * 100);
+                        $('#progressbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                    }
+                });
+                return xhr;
+            },
+            type: 'POST',
+            url: '/writeblog/',
+            data: {
+                heading: heading,
+                id: "{{id}}",
+                data: quillHtml,
+                token: token,
+                tags: tags,
+                anoaccept: anoaccept,
+                post_in: post_in,
+                val: 1,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(result){
+                var output = result['status'];
+                console.log(output)
+                if (output == 200){
+                    $("#success").text(result['success']);
+                    $("#success").show().delay(5000).fadeOut(3000);
+                    heading_ = replaceAll(heading," ", "-");
+                    heading_url = encodeURI(heading_);
+                    window.location.href = '/edit/'+heading_url+"/1";
+                }
+                else{
+                    $("#error").text("Error "+result['error']);
+                    $("#error").show().delay(5000).fadeOut(3000);;
+                }
+            }
+        })
+    });
+});
+{% else %}
+
 $(document).ready(function(){
     $("button[name ='datacatch']").click(function(){
         var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
@@ -211,6 +289,8 @@ $(document).ready(function(){
         })
     });
 });
+
+{% endif %}
 
 function escapeRegExp(string){
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
