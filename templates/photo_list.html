@@ -22,9 +22,10 @@
         $image.cropper({
           viewMode: 0,
           autoCropArea: 0,
+          zoomable: false,
           aspectRatio: 1/1,
-          minCropBoxWidth: 300,
-          minCropBoxHeight: 300,
+          minCropBoxWidth: 50,
+          minCropBoxHeight: 50,
           ready: function () {
             $image.cropper("setCanvasData", canvasData);
             $image.cropper("setCropBoxData", cropBoxData);

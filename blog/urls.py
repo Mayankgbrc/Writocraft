@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^privacypolicy/$',views.privacypolicy),
     url(r'^logout/$',views.logout_view),
     url(r'^myprofile/$',views.myprofile),
+    url(r'^newprofile/$',views.newprofile),
     url(r'^editwork/(?P<num>[0-9_\+]+)/$', views.editwork, name='editwork'),
     url(r'^editeducation/(?P<num>[0-9_\+]+)/$', views.editeducation, name='editeducation'),
     url(r'^editprofile/$', views.editprofile, name='editeducation'),

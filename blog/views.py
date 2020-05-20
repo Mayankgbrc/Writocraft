@@ -1895,6 +1895,172 @@ def myprofile(request):
         context['ptype'] = "profile"
     return render(request, "myprofile.html", context)
 
+@login_required(login_url='/login/')
+def newprofile(request):
+    context = {"username":"Anonymous"}
+    if not request.user.is_anonymous:
+        username = request.user.username
+        if User.objects.filter(username=username).count() == 1:
+            userdata = User.objects.get(username=username)
+            profile = models.Profile.objects.filter(user = userdata)
+            context['image_src'] = 'default.jpg'
+            context['description'] = ""
+            if profile.count():
+                if profile[0].image_src:
+                    context['image_src'] = profile[0].image_src
+            
+            if profile.count():
+                context['country'] = profile[0].country
+                if profile[0].description:
+                    context['description'] = profile[0].description
+            
+            follow_filter = models.Follower.objects.filter(touser__username=username)
+            followers = follow_filter.count()
+            followers_list = []
+            if followers:
+                from_follow = models.Follower.objects.filter(fromuser__username=username)
+                from_follow_list = [each.touser.username for each in from_follow]
+                for each in follow_filter:
+                    follow_dict = {}
+                    follow_dict['name'] = (each.fromuser.first_name + " " + each.fromuser.last_name).title()
+                    follow_dict['username'] = each.fromuser.username
+
+                    location3 = 'profile/100/'+each.fromuser.username+'.jpg'
+                    checkstorage3 =  django.core.files.storage.default_storage.exists(location3)
+                    if checkstorage3:
+                        follow_dict['src'] = '/media/profile/100/'+each.fromuser.username+'.jpg'
+                    else:
+                        follow_dict['src'] = "/media/profile/100/default.jpg"
+
+                    follow_dict['userid'] = each.fromuser.id
+                    if each.fromuser.username in from_follow_list:
+                        follow_dict['is_followed'] = 1
+                    else:
+                        follow_dict['is_followed'] = 0
+                    followers_list.append(follow_dict)
+            context['followers_list'] = followers_list
+            context['username'] = username
+            context['email'] = userdata.email
+            context['fname'] = userdata.first_name
+            context['lname'] = userdata.last_name
+            context['currentwork'] = currentwork(request, request.user.username)
+            TIME_FORMAT = "%b %d, %Y"
+            curr_time = userdata.date_joined
+            f_str = curr_time.strftime(TIME_FORMAT)
+            context['datejoined'] = f_str
+            fullname = userdata.first_name + " " + userdata.last_name
+            context['fullname'] = fullname
+            context['title'] = username
+            context['followers'] = followers
+            user_views = models.Views.objects.filter(user__username = username).count()
+            context['user_views'] = human_format(request, user_views)
+            context['status'] = 200
+            total_views = 0
+
+            work = models.Work.objects.filter(user__username = username).order_by('-present','-from_year')
+            work_list = []
+            if work.count() > 0:
+                for each in work:
+                    work_dict = {}
+                    work_dict['company'] = each.company
+                    work_dict['id'] = each.id
+                    work_dict['role'] = each.role
+                    work_dict['description'] = each.description
+                    work_dict['from_month'] = getmonth(request, each.from_month)
+                    work_dict['from_year'] = each.from_year
+                    if each.to_month and each.to_year:
+                        work_dict['to_month'] = getmonth(request, each.to_month)
+                        work_dict['to_year'] = each.to_year
+                    work_dict['present'] = each.present
+                    work_dict['updated_at'] = each.updated_at
+                    work_list.append(work_dict)
+            context['work'] = work_list
+            context['work_num'] = work.count()
+
+            education = models.Education.objects.filter(user__username = username).order_by('-from_year','-to_year')
+            education_list = []
+            if education.count() > 0:
+                for each in education:
+                    education_dict = {}
+                    education_dict['school'] = each.school
+                    education_dict['id'] = each.id
+                    education_dict['degree'] = each.degree
+                    education_dict['fieldofstudy'] = each.fieldofstudy
+                    education_dict['description'] = each.description
+                    education_dict['from_month'] = getmonth(request, each.from_month)
+                    education_dict['from_year'] = each.from_year
+                    education_dict['to_month'] = getmonth(request, each.to_month)
+                    education_dict['to_year'] = each.to_year
+                    education_dict['updated_at'] = each.updated_at
+                    education_list.append(education_dict)
+            context['education'] = education_list
+            context['education_num'] = education.count()
+
+            interest = models.Interest.objects.filter(user = request.user).order_by('created_at')
+            interest_list = [i.description for i in interest]
+            context['interest_list'] = interest_list
+
+
+            blog_count = models.Blog.objects.filter(user__username = username, is_draft=False).count()
+            context['blog_num'] = blog_count
+            if blog_count > 0:
+                blog_all = models.Blog.objects.filter(user__username = username, is_draft=False).order_by('-views_num','-id')
+                blog_list = []
+                blog_num = len(blog_all)
+                for each in blog_all:
+                    if each.heading and each.data:
+                        blog_content = {}
+                        blog_content['heading'] = each.heading
+                        blog_content['url'] = each.url
+                        blog_content['blogid'] = each.id
+                        blog_content['is_anonymous'] = each.is_anonymous
+                        blog_content['timestamp'] = each.unix_time
+                        blog_content['views_num'] = human_format(request, each.views_num)
+                        blog_content['created_at'] = each.created_at
+                        blog_content['read_time'] = each.read_time
+                        TIME_FORMAT = "%b %d %Y"
+                        curr_time = each.created_at
+                        f_str = curr_time.strftime(TIME_FORMAT)
+                        blog_content['date'] = f_str
+                        blog_content['updated_at'] = each.updated_at
+                        new_data = mdtohtml(request, each.data)
+                        cleanedhtml = cleanhtml(request, new_data)
+                        blog_content['cleaned_data'] = cleanedhtml
+                        blog_content['img_src']  = findimg(request, new_data)
+                        blog_list.append(blog_content)
+                        total_views += each.views_num
+                        context['status'] = 200
+                    else:
+                        context['status'] = 120
+                context['blogs'] = blog_list
+            context['total_views'] = human_format(request, total_views)
+
+            context['title_pg'] = fullname + " | @" + username + " | Writocraft"
+            context['description_pg'] = "Blogs by " + fullname + ". " + context['description']
+            context['img_url_pg'] = context['image_src']
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['username_pg'] = username
+            context['first_name_pg'] = userdata.first_name
+            context['last_name_pg'] = userdata.last_name
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "profile"
+
+        else:
+            context['title_pg'] = "My Profile | Writocraft"
+            context['description_pg'] = "Please Login"
+            context['curr_url_pg'] = request.build_absolute_uri() 
+            context['robots_pg'] = "noindex, nofollow"
+            context['ptype'] = "profile"
+            context['status'] = 110
+    else:
+        context['status'] = 404
+        context['title_pg'] = "My Profile | Writocraft"
+        context['description_pg'] = "Please Login to view your profile"
+        context['curr_url_pg'] = request.build_absolute_uri() 
+        context['robots_pg'] = "noindex, nofollow"
+        context['ptype'] = "profile"
+    return render(request, "newprofile.html", context) 
+
 def interestsave(request):
     context = {"status": 110}
     if not request.user.is_anonymous:
