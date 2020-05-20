@@ -577,6 +577,8 @@ def blogs(request, username, title):
     if profile.count():
         if profile[0].image_src:
             context['image_src'] = profile[0].image_src
+            timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
+            context['time_img'] = timestamp
     if models.Blog.objects.filter(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True))).exists():
         if models.Blog.objects.filter(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True))).count() == 1:
             blog = models.Blog.objects.get(Q(user__username = username) & Q(url=title) & (Q(is_visible = True) | Q(is_private= True)))
@@ -1574,6 +1576,8 @@ def profile(request, username):
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
+                    timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
+                    context['time_img'] = timestamp
                 
             followers = models.Follower.objects.filter(touser__username=username).count()
             if loggined:
@@ -1742,6 +1746,8 @@ def myprofile(request):
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
+                    timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
+                    context['time_img'] = timestamp
             
             if profile.count():
                 context['country'] = profile[0].country
@@ -1908,6 +1914,8 @@ def newprofile(request):
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
+                    timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
+                    context['time_img'] = timestamp
             
             if profile.count():
                 context['country'] = profile[0].country
