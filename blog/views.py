@@ -587,6 +587,7 @@ def blogs(request, username, title):
             new_data = mdtohtml(request, blog.data)
             new_data = new_data.replace("<img", "<img alt='img xt' style='max-width:100%; max-height: 900px;'")
             new_data = new_data.replace("<p><img", "<p style='text-align: center;'><img")
+            new_data = findYoutube(request, new_data)
             context['data'] = new_data
             context['author'] = username
             context['blogid'] = blog.id
@@ -2164,6 +2165,25 @@ def findimg(request, raw_html):
         zero_ind = zero_ind.replace("/media/images/blogimg","/media/images/blogimgxT")
         return zero_ind
     return '/media/images/blogimgxT/default.jpg'
+def findYoutube(request, raw_html):
+    re_pattern = r'load\(http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\)'
+    x = re.compile(re_pattern)
+    links = x.finditer(raw_html)
+    key = "AIzaSyBIr-6iIHgP_x9G7uJdxMIbaHsU1ePvSAc"
+    num = 0
+    for i in links:
+        num+=1
+        if num > 5:
+            return raw_html
+        full_match = i.group(0)
+        yid = i.group(1)
+        url = "https://www.googleapis.com/youtube/v3/videos?part=id&id="+yid+"&key="+key
+        response = requests.request("GET", url).json()
+        total_num = response['pageInfo']['totalResults']
+        if total_num:
+            iframe = "<div class='video-container'><iframe  width='560' height='315'  src='https://www.youtube.com/embed/"+yid+"?controls=0' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+            raw_html = raw_html.replace(full_match, iframe)
+    return raw_html
 
 def search(request):
     queryset = []
