@@ -277,9 +277,9 @@ $(document).ready(function(){
                 if (output == 200){
                     $("#success").text(result['success']);
                     $("#success").show().delay(5000).fadeOut(3000);
-                    heading_ = replaceAll(heading," ", "-");
-                    heading_url = encodeURI(heading_);
-                    window.location.href = '/edit/'+heading_url+"/1";
+                    blog_url = result['blog_url']
+                    blog_url_encoded = encodeURI(blog_url);
+                    window.location.href = '/edit/'+blog_url_encoded+"/1";
                 }
                 else{
                     $("#error").text("Error "+result['error']);

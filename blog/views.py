@@ -337,6 +337,7 @@ def writeblog(request):
                         ]
                         models.Tags.objects.bulk_create(objs)
                     context['success'] = "Changes Saved Successfully"
+                    context['blog_url'] = blog.url
                     context['status'] = 200
                 elif models.Blog.objects.filter(user = request.user, id = id).exists():
                     blog = models.Blog.objects.get(user = request.user, id =id)
@@ -375,6 +376,7 @@ def writeblog(request):
                         ]
                         models.Tags.objects.bulk_create(objs)
                     context['success'] = "Changes Saved Successfully"
+                    context['blog_url'] = blog.url
                     context['status'] = 200
                 else: 
                     context['error'] = "Error"
@@ -2165,6 +2167,7 @@ def findimg(request, raw_html):
         zero_ind = zero_ind.replace("/media/images/blogimg","/media/images/blogimgxT")
         return zero_ind
     return '/media/images/blogimgxT/default.jpg'
+
 def findYoutube(request, raw_html):
     re_pattern = r'load\(http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\)'
     x = re.compile(re_pattern)
