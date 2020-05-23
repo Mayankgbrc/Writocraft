@@ -48,7 +48,7 @@ class Interest(admin.ModelAdmin):
     list_display = ('user','description','created_at',)
 
 class Profile(admin.ModelAdmin):
-    list_display = ('user','description','country','phone','dob','tag','image_src','created_at','updated_at',)
+    list_display = ('user','description','country','phone','dob','tag','image_src','cover_image_src','created_at','updated_at',)
 
 class HTMLData(admin.ModelAdmin):
     list_display = ('data','page','created_at')

@@ -11,6 +11,7 @@ class Profile(models.Model):
     dob = models.DateTimeField(null=True, blank=True)
     tag = models.CharField(max_length=128, default = "noob")
     image_src = models.CharField(max_length=255, blank=True, null=True)
+    cover_image_src = models.CharField(max_length=255, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
