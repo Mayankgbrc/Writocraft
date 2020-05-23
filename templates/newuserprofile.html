@@ -23,9 +23,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300&display=swap" rel="stylesheet">
   <body style="font-family: Muli,sans-serif; color: #6b6f82; background-color: #f6f6f6;">
   
+
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal" >
+                    <div class="modal-content">
+                        <div class="row">
+                            <h4 class="center">Please Login</h4>
+                            <div class="col m6">
+                                <div>
+                                    <img alt="Login modal image"  class="responsive-img" src="/static/images/uploadsfile/mirage.png">
+                                </div>
+                            </div>
+                            <div class="col m6">
+                                <div>
+                                    <strong><div id="errorbox" class="center" style="color: red; font-size: 20px;"></div></strong>
+                                    {% csrf_token %}
+                                    <p>
+                                        <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Email:</label></strong>
+                                        <input type="email" id="useremail" name="email" placeholder="Enter your E-mail" maxlength="254" required autocomplete="off">
+                                    </p>
+                                    <p>
+                                        <strong><label style="font-size: 15px; color: #222; letter-spacing: 1;">Password:</label></strong>
+                                        <input type="password" id="userpassword" placeholder="Enter your Password" name="password" required autocomplete="off">
+                                    </p>                            
+                                    <div class="center">
+                                        <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
+                                    </div>    
+                                    <p class="center"> 
+                                        New User? <a title="Sign Up" href="/signup" style="color: #000;"> Sign Up Here </a> 
+                                        <br>
+                                        <a title="Password-reset" href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
+                                    </p>  
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Modal Structure -->
+        
+
   
                 <!-- Modal Structure -->
-                <div id="modal1" class="modal">
+                <div id="modal-followers" class="modal">
 
                   <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
                       <h5 class="center">Your Followers</h5>
@@ -107,26 +147,22 @@
                           <p>{{currentwork}} </p>
                         </div>
                       </div>
-                      <div class="col s12 center">
-                        <a class="btn dropdown-trigger waves-effect waves-light breadcrumbs-btn right" href="#!" data-target="dropdown-settings-2"><span>Settings</span><i class="material-icons right">arrow_drop_down</i></a>
-                        <ul class="dropdown-content" id="dropdown-settings-2" tabindex="0">
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/editprofile">Edit Profile</a></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/photo_upload">Change Profile Picture</a></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/cover_photo_upload/">Change Cover Picture</a></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/education">Add Education</a></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/work">Add Work</a></li>
-                          <li class="divider" tabindex="-1"></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/createblog">Write Blog</a></li>
-                          <li class="divider" tabindex="-1"></li>
-                          <li tabindex="0"><a class="grey-text text-darken-2" href="/contactus">Contact Us</a></li>
-                        </ul>
-                      </div>
+                    </div>
+                    <div class="center">
+                        <button class="btn waves-effect waves-light pink white-text" type="submit" name="action" value='{{ followcheck }}' style="text-transform: none;" id="followbutton">
+                            <span id="follow" >
+                                <i class="fa fa-user-plus" style="font-size: 1.1rem;"></i>ollow | <span class="follownum">{{followers}}</span>
+                            </span>
+                            <span id="followed" style="display: none;"> 
+                                <i class="fa fa-user-plus" style="font-size: 1.1rem;"></i>ollowed <i class="fa fa-check" style="font-size: 1.1rem;"></i> | <span class="follownum">{{followers}}</span>
+                            </span>
+                        </button>
                     </div>
 
                     <div class="row">
                       <div class="col s6">
                         <h6>Follower</h6>
-                        <h5><a href="#" class=" modal-trigger" data-target="modal1">{{followers}}</a></h5>
+                        <h5><a href="#" class=" modal-trigger" data-target="modal-followers">{{followers}}</a></h5>
                       </div>
                       <div class="col s6">
                         <h6>Following</h6>
@@ -152,17 +188,14 @@
                     </div>
                     {% endif %}
                     <!-- Work -->
+                    {% if work_num %}
                     <hr>
                     <div class="row">
                         <div class="col s12">
                           <h6>Work Experience</h6>
-                        {% if work_num %}
                             {% for each in work %}
                                 <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s" style="background-color: #e6e6e6; border-radius: 10px; padding: 0.5rem; margin: 5px 0px;">
                                     <span style="font-size: 1.1rem; color: #3949ab;">{{ each.role }} @ {{ each.company }}
-                                        <a href="/editwork/{{ each.id }}"> 
-                                            <span class="right"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
-                                        </a>
                                     </span>
                                     <br>
                                     <span style="font-size: 0.9rem; line-height: 25px;">
@@ -177,27 +210,23 @@
                                     <span style="font-size: 0.9rem; line-height: 22px;">{{ each.description }}</span>
                                 </div>
                             {% endfor %}
-                            <span style="font-size: 1.1rem; line-height: 25px;">Add More Details <a href="/work" class="blue-text" >Add</a></span>
-                        {% else %}
-                        <span style="font-size: 1.1rem; line-height: 25px;">Add Details <a href="/work" class="blue-text" >Add</a></span>
-                        {% endif %}
-                      </div>
+                      
+                        </div>
                     </div>
+                    {% endif %}
                     <!-- /Work -->
                     <hr>
                     <!-- Education -->
+                    {% if education_num %}
                     <div class="row">
                       <div class="col s12">
                         <h6>Education</h6>
-                      {% if education_num %}
+                      
                           {% for each in education %}
                               <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s" style="background-color: #e6e6e6; border-radius: 10px; padding: 0.5rem; margin: 5px 0px;">
                                   <span style="font-size: 1.1rem; color: #3949ab;">{{ each.degree }} <span>in</span> {{ each.fieldofstudy }}
                                     <br>
                                     <span>{{ each.school }}</span>
-                                    <a href="/editeducation/{{ each.id }}"> 
-                                        <span class="right"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
-                                    </a>
                                   </span>
                                   <br>
                                   <span style="font-size: 0.9rem; line-height: 25px;">
@@ -207,12 +236,9 @@
                                   <span style="font-size: 0.9rem; line-height: 22px;">{{ each.description }}</span>
                               </div>
                           {% endfor %}
-                          <span style="font-size: 1.1rem; line-height: 25px;">Add More Details <a href="/education" class="blue-text" >Add</a></span>
-                      {% else %}
-                      <span style="font-size: 1.1rem; line-height: 25px;">Add Details <a href="/education" class="blue-text" >Add</a></span>
-                      {% endif %}
+                        </div>
                       </div>
-                    </div>
+                    {% endif %}
                     <!-- /Education -->
 
                   </div>
@@ -229,20 +255,6 @@
                                 <h5>{{ fullname }}</h5>
                                 <p>{{currentwork}} </p>
                               </div>
-                              <div class="col s2 center">
-                                  <a class="btn dropdown-trigger waves-effect waves-light breadcrumbs-btn right" href="#!" data-target="dropdown-settings"><span>Settings</span><i class="material-icons right">arrow_drop_down</i></a>
-                                  <ul class="dropdown-content" id="dropdown-settings" tabindex="0">
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/editprofile">Edit Profile</a></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/photo_upload">Change Profile Picture</a></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/cover_photo_upload/">Change Cover Picture</a></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/education">Add Education</a></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/work">Add Work</a></li>
-                                    <li class="divider" tabindex="-1"></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/createblog">Write Blog</a></li>
-                                    <li class="divider" tabindex="-1"></li>
-                                    <li tabindex="0"><a class="grey-text text-darken-2" href="/contactus">Contact Us</a></li>
-                                  </ul>
-                              </div>
                             </div>
                           </div>
 
@@ -257,14 +269,6 @@
                                 <a href="#">
                                   <p>{{ fullname }} <!-- <span><i class="material-icons" style="vertical-align: bottom;">access_time</i> 1 days</span></p>-->
                                 </a>
-                              </div>
-                              <div class="col m2 s4 center">
-                                <a class="btn dropdown-trigger waves-effect waves-light breadcrumbs-btn right" href="#!" data-target="dropdown-settings-B{{each.blogid}}"><i class="material-icons">settings</i><i class="material-icons">arrow_drop_down</i></a>
-                                <ul class="dropdown-content" id="dropdown-settings-B{{each.blogid}}" tabindex="0">
-                                  <li tabindex="0"><a class="grey-text text-darken-2" href="/@{{ username|urlencode }}/{{ each.url|urlencode }}/">View</a></li>
-                                  <li class="divider" tabindex="-1"></li>
-                                  <li tabindex="0"><a class="grey-text text-darken-2" href="/edit/{{ each.url|urlencode }}/">Edit</a></li>
-                                </ul>
                               </div>
                               <div class="row">
                                 <div class="col s12">
@@ -290,10 +294,8 @@
                           </div>
                           <hr class="mt-5">
 
-                          {% if blog_num %}
-                          <span style="font-size: 1.1rem; line-height: 25px;"> <a href="/createblog" class="blue-text" >Write a New Blog</a></span>
-                          {% else %}
-                          <span style="font-size: 1.1rem; line-height: 25px;"> Time to start your blog count. <a href="/createblog" class="blue-text">Write Now</a></span>
+                          {% if not blog_num %}
+                            <span style="font-size: 1.1rem; line-height: 25px;"> No Blogs to show.</span>
                           {% endif %}
 
                         </div>
@@ -321,9 +323,80 @@
   $(document).ready(function(){
     $('.dropdown-trigger').dropdown({coverTrigger:false});
 
-    $('#modal1').modal({'endingTop':'6%'});
+    $('#modal-followers').modal({'endingTop':'6%'});
     $('#modal2').modal({'endingTop':'6%'});
+    $('#modal1').modal({'endingTop':'6%'});
   });
+
+  $(document).on('click', '#loginbutton', function(){
+            var email = $("#useremail").val();
+            var password = $("#userpassword").val();
+            $.ajax({
+                type: 'POST',
+                url: '/login/',
+                data: {
+                    email: email,
+                    password: password,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(result){
+                    status = result['status']
+                    if (status == 200){
+                        $('#modal1').modal('close');
+                        location.reload(true);
+                    }
+                    else{
+                        $('#errorbox').text(result['login_error']);
+                    }
+                }
+            });
+        });
+            
+            $(document).ready(function(){
+                    
+                var value = $('#followbutton').val();
+                if (value == 0){
+                    $("#followed").hide();
+                    $("#follow").show();
+                }
+                else{
+                    $("#followed").show();
+                    $("#follow").hide();
+                }
+
+                
+                $("#followbutton").click(function(){
+                    var loginned = {{ loginned }};
+                    if (loginned == 0){
+                        $('#modal1').modal();
+                        $('#modal1').modal('open');
+                        return 0;
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/followplus/',
+                        async: false,
+                        data: {
+                            profile: '{{username}}',
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                        },
+                        success: function(result){
+                            if (result['status']==200){
+                                if (result['stats'] == 1){
+                                    $("#followed").show();
+                                    $("#follow").hide();
+                                    $(".follownum").text(result['follownum']);
+                                }
+                                else{
+                                    $("#follow").show();
+                                    $("#followed").hide();
+                                    $(".follownum").text(result['follownum']);
+                                }
+                            }
+                        }
+                    });
+                });
+            });
 </script>
   </body>
 </html>
