@@ -8,7 +8,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 import django.core
 from io import BytesIO
 from . import models
-from .forms import PhotoForm, SignUpForm
+from .forms import PhotoForm, SignUpForm, CoverPhotoForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 import os
@@ -32,6 +32,7 @@ from sendgrid.helpers.mail import Mail
 from django.core.mail import send_mail, BadHeaderError
 import string
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from dateutil.relativedelta import relativedelta
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -210,12 +211,16 @@ def convertimage(request, data, id, unix_time, is_anonymous):
                     name = request.user.username + "_" + str(id) + "_" + str(count) + formats_dicts[k]
                 location = "media/images/blogimg/"
                 location2 = "media/images/blogimgxT/"
+                location3 = "media/images/blogimgT/"
                 image = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
                 image.thumbnail((800, 800))
                 image2 = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
                 image2.thumbnail((400, 300))
+                image3 = Image.open(BytesIO(base64.b64decode(formatedimgdata)))
+                image3.thumbnail((700, 400))
                 full_name = location + name
                 full_name2 = location2 + name
+                full_name3 = location3 + name
                 if formats_dicts[k] == '.png':
                     rgb_image = image.convert('RGB')
                     full_name = full_name.replace("png", "jpg")
@@ -223,9 +228,13 @@ def convertimage(request, data, id, unix_time, is_anonymous):
                     rgb_image2 = image2.convert('RGB')
                     full_name2 = full_name2.replace("png", "jpg")
                     rgb_image2.save(full_name2, quality=50)
+                    rgb_image3 = image3.convert('RGB')
+                    full_name3 = full_name3.replace("png", "jpg")
+                    rgb_image3.save(full_name3, quality=70)
                 else:
                     image.save(full_name)
                     image2.save(full_name2)
+                    image3.save(full_name3)
 
                 full_link = "<img src=\'/"+full_name+"\'>"
                 data = data.replace(i.group(0), full_link)
@@ -1042,6 +1051,26 @@ def photo_list(request):
     else:
         form = PhotoForm()
     return render(request, 'photo_list.html', {'form': form, 'photos': photos})
+
+@login_required
+def cover_photo_list(request):
+    photos = models.Photo.objects.all()
+    if request.method == 'POST':
+        if not request.user.is_anonymous:
+            form = CoverPhotoForm(request.POST, request.FILES, user=request.user)
+            if form.is_valid():
+                obj = form.save()
+                user_obj = User.objects.get(username = request.user.username)
+                try:
+                    profile_obj = models.Profile.objects.get(user = user_obj)
+                    profile_obj.cover_image_src = obj
+                except:
+                    profile_obj = models.Profile(user = user_obj, cover_image_src = obj)
+                profile_obj.save()
+                return redirect('/myprofile')
+    else:
+        form = CoverPhotoForm()
+    return render(request, 'photo_cover_list.html', {'form': form, 'photos': photos})
 
 def human_format(request, num):
     magnitude = 0
@@ -1904,6 +1933,23 @@ def myprofile(request):
         context['ptype'] = "profile"
     return render(request, "myprofile.html", context)
 
+def datestdformat(request, dateto, datefrom):
+    diff = relativedelta(datefrom, dateto)
+    if diff.years:
+        return str(diff.years)+"y"
+    if diff.months:
+        return str(diff.months)+"Mo"
+    if diff.days:
+        weeks = diff.days//7
+        if weeks:
+            return str(weeks)+"w"
+        return str(diff.days)+"d"
+    if diff.hours:
+        return str(diff.hours)+"h"
+    if diff.minutes:
+        return str(diff.minutes)+"min"
+    return str(diff.seconds)+"s"
+
 @login_required(login_url='/login/')
 def newprofile(request):
     context = {"username":"Anonymous"}
@@ -1913,23 +1959,30 @@ def newprofile(request):
             userdata = User.objects.get(username=username)
             profile = models.Profile.objects.filter(user = userdata)
             context['image_src'] = 'default.jpg'
+            context['cover_image_src'] = 'default.jpg'
             context['description'] = ""
             if profile.count():
                 if profile[0].image_src:
                     context['image_src'] = profile[0].image_src
                     timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
                     context['time_img'] = timestamp
-            
-            if profile.count():
-                context['country'] = profile[0].country
+                if profile[0].cover_image_src:
+                    context['cover_image_src'] = profile[0].cover_image_src
+                    timestamp = datetime.datetime.timestamp(profile[0].updated_at) 
+                    context['time_img'] = timestamp
+                if profile[0].country:
+                    context['country'] = profile[0].country
                 if profile[0].description:
                     context['description'] = profile[0].description
             
             follow_filter = models.Follower.objects.filter(touser__username=username)
             followers = follow_filter.count()
+            from_follow = models.Follower.objects.filter(fromuser__username=username)
+            following = from_follow.count()
+            context['following'] = following
             followers_list = []
+            following_list = []
             if followers:
-                from_follow = models.Follower.objects.filter(fromuser__username=username)
                 from_follow_list = [each.touser.username for each in from_follow]
                 for each in follow_filter:
                     follow_dict = {}
@@ -1950,6 +2003,7 @@ def newprofile(request):
                         follow_dict['is_followed'] = 0
                     followers_list.append(follow_dict)
             context['followers_list'] = followers_list
+            
             context['username'] = username
             context['email'] = userdata.email
             context['fname'] = userdata.first_name
@@ -2011,7 +2065,7 @@ def newprofile(request):
             interest_list = [i.description for i in interest]
             context['interest_list'] = interest_list
 
-
+            current_datetime = datetime.datetime.now()
             blog_count = models.Blog.objects.filter(user__username = username, is_draft=False).count()
             context['blog_num'] = blog_count
             if blog_count > 0:
@@ -2026,9 +2080,14 @@ def newprofile(request):
                         blog_content['blogid'] = each.id
                         blog_content['is_anonymous'] = each.is_anonymous
                         blog_content['timestamp'] = each.unix_time
-                        blog_content['views_num'] = human_format(request, each.views_num)
-                        blog_content['created_at'] = each.created_at
+
+                        blog_content['viewsnum'] = human_format(request, models.Views.objects.filter(blog = each).distinct('user','ip').count())
+                        likes_count = human_format(request, models.Likes.objects.filter(blog = each).count())
+                        comment_count = human_format(request, models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count())
+                        blog_content['likes_count'] = likes_count
+                        blog_content['comments_count'] = comment_count
                         blog_content['read_time'] = each.read_time
+                        blog_content['created_at'] = each.created_at
                         TIME_FORMAT = "%b %d %Y"
                         curr_time = each.created_at
                         f_str = curr_time.strftime(TIME_FORMAT)
@@ -2037,7 +2096,7 @@ def newprofile(request):
                         new_data = mdtohtml(request, each.data)
                         cleanedhtml = cleanhtml(request, new_data)
                         blog_content['cleaned_data'] = cleanedhtml
-                        blog_content['img_src']  = findimg(request, new_data)
+                        blog_content['img_src']  = findimg2(request, new_data)
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
@@ -2167,6 +2226,18 @@ def findimg(request, raw_html):
         zero_ind = zero_ind.replace("/media/images/blogimg","/media/images/blogimgxT")
         return zero_ind
     return '/media/images/blogimgxT/default.jpg'
+
+def findimg2(request, raw_html):
+    matches = re.findall(r'\ssrc="([^"]+)"', raw_html)
+    if len(matches):
+        zero_ind = matches[0]
+        loc_check_q = zero_ind.replace("/media/images/blogimg","images/blogimgT")
+        check_loc = django.core.files.storage.default_storage.exists(loc_check_q)
+        if check_loc:
+            return zero_ind.replace("/media/images/blogimg","/media/images/blogimgT")
+        return zero_ind.replace("/media/images/blogimg","/media/images/blogimgxT")
+
+    return '/media/images/blogimgT/default.jpg'
 
 def findYoutube(request, raw_html):
     re_pattern = r'load\(http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\)'
@@ -2311,10 +2382,9 @@ def search2(request):
             temp['fullname'] = each.user.first_name + " " + each.user.last_name
             temp['blogid'] = each.id
             temp['url'] = each.url
-            temp['readtime'] = each.read_time
-            temp['viewsnum'] = models.Views.objects.filter(blog = each).distinct('user','ip').count()
             temp['username'] = each.user.username
             temp['readtime'] = each.read_time
+            temp['viewsnum'] = models.Views.objects.filter(blog = each).distinct('user','ip').count()
             likes_count = models.Likes.objects.filter(blog = each).count()
             comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
             temp['likes_count'] = likes_count

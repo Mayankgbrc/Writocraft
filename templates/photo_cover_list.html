@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block javascript %}
+  <script>
+    $(function () {
+      /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+      $("#id_file").change(function () {
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $("#image").attr("src", e.target.result);
+            $("#modalCrop").modal("show");
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+      /* SCRIPTS TO HANDLE THE CROPPER BOX */
+      var $image = $("#image");
+      var cropBoxData;
+      var canvasData;
+      $("#modalCrop").on("shown.bs.modal", function () {
+        $image.cropper({
+          viewMode: 0,
+          autoCropArea: 0,
+          zoomable: false,
+          aspectRatio: 3/1,
+          minCropBoxWidth: 150,
+          minCropBoxHeight: 50,
+          ready: function () {
+            $image.cropper("setCanvasData", canvasData);
+            $image.cropper("setCropBoxData", cropBoxData);
+          }
+        });
+      }).on("hidden.bs.modal", function () {
+        cropBoxData = $image.cropper("getCropBoxData");
+        canvasData = $image.cropper("getCanvasData");
+        $image.cropper("destroy");
+      });
+      $(".js-zoom-in").click(function () {
+        $image.cropper("zoom", 0.1);
+      });
+      $(".js-zoom-out").click(function () {
+        $image.cropper("zoom", -0.1);
+      });
+      /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+      $(".js-crop-and-upload").click(function () {
+        var cropData = $image.cropper("getData");
+        $("#id_x").val(cropData["x"]);
+        $("#id_y").val(cropData["y"]);
+        $("#id_height").val(cropData["height"]);
+        $("#id_width").val(cropData["width"]);
+        console.log($("#id_x").val(cropData["x"]), $("#id_y").val(cropData["y"]), $("#id_height").val(cropData["height"]), $("#id_width").val(cropData["width"]));
+        $("#formUpload").submit();
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<style>
+
+/* Ensure the size of the image fit the container perfectly */
+img {
+  display: block;
+
+  /* This rule is very important, please don't ignore this */
+  max-width: 100%;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+label{
+  display: none;
+}
+
+</style>
+<div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3"> </div>
+      <div class="col-sm-12 col-md-6 offset-md-3" style="height: 700px; background-color: #fff;">
+        <div style="text-align: center;">
+          <h3 style="padding-top: 20px; margin-top: 0px">Upload your Cover Pic</h3>
+          <br>
+          <!-- FORM TO UPLOAD THE IMAGES -->
+          <form method="post" enctype="multipart/form-data" id="formUpload">
+            <label for="id_file" class="custom-file-upload">
+              <i class="fa fa-cloud-upload"></i> Upload
+            </label>
+            {% csrf_token %}
+            {{ form }}
+          </form>
+          <br>
+          <a href="/myprofile">Skip Now</a>
+          <br><br>
+          <div>
+            If you face any issue while uploading, then please refresh the page,<br> or still not solved then please contact us <a href="/contactus">here</a>.
+          </div>
+        </div>
+
+        <!-- MODAL TO CROP THE IMAGE -->
+        <div class="modal fade" id="modalCrop">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Crop the photo</h4>
+              </div>
+              <div class="modal-body">
+                <img src="" id="image" style="max-width: 100%;">
+              </div>
+              <div class="modal-footer">
+                <div class="btn-group pull-left" role="group">
+                  <button type="button" class="btn btn-default js-zoom-in">
+                    <i class="fa fa-search-plus" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="btn btn-default js-zoom-out">
+                    <i class="fa fa-search-minus" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary js-crop-and-upload">Crop and upload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

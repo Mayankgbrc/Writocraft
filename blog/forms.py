@@ -59,3 +59,36 @@ class PhotoForm(forms.ModelForm):
         resized_image_small = rgb_im.resize((100, 100))
         resized_image_small.save('media/profile/100/' + str(self.user) + '.jpg')
         return photo_name
+
+class CoverPhotoForm(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput())
+    y = forms.FloatField(widget=forms.HiddenInput())
+    width = forms.FloatField(widget=forms.HiddenInput())
+    height = forms.FloatField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user',None)
+        super(CoverPhotoForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Photo
+        fields = ('file', 'x', 'y', 'width', 'height', )
+    def save(self):
+        photo = super(CoverPhotoForm, self).save()
+
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        image = Image.open(photo.file)
+        cropped_image = image.crop((x, y, w+x, h+y))
+        rgb_im = cropped_image.convert('RGB')
+        unix_time = str(int(time.time()))
+        photo_name = str(self.user) + '.jpg'
+        file_name = 'media/cover/org/' + str(self.user) + '.jpg'
+        resized_image_big = rgb_im.resize((1440, 480))
+        resized_image_big.save(file_name)
+        resized_image = rgb_im.resize((600, 200))
+        resized_image.save('media/cover/200/' + str(self.user) + '.jpg')
+        return photo_name
