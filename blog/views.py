@@ -2520,18 +2520,37 @@ def findYoutube(request, raw_html):
     links = x.finditer(raw_html)
     key = "AIzaSyBIr-6iIHgP_x9G7uJdxMIbaHsU1ePvSAc"
     num = 0
-    for i in links:
-        num+=1
-        if num > 5:
-            return raw_html
-        full_match = i.group(0)
-        yid = i.group(1)
-        url = "https://www.googleapis.com/youtube/v3/videos?part=id&id="+yid+"&key="+key
-        response = requests.request("GET", url).json()
-        total_num = response['pageInfo']['totalResults']
-        if total_num:
-            iframe = "<div class='video-container'><iframe  width='560' height='315'  src='https://www.youtube.com/embed/"+yid+"?controls=0' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
-            raw_html = raw_html.replace(full_match, iframe)
+    if links:
+        for i in links:
+            num+=1
+            if num > 5:
+                return raw_html
+            full_match = i.group(0)
+            yid = i.group(1)
+            url = "https://www.googleapis.com/youtube/v3/videos?part=id&id="+yid+"&key="+key
+            response = requests.request("GET", url).json()
+            total_num = response['pageInfo']['totalResults']
+            if total_num:
+                iframe = "<div class='video-container'><iframe  width='560' height='315'  src='https://www.youtube.com/embed/"+yid+"?controls=0' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+                raw_html = raw_html.replace(full_match, iframe)
+    if num == 0:
+        re_pattern2 = r'load\(<a href="http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?" target="_blank">http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?</a>\)'
+        x = re.compile(re_pattern2)
+        links2 = x.finditer(raw_html)
+        for i in links2:
+            num+=1
+            if num > 5:
+                return raw_html
+            full_match = i.group(0)
+            yid = i.group(1)
+            
+            url = "https://www.googleapis.com/youtube/v3/videos?part=id&id="+yid+"&key="+key
+            response = requests.request("GET", url).json()
+            total_num = response['pageInfo']['totalResults']
+            if total_num:
+                iframe = "<div class='video-container'><iframe  width='560' height='315'  src='https://www.youtube.com/embed/"+yid+"?controls=0' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+                raw_html = raw_html.replace(full_match, iframe)
+            
     return raw_html
 
 def search(request):
