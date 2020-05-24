@@ -1941,24 +1941,13 @@ def newuserprofile(request, username):
                         cleanedhtml = cleanhtml(request, new_data)
                         blog_content['cleaned_data'] = cleanedhtml
                         blog_content['img_src']  = findimg2(request, new_data)
-                        '''
-                        location = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_1.jpg"
-                        checkstorage =  django.core.files.storage.default_storage.exists("blog"+location)
-                        if checkstorage:
-                            blog_content['src'] = location
-                        else:
-                            location2 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_2.jpg"
-                            checkstorage2 =  django.core.files.storage.default_storage.exists("blog"+location2)
-                            if checkstorage2:
-                                blog_content['src'] = location2
-                            else:
-                                location3 = '/static/images/blogimg/'+username+"_"+ str(each.id) + "_3.jpg"
-                                checkstorage3 =  django.core.files.storage.default_storage.exists("blog"+location3)
-                                if checkstorage3:
-                                    blog_content['src'] = location3
-                                else:
-                                    blog_content['src'] = "/static/images/blogimg/default.jpg"
-                        '''
+
+                        blog_content['viewsnum'] = human_format(request, models.Views.objects.filter(blog = each).distinct('user','ip').count())
+                        likes_count = human_format(request, models.Likes.objects.filter(blog = each).count())
+                        comment_count = human_format(request, models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count())
+                        blog_content['likes_count'] = likes_count
+                        blog_content['comments_count'] = comment_count
+                        
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
