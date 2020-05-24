@@ -567,6 +567,7 @@ def followpush(request):
                 profile = int(profile)
                 followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__id = profile)
                 touser = User.objects.filter(id = profile)
+                
                 if followcheck.count() == 0:
                     if request.user != touser[0]:
                         following = models.Follower(fromuser = request.user, touser = touser[0])
@@ -1771,6 +1772,9 @@ def newuserprofile(request, username):
     loggined = 1
     if request.user.is_anonymous:
         loggined = 0
+    if not request.user.is_anonymous:
+        if request.user.username == username:
+            return redirect('myprofile')
         
     if User.objects.filter(username=username).exists():
         if User.objects.filter(username=username).count() == 1:
@@ -1792,21 +1796,23 @@ def newuserprofile(request, username):
                     context['country'] = profile[0].country
                 if profile[0].description:
                     context['description'] = profile[0].description
-                
+            user_follow_list = []  
             if loggined:
                 followcheck = models.Follower.objects.filter(fromuser__username = request.user, touser__username = userdata).count()
                 context['followcheck'] = followcheck
+            
+                user_follower = models.Follower.objects.filter(fromuser=request.user)
+                user_follow_list = [each.touser.username for each in user_follower]
                         
-            follow_filter = models.Follower.objects.filter(touser__username=username)
+            follow_filter = models.Follower.objects.filter(touser=userdata)
             followers = follow_filter.count()
-            from_follow = models.Follower.objects.filter(fromuser__username=username)
+            from_follow = models.Follower.objects.filter(fromuser=userdata)
             following = from_follow.count()
             context['following'] = following
             context['followers'] = followers
             followers_list = []
             following_list = []
             if followers:
-                from_follow_list = [each.touser.username for each in from_follow]
                 for each in follow_filter:
                     follow_dict = {}
                     follow_dict['name'] = (each.fromuser.first_name + " " + each.fromuser.last_name).title()
@@ -1820,14 +1826,13 @@ def newuserprofile(request, username):
                         follow_dict['src'] = "/media/profile/100/default.jpg"
 
                     follow_dict['userid'] = each.fromuser.id
-                    if each.fromuser.username in from_follow_list:
+                    if each.fromuser.username in user_follow_list:
                         follow_dict['is_followed'] = 1
                     else:
                         follow_dict['is_followed'] = 0
                     followers_list.append(follow_dict)
 
             if following:
-                to_follow_list = [each.fromuser.username for each in follow_filter]
                 for each in from_follow:
                     following_dict = {}
                     following_dict['name'] = (each.touser.first_name + " " + each.touser.last_name).title()
@@ -1841,7 +1846,7 @@ def newuserprofile(request, username):
                         following_dict['src'] = "/media/profile/100/default.jpg"
 
                     following_dict['userid'] = each.touser.id
-                    if each.touser.username in to_follow_list:
+                    if each.touser.username in user_follow_list:
                         following_dict['is_followed'] = 1
                     else:
                         following_dict['is_followed'] = 0
@@ -1947,7 +1952,7 @@ def newuserprofile(request, username):
                         comment_count = human_format(request, models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count())
                         blog_content['likes_count'] = likes_count
                         blog_content['comments_count'] = comment_count
-                        
+
                         blog_list.append(blog_content)
                         total_views += each.views_num
                         context['status'] = 200
