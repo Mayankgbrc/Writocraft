@@ -1579,16 +1579,39 @@ def team(requests):
     return render(requests, 'team.html', context)
 
 def mailsend(request):
+    users = User.objects.all()
+    to_emails = [each.email for each in users]
     
     from_email='hello@writocraft.com'
-    to_emails=['mayankgbrc@gmail.com']
-    subject='Welcome to WritoCraft'
-    html_content='Hi Mayank, wishing you a warm welcome to Writocraft Family.'
+    subject='WritoCraft Weekly News'
+    
+    line1 = "We hope you and your family are healthy and safe during these uncertain and unprecedented times. <br>Here are this week's five links that you can go through:"
+    line2 = """
+                <ol>
+                    <li>Read Top 10 Unknown Conspiracies by Writocraft Official (7 min read) - https://writocraft.com/@writocraft/Top-10-Unknown-Conspiracies/</li>
+                    <li>Know about the holy city of India - 'Varanasi' by Sakshi Kumari (7 min read) - https://writocraft.com/@ksakshi489/The-holy-city-of-India---%22-Varanasi%22/ </li>
+                    <li>The most noteworthy - Colonizing Mars by Sourav Chakraborty (8 min read) - https://writocraft.com/@Souravari2699/Colonizing-Mars/ </li>
+                    <li>Required thing: Importance Of Love by Baishakhi Chakraborty (7 min read) - https://writocraft.com/@baishakhi18/IMPORTANCE-OF-LOVE/</li>
+                    <li>Get an overview about Gaya city - The Land of Enlightment by Vidisha Gupta (5 min read) - https://writocraft.com/@vidisha0302/Gaya---An-Overview/ </li>
+                </ol>
+            """
+    features1 = """<b>Features Update:</b><br>
+                <ol>
+                    <li>We updated the user profile page with the new material UI. </li>
+                    <li>Now you can link Youtube videos with your blog (Max 5 per blogs). Test Example - https://writocraft.com/@adminmayank/Python-Program-to-Track-Covid-19-Cases/ <br>
+                    You just have to use this code in our editor:  load("Video Link") <br>
+                    And it will show that video there.</li>
+                </ol>
+            """
+    html_content = line1 + line2 + features1
+    
     try:
-        send_mail(subject, html_content, from_email, to_emails, fail_silently =True)
+        send_mail(subject, "", from_email, to_emails, fail_silently =True, html_message = html_content)
     except BadHeaderError:
         return HttpResponse("Error")
+    
     return HttpResponse("Working")
+
 
 def getmonth(request,digit):
     month_dict = {"1":"Jan","2":"Feb","3":"Mar","4":"Apr","5":"May","6":"June","7":"July","8":"Aug","9":"Sept","10":"Oct","11":"Nov","12":"Dec"}
