@@ -2496,6 +2496,21 @@ def cleanhtml(request,raw_html):
     cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
     cleantext = re.sub(cleanr, '', raw_html)
     cleantext = cleantext.replace("\n","")
+
+    re_pattern = r'load\(http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\)'
+    x = re.compile(re_pattern)
+    links = x.finditer(cleantext)
+    if links:
+        for i in links:
+            full_match = i.group(0)
+            cleantext = cleantext.replace(full_match,"")
+    
+    re_pattern2 = r'load\(<a href="http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?" target="_blank">http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?</a>\)'
+    x = re.compile(re_pattern2)
+    links2 = x.finditer(cleantext)
+    for i in links2:
+        full_match = i.group(0)
+        cleantext = cleantext.replace(full_match,"")
     return cleantext
 
 def findimg(request, raw_html):
@@ -2515,6 +2530,26 @@ def findimg2(request, raw_html):
         if check_loc:
             return zero_ind.replace("/media/images/blogimg","/media/images/blogimgT")
         return zero_ind.replace("/media/images/blogimg","/media/images/blogimgxT")
+    
+    re_pattern = r'load\(http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\)'
+    x = re.compile(re_pattern)
+    links = x.finditer(raw_html)
+    num = 0
+    if links:
+        for i in links:
+            num+=1
+            full_match = i.group(0)
+            yid = i.group(1)
+            return 'https://img.youtube.com/vi/'+yid+'/sddefault.jpg' 
+    
+    re_pattern2 = r'load\(<a href="http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?" target="_blank">http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?</a>\)'
+    x = re.compile(re_pattern2)
+    links2 = x.finditer(raw_html)
+    for i in links2:
+        num+=1
+        full_match = i.group(0)
+        yid = i.group(1)
+        return 'https://img.youtube.com/vi/'+yid+'/sddefault.jpg' 
 
     return '/media/images/blogimgT/default.jpg'
 
