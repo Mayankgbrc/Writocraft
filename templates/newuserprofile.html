@@ -51,7 +51,7 @@
                                         <button id="loginbutton" class=" btn-large black" type="submit">Login</button>
                                     </div>    
                                     <p class="center"> 
-                                        New User? <a title="Sign Up" href="/signup" style="color: #000;"> Sign Up Here </a> 
+                                        New User? <a title="Sign Up" href="/signup/?next={{ request.path }}" style="color: #000;"> Sign Up Here </a> 
                                         <br>
                                         <a title="Password-reset" href="{% url 'password_reset' %}" style="font-size: 14px;">Forgot Password</a> 
                                     </p>  

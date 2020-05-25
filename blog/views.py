@@ -135,12 +135,15 @@ def index(request):
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
+        next_link = request.GET.get('next')
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            if next_link:
+                return redirect(next_link)
             return redirect('/photo_upload/')
     else:
         form = SignUpForm()
