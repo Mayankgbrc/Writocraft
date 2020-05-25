@@ -86,14 +86,14 @@ class Notification(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
-    comment = models.CharField(max_length=128, blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Commentthread(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
-    commentthread = models.CharField(max_length=128, blank=True, null=True)
+    commentthread = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class URLshortner(models.Model):
