@@ -122,6 +122,11 @@ class Views(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
     ip = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
+    src = models.CharField(max_length=128, blank=True, null=True)
+    utm_source = models.CharField(max_length=128, blank=True, null=True)
+    utm_medium = models.CharField(max_length=128, blank=True, null=True)
+    utm_campaign = models.CharField(max_length=128, blank=True, null=True)
+    clid = models.CharField(max_length=128, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Photo(models.Model):

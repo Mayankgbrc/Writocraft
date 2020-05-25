@@ -587,6 +587,7 @@ def followpush(request):
 
 def blogs(request, username, title):
     context = {}
+    src = request.GET.get('src','')
     profile = models.Profile.objects.filter(user__username = username)
     context['image_src'] = 'default.jpg'
     if profile.count():
@@ -615,10 +616,10 @@ def blogs(request, username, title):
             if not request.user.is_anonymous:
                 context['loginned'] = 1
                 user_obj = User.objects.get(username = request.user)
-                view = models.Views(blog=blog, user = user_obj, ip = loc['ip'], city = loc['city'])
+                view = models.Views(blog=blog, user = user_obj, ip = loc['ip'], city = loc['city'], src=src)
             else:
                 context['loginned'] = 0
-                view = models.Views(blog=blog, ip = loc['ip'], city = loc['city'])
+                view = models.Views(blog=blog, ip = loc['ip'], city = loc['city'], src=src)
             view.save()
             blog.views_num = blog.views_num + 1
             blog.save()
