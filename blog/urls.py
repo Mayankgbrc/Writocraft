@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^likescheck/$',views.likescheck),
     url(r'^followpush/$',views.followpush),
     url(r'^notification/$',views.notification),
+    url(r'^hidenotification/$',views.hidenotification),
     url(r'^team/$',views.team),
     url(r'^logout/$',views.logout_view),
     url(r'^commentslikes/$',views.commentslikes),

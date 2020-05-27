@@ -66,6 +66,12 @@
 
           gtag('config', 'UA-166970710-1');
         </script>
+        <style>
+          #dropdown-notify{
+            width: 500px;
+            color: #222;
+          }
+        </style>
         
     </head>
     <body to="0">
@@ -113,12 +119,21 @@
                             </button>
                           </a>
                         </li>
+                        <!--
                         <li style="margin: 0px 20px">
                             <span class="notify__wrapper">
                                 <i class="fa fa-bell-o" id="notify" onclick="myFunction()" for="0" style="cursor: pointer; font-size: 20px; color: #fff;"> </i>
                                 <div class="notify__content" id="content"  style=" max-height: 60vh; overflow: scroll;"> </div>
                             </span>
                         </li>
+                        -->
+                        <li style="margin: 0px 20px">
+                          <a href="#" class='dropdown-trigg' data-target='dropdown-notify'><i class="fa fa-bell-o" style="line-height: 58px; padding: 0px 5px; color: #fff;" ></i></a>
+                          <ul class='dropdown-content row'  id='dropdown-notify'>
+                            
+                          </ul>
+                        </li>
+
                         {% if user.is_authenticated %}
                           <li><a href="/myprofile" title="My Profile">My Profile</a></li>
                         {% else %}
@@ -250,15 +265,34 @@ function boldString(str, find){
                         var output = result['status'];
                         if (output == 200){
                             for (var i = 0; i < result['notification'].length ; i++){
-                                $("#content").append("<div class='collection' style='margin: 0px !important;'><a title='notification-div' href='#' class='collection-item'><div class='badge' style='font-size: 24px; margin-bottom: 5px;'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></a></div>");
+                              var each_notification =  "<li><a style='color: #222 !important;'><div class='row' style='margin-bottom: 0px;'><div class='col s2'><img src='/media/profile/200/default.jpg/' style='width: 100%; border-radius: 50%;'></div><div class='col s10'><div style='font-size: 20px; margin-bottom: 5px'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></div></div></a></li><li class='divider'></li>";
+                              $("#dropdown-notify").append(each_notification);
                             }
                         }
                         else{
-                            $("#content").append("<div class='collection' style='margin: 0px !important;'><a href='#' titile='no-notification' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
+                            $("#dropdown-notify").append("<div class='collection' style='margin: 0px !important;'><a href='#' titile='no-notification' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
                         }
                     }
                 })
             });
+
+            $(document).ready(function(){
+                var instance = M.Dropdown.getInstance($('#dropdown-notify'));
+                if (instance.isOpen){
+                  $.ajax({
+                      type: 'POST',
+                      url: '/hidenotification/',
+                      data: {
+                          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                      },
+                      success: function(result){
+                          var output = result['status'];
+                      }
+                  })
+
+                }
+            });
+
 
 $(document).ready(function(){
     $('#search,#search2').keypress(function(e){
@@ -276,4 +310,6 @@ $(document).ready(function(){
 });
 
 $('.dropdown-trigger').dropdown({coverTrigger:false, hover: true});
+
+$('.dropdown-trigg').dropdown({coverTrigger:false, alignment: 'right', constrainWidth: false});
         </script>

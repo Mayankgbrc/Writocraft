@@ -74,7 +74,7 @@ def currentwork(request, username):
     return temp
 
 def index(request):
-    Topblogs = models.TopBlogs.objects.filter(is_visible=True)
+    Topblogs = models.TopBlogs.objects.filter(is_visible=True).order_by('rank')
     context = {}
     blog_list = []
     for each in Topblogs:
@@ -626,6 +626,7 @@ def blogs(request, username, title):
             blog_views = models.Views.objects.filter(blog = blog).distinct('user','ip').count()
             blog_likes = models.Likes.objects.filter(blog = blog).count()
             user_views = models.Views.objects.filter(blog__user = user).count()
+            ViewsNotification(request, blog_views, blog)
             context['blog_views'] = human_format(request, blog_views)
             context['blog_likes'] = human_format(request, blog_likes)
             context['user_views'] = human_format(request, user_views)
@@ -781,13 +782,18 @@ def notification(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         notify = models.Notification.objects.filter(Q(touser=request.user)).order_by('-created_at')
+        print(notify)
         if notify.count() > 0:
             status = 200
             data = []
             for each in notify:
                 notifi_dict = {}
-                notifi_dict['blog'] = each.blog
-                notifi_dict['data'] = each.data
+                if each.blog:
+                    notifi_dict['blog'] = each.blog.heading
+                if each.data:
+                    notifi_dict['data'] = each.data
+                if each.data:
+                    notifi_dict['data'] = each.data
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 curr_time = each.created_at
                 f_str = curr_time.strftime(TIME_FORMAT)
@@ -798,6 +804,42 @@ def notification(request):
             data = "No notification"
         context['status'] = status
         return HttpResponse(json.dumps(context), content_type="application/json")
+
+def ViewsNotification(request, views, blog):
+    if views%100 == 0:
+        data = "Congrats, Your Blog "+blog.heading+" completed "+str(views)+" views."
+        noti_view_obj, create = models.Notification.objects.get_or_create(touser = blog.user, blog = blog, data = data)
+        noti_view_obj.save()
+    return True
+
+def LikesNotification(request, blog):
+    if request.user.username != blog.user.username:
+        fromusername = request.user.first_name + " " + request.user.last_name
+        data = fromusername+" liked your post - "+blog.heading+"."
+        noti_like_obj, create = models.Notification.objects.get_or_create(touser = blog.user, blog = blog, data = data)
+        noti_like_obj.save()
+    return True
+
+def CommentsNotification(request, blog, message):
+    if request.user.username != blog.user.username:
+        fromusername = request.user.first_name + " " + request.user.last_name
+        data = fromusername+" commented on your post - "+message+"."
+        noti_comment_obj = models.Notification(touser = blog.user, blog = blog, data = data)
+        noti_comment_obj.save()
+    return True
+
+def CommentsThreadNotification(request, blog, comment, message):
+    if request.user.username != comment.user.username:
+        fromusername = request.user.first_name + " " + request.user.last_name
+        data = fromusername+" replied to a comment - "+message+"."
+        noti_comment_obj = models.Notification(touser = blog.user, blog = blog, data = data)
+        noti_comment_obj.save()
+    if request.user.username != blog.user.username:
+        fromusername = request.user.first_name + " " + request.user.last_name
+        data = fromusername+" replied to a comment - "+message+"."
+        noti_comment_obj = models.Notification(touser = blog.user, blog = blog, data = data)
+        noti_comment_obj.save()
+    return True
 
 def commentload(request):
     comment = {}
@@ -881,6 +923,7 @@ def likes(request):
                     blogs = models.Blog.objects.get(id=blogid)
                     like = models.Likes(blog=blogs, user = request.user)
                     like.save()
+                    LikesNotification(request, blogs)
                 except:
                     context['status'] = 110
                 else:
@@ -1001,6 +1044,7 @@ def commentpush(request):
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 f_str2 = curr_time2.strftime(TIME_FORMAT)
                 context['date'] = f_str2
+                CommentsNotification(request, blogs, commenttext)
                 context['status'] = 200
 
             else:
@@ -1025,6 +1069,7 @@ def commentpush(request):
                         TIME_FORMAT = "%b %d %Y, %I:%M %p"
                         f_str2 = curr_time2.strftime(TIME_FORMAT)
                         context['date'] = f_str2
+                        CommentsThreadNotification(request, blogs, comment, commenttext)
                         context['status'] = 200
                     else:
                         context['data'] = "Something Error Occured"
@@ -1056,6 +1101,12 @@ def photo_list(request):
     else:
         form = PhotoForm()
     return render(request, 'photo_list.html', {'form': form, 'photos': photos})
+
+def hidenotification(request):
+    notifications = models.Notification.objects.filter(user = request.user).update(viewed=True)
+    context = {'status': 200}
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
 
 @login_required
 def cover_photo_list(request):
