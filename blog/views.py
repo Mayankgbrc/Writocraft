@@ -636,7 +636,7 @@ def blogs(request, username, title):
             new_data = mdtohtml(request, blog.data)
             cleanedhtml = cleanhtml(request, new_data)
             context['description_pg'] = cleanedhtml
-            context['img_url_pg'] = request.build_absolute_uri(findimg(request, new_data))
+            context['img_url_pg'] = request.build_absolute_uri(findimg2(request, new_data))
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['author_url_pg'] = request.build_absolute_uri("/@"+username)
             context['full_name_pg'] = user.first_name + " " + user.last_name
@@ -782,7 +782,6 @@ def notification(request):
         return HttpResponse(json.dumps(context), content_type="application/json")
     else:
         notify = models.Notification.objects.filter(Q(touser=request.user)).order_by('-created_at')
-        print(notify)
         if notify.count() > 0:
             status = 200
             data = []
