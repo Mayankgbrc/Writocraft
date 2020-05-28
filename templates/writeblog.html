@@ -29,18 +29,25 @@
                     <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
                         <h2 class="center" style="font-size: 30px;">Blog Saved</h2>
                     </div>
-                    <div class="modal-content" style="height: 50vh; overflow:scroll; ">
+                    <div class="modal-content" style="overflow:scroll; background-color: #fff;">
                         <br><br>
-                        Congrats, your blog is published.<br>
-                        To view the blog you can click here: 
-                        <a target="_blank" href="/@{{username}}/{{url}}/">
-                            <button class="btn">Go to Blog</button>
-                        </a>
+                        <div class="row">
+                            <div class="col l9 s12">
+                                Congrats, your blog is published.<br>
+                                To view the blog you can click here: 
+                                <a target="_blank" href="/@{{username}}/{{url}}/">
+                                    <button class="btn">Go to Blog</button>
+                                </a>
+                            </div>
+                            <div class="col l3 s10 offset-s1">
+                                <img src="/static/images/uploadsfile/submitted-small.jpg" style="width: 100%; margin: 20px 0px;">
+                            </div>
+                        </div>
                     </div>
                     <div style="border-top: 1px solid rgba(0,0,0,0.1); position: absolute; bottom: 0;" class="modal-footer">
                         <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
                     </div>
-                  </div>
+                </div>
                 <!-- /Modal Structure -->
                 <script>
                     $(document).ready(function(){
@@ -49,6 +56,25 @@
                     });
                 </script>
             {% endif %}
+
+
+        <!-- Modal Structure -->
+        <div id="modal2" class="modal">
+
+            <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
+                <h2 class="center" style="font-size: 30px; color: #f00;">Error</h2>
+            </div>
+            <div class="modal-content" style="height: 50vh; background-color: #fff;">
+                <br><br>
+                Your changes is not saved.
+                <div id="errmessage" style="color: #f00;"> </div>
+            </div>
+            <div style="border-top: 1px solid rgba(0,0,0,0.1); position: absolute; bottom: 0;" class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
+        </div>
+        <!-- /Modal Structure -->
+
 
         <div class="row">
             <div class="">
@@ -282,9 +308,15 @@ $(document).ready(function(){
                     window.location.href = '/edit/'+blog_url_encoded+"/1";
                 }
                 else{
-                    $("#error").text("Error "+result['error']);
-                    $("#error").show().delay(5000).fadeOut(3000);;
+                    $('#modal2').modal();
+                    $('#modal2').modal('open');
+                    $("#errmessage").text("Error "+result['error']);
                 }
+            },
+            error: function (jqXHR, exception) {
+                $('#modal2').modal();
+                $('#modal2').modal('open');
+                $("#errmessage").text("Some Error Occured.");
             }
         })
     });

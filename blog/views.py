@@ -318,7 +318,7 @@ def writeblog(request):
                     data = data.strip()
                     blog.read_time = int(total_word/150) + 1
                     blog.heading = heading
-                    blog.url = heading.replace(' ', '-').replace('|','-')
+                    blog.url = heading.replace(' ', '-').replace('|','-').replace('/','-')
                     if post_in == "public":
                         blog.is_visible = True
                         blog.is_anonymous = False
