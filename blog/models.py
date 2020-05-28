@@ -63,6 +63,8 @@ class Blog(models.Model):
     views_num = models.IntegerField(default = 0, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.heading
 
 class Tags(models.Model):
     tag = models.CharField(max_length=128, blank=True, null=True)
@@ -88,6 +90,8 @@ class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.comment
 
 class Commentthread(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -95,6 +99,8 @@ class Commentthread(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
     commentthread = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.commentthread
 
 class URLshortner(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, blank=True, null=True)
