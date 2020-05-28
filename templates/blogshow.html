@@ -236,6 +236,36 @@ pre{
             <div class="parallax"><img src="/static/images/parallax1.jpg"></div>
         </div>
     -->
+{% if blog_likes %}
+                                <!-- Modal Structure -->
+                                <div id="modallikes" class="modal">
+
+                                    <div style="border-bottom: 1px solid rgba(0,0,0,0.1); position: absolute; top: 0;" class="modal-footer">
+                                        <h5 class="center">Your Followers</h5>
+                                    </div>
+                                    <div class="modal-content" style="height: 70vh; overflow:scroll; ">
+                                        <br><br>
+                                        {% for each in like_user_list %}
+                                        <div class="row">
+                                            <div class="col m1 s3">
+                                                <img class="image" src="{{ each.src }}" style="width: 100%; border-radius: 50%;">
+                
+                                            </div>
+                                            <div class="col m6 offset-m1 s5">
+                                                <a href="/@{{ each.username|urlencode }}" class="black-text" style="font-size: 1.4rem;">{{ each.name }}</a>
+                                            </div>
+                                            <div class="col m4 s4 center">
+                                                <button class="btn white black-text follow_btn" style="font-size: 0.8rem; padding: 0 6px;"><a href="/@{{ each.username|urlencode }}">View Profile</a></button>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div style="border-top: 1px solid rgba(0,0,0,0.1); position: absolute; bottom: 0;" class="modal-footer">
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                                    </div>
+                                </div>
+                                <!-- /Modal Structure -->
+                            {% endif %}    
 
         <!-- Modal Structure -->
         <div id="modal1" class="modal" >
@@ -297,7 +327,14 @@ pre{
                         <h1 style="text-align: left;">{{heading}}</h1>
                         <div style="font-size: 1.5rem; letter-spacing: 0.0625em; text-align: justify; text-justify: inter-word;">{{data|safe}}</div>
                         Total Views - {{ blog_views }}<br>
-                        Total Likes - {{ blog_likes }}
+                        Total Likes - {{ blog_likes }} 
+                        {% if blog_likes %}
+                        <br>
+                            <br>
+                            <a href="#" class="waves-effect waves-light btn-small green lighten-5 black-text modal-trigger" data-target="modallikes">View Likers</a>
+                
+                        {% endif %}
+
                         {% if fullname %}
                             <div><b>Written By - </b>
                                 <span style="font-family: 'Times New Roman', Times, serif;">
@@ -567,6 +604,8 @@ pre{
                 }
             });
         });     
-
+                                $(document).ready(function(){
+                                    $('#modallikes').modal({'endingTop':'4%'});
+                                });
     </script>
 </html>

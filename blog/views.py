@@ -624,12 +624,27 @@ def blogs(request, username, title):
             blog.views_num = blog.views_num + 1
             blog.save()
             blog_views = models.Views.objects.filter(blog = blog).distinct('user','ip').count()
-            blog_likes = models.Likes.objects.filter(blog = blog).count()
+            blog_likes = models.Likes.objects.filter(blog = blog)
             user_views = models.Views.objects.filter(blog__user = user).count()
             ViewsNotification(request, blog_views, blog)
             context['blog_views'] = human_format(request, blog_views)
-            context['blog_likes'] = human_format(request, blog_likes)
+            context['blog_likes'] = human_format(request, blog_likes.count())
             context['user_views'] = human_format(request, user_views)
+            
+            like_user_list = []
+            for each in blog_likes:
+                user_dict = {}
+                user_dict['name'] = (each.user.first_name + " " + each.user.last_name).title()
+                user_dict['username'] = each.user.username
+
+                location3 = 'profile/100/'+each.user.username+'.jpg'
+                checkstorage3 =  django.core.files.storage.default_storage.exists(location3)
+                if checkstorage3:
+                    user_dict['src'] = '/media/profile/100/'+each.user.username+'.jpg'
+                else:
+                    user_dict['src'] = "/media/profile/100/default.jpg"
+                like_user_list.append(user_dict)
+            context['like_user_list'] = like_user_list
             context['status'] = 200
 
             context['title_pg'] = blog.heading + " | " + username + " | Writocraft"
