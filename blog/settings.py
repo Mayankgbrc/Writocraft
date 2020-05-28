@@ -25,7 +25,7 @@ SECRET_KEY = 'n1)-yx4q0f+76qvcp0tie%dx2qy-afpjoqi8raf1#byryxxuki'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['writocraft.com','127.0.0.1']
 
 
 # Application definition
