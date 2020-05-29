@@ -98,6 +98,13 @@
                     <div class="chips">
                         <input class="custom-class" name="tags" id="tag"></input>
                     </div>
+                    <div class="input-field" style="margin-top: 30px;">
+                        <select id="post_in">
+                          <option value="public" {{is_visible}}>Public</option>
+                          <option value="unlisted" {{is_private}}>Unlisted</option>
+                        </select>
+                        <label>Choose Publish Type</label>
+                    </div>
                     <br>
 
                     <div class="progress">
@@ -109,16 +116,6 @@
                         <span>Post Anonymously</span>
                     </label>
                     -->
-                    {% if request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
-                    <div class="input-field col s12">
-                        <select id="post_in">
-                          <option value="public" {{is_visible}}>Public</option>
-                          <option value="unlisted" {{is_private}}>Unlisted</option>
-                          <option value="anonymously" {{is_anonymous}}>Anonymously</option>
-                        </select>
-                        <label>Choose Publish Type</label>
-                    </div>
-                    {% endif %}
                     <button class="waves-effect waves-light btn " name="datacatch" value="save">Submit For Review</button> &nbsp;
                     <!-- <button name="datacatch" value="submit">Submit for Review</button> -->
                 </div>
@@ -129,11 +126,9 @@
 
 <script>
 
-{% if request.user.username == "adminmayank" or request.user.username == "Yusra310" %}
  $(document).ready(function(){
     $('select#post_in').formSelect();
   });
-{% endif %} 
 document.addEventListener('DOMContentLoaded', function() {
     var tag_list = {{ tag_list|safe }};
     tags = [];
@@ -200,7 +195,6 @@ const imageHandler = () => {
         placeholder: 'Write Content Here...',
     });
     
-{% if  request.user.username == "adminmayank" or request.user.username == "Yusra310" %} 
 $(document).ready(function(){
     $("button[name ='datacatch']").click(function(){
         var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
@@ -252,77 +246,15 @@ $(document).ready(function(){
                 }
                 else{
                     $("#error").text("Error "+result['error']);
-                    $("#error").show().delay(5000).fadeOut(3000);;
-                }
-            }
-        })
-    });
-});
-{% else %}
-
-$(document).ready(function(){
-    $("button[name ='datacatch']").click(function(){
-        var tags = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
-        var token = $(this).val(); 
-        var delta = editor.getContents();
-        var quillHtml = editor.root.innerHTML.trim();
-        var id = "{{id}}";
-        var anoaccept = "False";
-        $('#progressbar').css("width","0%");
-		if ($('#post_type').is(":checked"))
-		{
-			anoaccept = "True";
-		}
-        heading = $("#heading").val();
-        $.ajax({
-            xhr : function() {
-                var xhr = new window.XMLHttpRequest();
-                xhr.upload.addEventListener('progress', function(e) {
-                    if (e.lengthComputable) {
-                        var percent = Math.round((e.loaded / e.total) * 100);
-                        $('#progressbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
-                    }
-                });
-                return xhr;
-            },
-            type: 'POST',
-            url: '/writeblog/',
-            data: {
-                heading: heading,
-                id: "{{id}}",
-                data: quillHtml,
-                token: token,
-                tags: tags,
-                anoaccept: anoaccept,
-                val: 1,
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(result){
-                var output = result['status'];
-                console.log(output)
-                if (output == 200){
-                    $("#success").text(result['success']);
-                    $("#success").show().delay(5000).fadeOut(3000);
-                    blog_url = result['blog_url']
-                    blog_url_encoded = encodeURI(blog_url);
-                    window.location.href = '/edit/'+blog_url_encoded+"/1";
-                }
-                else{
                     $('#modal2').modal();
                     $('#modal2').modal('open');
-                    $("#errmessage").text("Error "+result['error']);
+                    $("#errmessage").text("Error: "+result['error']);
                 }
-            },
-            error: function (jqXHR, exception) {
-                $('#modal2').modal();
-                $('#modal2').modal('open');
-                $("#errmessage").text("Some Error Occured.");
             }
         })
     });
 });
 
-{% endif %}
 
 function escapeRegExp(string){
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
