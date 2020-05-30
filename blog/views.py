@@ -33,6 +33,7 @@ from django.core.mail import send_mail, BadHeaderError
 import string
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from dateutil.relativedelta import relativedelta
+from django.utils.timezone import localtime
 
 def home(request):
     return render(request, "home.html", {"name": "Mayank Gupta"})
@@ -95,7 +96,7 @@ def index(request):
         temp['likes_count'] = likes_count
         temp['comments_count'] = comment_count
         temp['img_src']  = findimg(request, new_data)
-        date_time = each.blog.created_at
+        date_time = localtime(each.blog.created_at)
         temp['date_time']  = date_time.strftime("%b %d, %Y")
         blog_list.append(temp)
     context['blogs'] = blog_list
@@ -655,7 +656,7 @@ def blogs(request, username, title):
             context['curr_url_pg'] = request.build_absolute_uri() 
             context['author_url_pg'] = request.build_absolute_uri("/@"+username)
             context['full_name_pg'] = user.first_name + " " + user.last_name
-            context['time_pg'] = blog.created_at
+            context['time_pg'] = localtime(blog.created_at)
             context['robots_pg'] = "index, follow"
             if blog.is_private:
                 context['robots_pg'] = "noindex, nofollow"
@@ -809,7 +810,7 @@ def notification(request):
                 if each.data:
                     notifi_dict['data'] = each.data
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
-                curr_time = each.created_at
+                curr_time = localtime(each.created_at)
                 f_str = curr_time.strftime(TIME_FORMAT)
                 notifi_dict['date'] = f_str
                 data.append(notifi_dict)
@@ -882,7 +883,7 @@ def commentload(request):
                     if profile[0].image_src:
                         comment['image_src'] = profile[0].image_src
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
-                curr_time1 = each.created_at
+                curr_time1 = localtime(each.created_at)
                 f_str1 = curr_time1.strftime(TIME_FORMAT)
                 comment['date'] = f_str1
                 commentthreaddata = models.Commentthread.objects.filter(blog=blogid, comment__comment = each.comment)
@@ -905,7 +906,7 @@ def commentload(request):
                             if profile[0].image_src:
                                 commentthread['image_src'] = profile[0].image_src
                         commentthread['id'] = per.id
-                        curr_time2 = per.created_at
+                        curr_time2 = localtime(per.created_at)
                         
                         TIME_FORMAT = "%b %d %Y, %I:%M %p"
                         f_str2 = curr_time2.strftime(TIME_FORMAT)
@@ -958,7 +959,7 @@ def deleteask(request, title):
         if blog_filter.count() == 1:
             blog = models.Blog.objects.get(url = title, user = request.user, is_visible=True)
             context['heading'] = blog.heading
-            context['created_at'] = blog.created_at
+            context['created_at'] = localtime(blog.created_at)
             context['views'] = blog.views_num
             context['url'] = title
             context['status'] = 200
@@ -1054,7 +1055,7 @@ def commentpush(request):
                 if profile.count():
                     if profile[0].image_src:
                         context['image_src'] = profile[0].image_src
-                curr_time2 = comment.created_at
+                curr_time2 = localtime(comment.created_at)
                 TIME_FORMAT = "%b %d %Y, %I:%M %p"
                 f_str2 = curr_time2.strftime(TIME_FORMAT)
                 context['date'] = f_str2
@@ -1079,7 +1080,7 @@ def commentpush(request):
                         context['commentid'] = commentid
                         context['commentthread'] = commenttext
                         context['id'] = commentthread.id
-                        curr_time2 = commentthread.created_at
+                        curr_time2 = localtime(commentthread.created_at)
                         TIME_FORMAT = "%b %d %Y, %I:%M %p"
                         f_str2 = curr_time2.strftime(TIME_FORMAT)
                         context['date'] = f_str2
@@ -2540,7 +2541,7 @@ def topblogs(request):
         blog_dict['blog'] = each.blog.heading
         blog_dict['read_time'] = each.blog.read_time
         blog_dict['views_num'] = models.Views.objects.filter(blog = each.blog).distinct('user','ip').count()
-        blog_dict['created_at'] = each.blog.created_at
+        blog_dict['created_at'] = localtime(each.blog.created_at)
         blog_list.append(blog_dict)
     context['blog_list'] = blog_list
     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -2694,7 +2695,7 @@ def search(request):
         comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
         temp['likes_count'] = likes_count
         temp['comments_count'] = comment_count
-        date_time = each.created_at
+        date_time = localtime(each.created_at)
         temp['date_time']  = date_time.strftime("%b %d, %Y")
 
         temp['readlater'] = "Add to Read Later"
@@ -2787,7 +2788,7 @@ def search2(request):
             comment_count = models.Comment.objects.filter(blog = each).count() + models.Commentthread.objects.filter(blog = each).count()
             temp['likes_count'] = likes_count
             temp['comments_count'] = comment_count
-            date_time = each.created_at
+            date_time = localtime(each.created_at)
             temp['date_time']  = date_time.strftime("%b %d, %Y")
 
             temp['readlater'] = "Add to Read Later"
