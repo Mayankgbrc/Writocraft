@@ -25,7 +25,7 @@ SECRET_KEY = 'n1)-yx4q0f+76qvcp0tie%dx2qy-afpjoqi8raf1#byryxxuki'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['writocraft.com','127.0.0.1']
+ALLOWED_HOSTS = ['writocraft.com','127.0.0.1', '192.168.43.230']
 
 
 # Application definition
@@ -125,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
