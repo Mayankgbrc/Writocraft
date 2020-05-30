@@ -71,6 +71,12 @@
             width: 500px;
             color: #222;
           }
+          #dropdown-notify2{
+            top: -58px;
+            width: 100% !important;
+            max-height: 70vh !important;
+            overflow-y: scroll;
+          }
         </style>
         
     </head>
@@ -92,6 +98,13 @@
                         <label id="search_button" class="label-icon" for="search2"><i class="material-icons" style="color: #999;">search</i></label>
                       </div>
                     </a>
+                    {% if user.is_authenticated %}
+                    <a href="#" class='dropdown-trigg2 hide-on-med-and-up' data-target='dropdown-notify2' for="0">
+                      <i class="fa fa-bell-o right" style="line-height: 58px; padding: 0px 10px; color: #fff; margin-left: 0px;" ></i>
+                    </a>
+                    {% endif %}
+                    <ul class='dropdown-content row'  id='dropdown-notify2'>
+                    </ul>
                     <ul class="right hide-on-med-and-down black-text text-darken-2">
                       <li class="search" style='margin-top: 5px; background-color: #eee; border-radius: 5px; border-radius: 5px; margin-right: 30px;'>
                         <form style="margin:0px; height: 85%; width: 350px;">
@@ -267,10 +280,12 @@ function boldString(str, find){
                             for (var i = 0; i < result['notification'].length ; i++){
                               var each_notification =  "<li><a style='color: #222 !important;'><div class='row' style='margin-bottom: 0px;'><div class='col s2'><img src='/media/profile/200/default.jpg/' style='width: 100%; border-radius: 50%;'></div><div class='col s10'><div style='font-size: 20px; margin-bottom: 5px'>"+result['notification'][i]['data']+"</div><div>"+result['notification'][i]['date']+"</div></div></div></a></li><li class='divider'></li>";
                               $("#dropdown-notify").append(each_notification);
+                              $("#dropdown-notify2").append(each_notification);
                             }
                         }
                         else{
                             $("#dropdown-notify").append("<div class='collection' style='margin: 0px !important;'><a href='#' titile='no-notification' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
+                            $("#dropdown-notify2").append("<div class='collection' style='margin: 0px !important;'><a href='#' titile='no-notification' class='collection-item'><div class='badge'>No Notification Found</div></a></div>");
                         }
                     }
                 })
@@ -312,4 +327,20 @@ $(document).ready(function(){
 $('.dropdown-trigger').dropdown({coverTrigger:false, hover: true});
 
 $('.dropdown-trigg').dropdown({coverTrigger:false, alignment: 'right', constrainWidth: false});
+$('.dropdown-trigg').dropdown({coverTrigger:false, alignment: 'right', constrainWidth: false});
+$('.dropdown-trigg2').dropdown({coverTrigger:false, alignment: 'right', constrainWidth: false});
+
+
+$('.dropdown-trigg2').click(function(){
+  status = $(this).attr("for");
+  if (status==1){
+    $('.dropdown-trigg2').dropdown('close');
+    $(this).attr('for','0');
+  }
+  else{
+    $(this).attr('for','1');
+  }
+  
+});
+
         </script>
