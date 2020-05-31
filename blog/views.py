@@ -29,7 +29,7 @@ import base64
 import requests
 from django.db.models import Count
 from sendgrid.helpers.mail import Mail
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail, BadHeaderError, EmailMessage, EmailMultiAlternatives, send_mass_mail
 import string
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from dateutil.relativedelta import relativedelta
@@ -1649,38 +1649,47 @@ def team(requests):
     return render(requests, 'team.html', context)
 
 def mailsend(request):
-    users = User.objects.all()
-    to_emails = [each.email for each in users]
-    
-    from_email='hello@writocraft.com'
-    subject='WritoCraft Weekly News'
-    
-    line1 = "We hope you and your family are healthy and safe during these uncertain and unprecedented times. <br>Here are this week's five links that you can go through:"
-    line2 = """
-                <ol>
-                    <li>Read Top 10 Unknown Conspiracies by Writocraft Official (7 min read) - https://writocraft.com/@writocraft/Top-10-Unknown-Conspiracies/</li>
-                    <li>Know about the holy city of India - 'Varanasi' by Sakshi Kumari (7 min read) - https://writocraft.com/@ksakshi489/The-holy-city-of-India---%22-Varanasi%22/ </li>
-                    <li>The most noteworthy - Colonizing Mars by Sourav Chakraborty (8 min read) - https://writocraft.com/@Souravari2699/Colonizing-Mars/ </li>
-                    <li>Required thing: Importance Of Love by Baishakhi Chakraborty (7 min read) - https://writocraft.com/@baishakhi18/IMPORTANCE-OF-LOVE/</li>
-                    <li>Get an overview about Gaya city - The Land of Enlightment by Vidisha Gupta (5 min read) - https://writocraft.com/@vidisha0302/Gaya---An-Overview/ </li>
-                </ol>
-            """
-    features1 = """<b>Features Update:</b><br>
-                <ol>
-                    <li>We updated the user profile page with the new material UI. </li>
-                    <li>Now you can link Youtube videos with your blog (Max 5 per blogs). Test Example - https://writocraft.com/@adminmayank/Python-Program-to-Track-Covid-19-Cases/ <br>
-                    You just have to use this code in our editor:  load("Video Link") <br>
-                    And it will show that video there.</li>
-                </ol>
-            """
-    html_content = line1 + line2 + features1
-    
-    try:
-        send_mail(subject, "", from_email, to_emails, fail_silently =True, html_message = html_content)
-    except BadHeaderError:
-        return HttpResponse("Error")
-    
-    return HttpResponse("Working")
+    if request.user.is_staff:
+        users = User.objects.all()
+
+        to_emails = ['mayank@writocraft.com']
+        bcc_email = [each.email for each in users]
+        
+
+        
+        from_email='info@writocraft.com'
+        subject='WritoCraft Weekly News'
+        
+        line1 = """
+                    Hi, hope you're well and doing some good and efficient work to spend your time.<br>
+                    Here are this week's five links that you can go through: 
+                """
+        line2 = """
+                    <ol>
+                        <li>Read about the first Hindi Newspaper by Maheshwar Pd Gupta (2 min read) - https://writocraft.com/@Maheshwar/Hindi-Journalism-Day/ </li> 
+                        <li>Homoeopathic medicine for corona virus - by Dr Nishant Saurabh (5 min read) - https://writocraft.com/@Nishantsaurabh/Homoeopathic-medicine-for-corona-virus/ </li> 
+                        <li>Is RO water - a Necessity or Vanity? - by Dr Vaidehi Gupta (3 min read) - https://writocraft.com/@vaidehigupta11/RO-water--Necessity-or-Vanity%3F/ </li> 
+                        <li>Let's celebrate World No Tobacco Day by Maheshwar Pd Gupta (2 min read) - https://writocraft.com/@Maheshwar/World-No-Tobacco-Day/ </li> 
+                        <li>10 Best Career Options for 2020 by Writocraft Official (7 min read) - https://writocraft.com/@writocraft/10-Best-Career-Options-for-2020%3A/ </li> 
+                    </ol>
+                """
+        features1 = """<b>Features Update:</b><br>
+                        Now you can post a private blog that can only be viewed by people you share the link with.<br>
+                        We have brought the "Unlist" feature for you. Once you set a blog Publish type from "Public" to "Unlist", that Blog will not show on your profile for any other user, and it won't show in search results also. It will show to specific users only, with whom you have shared the link.
+                    """
+        html_content = line1 + line2 + features1
+        return HttpResponse("Okkk")
+        try:
+            msg = EmailMultiAlternatives(subject, "", from_email, to_emails, bcc=bcc_email)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+        except BadHeaderError:
+            return HttpResponse("Error")
+        
+        return HttpResponse("Working")
+    else:
+        return HttpResponse("No Access")
 
 
 def getmonth(request,digit):
@@ -2436,6 +2445,9 @@ def newprofile(request):
                         TIME_FORMAT = "%b %d %Y"
                         curr_time = each.created_at
                         f_str = curr_time.strftime(TIME_FORMAT)
+                        dateto = datetime.datetime.now()
+                        datefrom = each.created_at.replace(tzinfo=None)
+                        date_diff = datestdformat(request, dateto, datefrom)
                         blog_content['date'] = f_str
                         blog_content['updated_at'] = each.updated_at
                         new_data = mdtohtml(request, each.data)
