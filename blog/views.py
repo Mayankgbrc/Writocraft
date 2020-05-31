@@ -1678,7 +1678,6 @@ def mailsend(request):
                         We have brought the "Unlist" feature for you. Once you set a blog Publish type from "Public" to "Unlist", that Blog will not show on your profile for any other user, and it won't show in search results also. It will show to specific users only, with whom you have shared the link.
                     """
         html_content = line1 + line2 + features1
-        return HttpResponse("Okkk")
         try:
             msg = EmailMultiAlternatives(subject, "", from_email, to_emails, bcc=bcc_email)
             msg.attach_alternative(html_content, "text/html")
