@@ -1654,10 +1654,10 @@ def mailsend(request):
 
         to_emails = ['mayank@writocraft.com']
         bcc_email = [each.email for each in users]
-        
+        #bcc_email = ['vidisha0302@gmail.com','mayankgbrc@gmail.com']
 
         
-        from_email='info@writocraft.com'
+        from_email='writocraft-weekly@writocraft.com'
         subject='WritoCraft Weekly News'
         
         line1 = """
@@ -1666,18 +1666,15 @@ def mailsend(request):
                 """
         line2 = """
                     <ol>
-                        <li>Read about the first Hindi Newspaper by Maheshwar Pd Gupta (2 min read) - https://writocraft.com/@Maheshwar/Hindi-Journalism-Day/ </li> 
-                        <li>Homoeopathic medicine for corona virus - by Dr Nishant Saurabh (5 min read) - https://writocraft.com/@Nishantsaurabh/Homoeopathic-medicine-for-corona-virus/ </li> 
-                        <li>Is RO water - a Necessity or Vanity? - by Dr Vaidehi Gupta (3 min read) - https://writocraft.com/@vaidehigupta11/RO-water--Necessity-or-Vanity%3F/ </li> 
-                        <li>Let's celebrate World No Tobacco Day by Maheshwar Pd Gupta (2 min read) - https://writocraft.com/@Maheshwar/World-No-Tobacco-Day/ </li> 
-                        <li>10 Best Career Options for 2020 by Writocraft Official (7 min read) - https://writocraft.com/@writocraft/10-Best-Career-Options-for-2020%3A/ </li> 
+                        <li>Importance of Education by Writocraft Official (6 min read) - https://writocraft.com/@writocraft/Importance-of-Education/ </li> 
+                        <li>Difference Between NEED and GREED by Baishakhi Chakraborty (6 min read) - https://writocraft.com/@baishakhi18/Difference-Between-NEED-and-GREED/ </li> 
+                        <li>A blog over Career: phase1 by Salony Gupta (5 min read) - https://writocraft.com/@salony/Career%3A-phase1/ </li> 
+                        <li>I have changed alot by Sumit Kumar (4 min read) - https://writocraft.com/@sumit/I-have-changed-alot/ </li> 
+                        <li>Astronomy and it's unknown facts by Writocraft Official (7 min read) - https://writocraft.com/@writocraft/Astronomy-and-it%27s-unknown-facts/ </li> 
                     </ol>
                 """
-        features1 = """<b>Features Update:</b><br>
-                        Now you can post a private blog that can only be viewed by people you share the link with.<br>
-                        We have brought the "Unlist" feature for you. Once you set a blog Publish type from "Public" to "Unlist", that Blog will not show on your profile for any other user, and it won't show in search results also. It will show to specific users only, with whom you have shared the link.
-                    """
-        html_content = line1 + line2 + features1
+        
+        html_content = line1 + line2 
         try:
             msg = EmailMultiAlternatives(subject, "", from_email, to_emails, bcc=bcc_email)
             msg.attach_alternative(html_content, "text/html")
