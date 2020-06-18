@@ -783,6 +783,7 @@ def edit(request, url, val = 0):
                 context['anoaccept'] = "checked"
             else:
                 context['anoaccept'] = ""
+            context['blog_url'] = blog.url
             context['status'] = 200
         else:
             context['status'] = 110
