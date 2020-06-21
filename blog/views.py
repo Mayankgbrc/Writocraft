@@ -2921,6 +2921,22 @@ def change_password(request):
         'form': form
     })
 
+def adstxt(request):
+    ads = """
+        media.net, 8CUW647OT, DIRECT<br>
+        google.com, pub-7439041255533808, RESELLER, f08c47fec0942fa0<br>
+        rubiconproject.com, 19398, DIRECT, 0bfd66d529a55807<br>
+        rubiconproject.com, 19398, RESELLER, 0bfd66d529a55807<br>
+        pubmatic.com, 157599, DIRECT, 5d62403b186f2ace<br>
+        pubmatic.com, 157599, RESELLER, 5d62403b186f2ace<br>
+        openx.com, 537100188, RESELLER, 6a698e2ec38604c6<br>
+        districtm.io, 100600, DIRECT<br>
+        rubiconproject.com, 17054, RESELLER<br>
+        pubmatic.com, 156181, RESELLER<br>
+        spotxchange.com, 211156, RESELLER, 7842df1d2fe2db34<br>
+        spotx.tv, 211156, RESELLER, 7842df1d2fe2db34
+    """
+    return HttpResponse(ads)
 
 def contactus(request):
     if request.method == 'POST':

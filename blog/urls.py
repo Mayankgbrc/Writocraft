@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^search/$',views.search2),
     url(r'^logsign/$',views.logsign),
     url(r'^contactus/$',views.contactus),
+    url(r'^ads.txt/$',views.adstxt),
     url(r'^mailer/$',views.mailer),
     url(r'^mailsend/$',views.mailsend),
     url(r'^coronaGo/$',views.coronaGo),
