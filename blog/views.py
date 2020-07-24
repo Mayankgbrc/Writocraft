@@ -2935,6 +2935,7 @@ def adstxt(request):
         pubmatic.com, 156181, RESELLER
         spotxchange.com, 211156, RESELLER, 7842df1d2fe2db34
         spotx.tv, 211156, RESELLER, 7842df1d2fe2db34
+        google.com, pub-4822230141083291, DIRECT, f08c47fec0942fa0
     """
     return HttpResponse(ads)
 
