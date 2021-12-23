@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'social',
-        'USER': 'admin3',
-        'PASSWORD': 'admin3',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -167,10 +167,6 @@ REST_FRAMEWORK = {
 
 LOGIN_URL = '/login/'
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = "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"
+SENDGRID_API_KEY = "" 
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-DEFAULT_FROM_EMAIL = "admin@writocraft.com"
-
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '673111798009-4ennbn16pshr0dqqadvsjribf40jdrs8.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'Kg5z6ZdsggYzpunCxgNB7li5'
+DEFAULT_FROM_EMAIL = ""
